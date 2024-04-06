@@ -63,7 +63,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     
     private Bitmap mBackgroundBitmap;
 
-    private DrawPauseButton drawButtonPause;
+    private DrawPauseButton drawPauseButton;
 
     // This is the constructor method that gets called
     // from SnakeActivity
@@ -96,7 +96,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         createPauseButton();
 
         //Initialize the drawButtonPause
-        drawButtonPause = DrawPauseButton.getDrawPauseButton(context, this);
+        drawPauseButton = DrawPauseButton.getDrawPauseButton(context, this);
     }
 
     public boolean isPaused() {
@@ -320,12 +320,12 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             drawNames();
             
             // Draw the pause button only if the game is paused and not rendering "Tap to play"
-            drawButtonPause.drawButton(mCanvas, mPaint);
+            drawPauseButton.drawButton(mCanvas, mPaint);
         }
 
         else {
             // Draw the pause button only if the game is paused and not rendering "Tap to play"
-            drawButtonPause.drawButton(mCanvas, mPaint);
+            drawPauseButton.drawButton(mCanvas, mPaint);
 
             if (!mPaused) {
                 // Draw the apple only if the game is not paused
@@ -379,7 +379,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         float messageHeight = mPaint.getFontMetrics().bottom - mPaint.getFontMetrics().top;
 
         // Get the screen dimensions
-        Point screenDimensions = drawButtonPause.getScreenDimensions();;
+        Point screenDimensions = drawPauseButton.getScreenDimensions();;
         int screenWidth = screenDimensions.x;
         int screenHeight = screenDimensions.y;
 
@@ -398,7 +398,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         mPaint.setTextSize(30);
 
         // Get the screen dimensions
-        Point screenDimensions = drawButtonPause.getScreenDimensions();
+        Point screenDimensions = drawPauseButton.getScreenDimensions();
         int screenWidth = screenDimensions.x;
 
         // Calculate the x-coordinate to position the names
@@ -415,6 +415,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         mCanvas.drawText(getResources().getString(R.string.name5),
                 xCoordinate, 190, mPaint);
     }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
