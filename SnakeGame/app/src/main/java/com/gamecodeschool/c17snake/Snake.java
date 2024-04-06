@@ -32,7 +32,10 @@ class Snake extends GameObject implements Movable, Collidable {
     // A bitmap for the body
     private Bitmap mBitmapBody;
 
-    protected Snake(Context context, Point mr, int ss) {
+    // Maintain a single global reference to the snake
+    private static Snake snake;
+
+    private Snake(Context context, Point mr, int ss) {
 
         super(context, mr, ss);
 
@@ -54,6 +57,13 @@ class Snake extends GameObject implements Movable, Collidable {
         // The halfway point across the screen in pixels
         // Used to detect which side of screen was pressed
         halfWayPoint = mr.x * ss / 2;
+    }
+
+    // Provide access to the snake, creating it if necessary
+    public static Snake getSnake(Context context, Point mr, int ss) {
+        if(snake == null)
+            snake = new Snake(context, mr, ss);
+        return snake;
     }
 
     // Method to hide the snake

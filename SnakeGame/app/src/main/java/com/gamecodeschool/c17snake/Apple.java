@@ -13,8 +13,11 @@ class Apple extends GameObject implements Spawnable{
     // An image to represent the apple
     private Bitmap mBitmapApple;
 
+    // Maintain a single global reference to the apple
+    private static Apple apple;
+
     /// Set up the apple in the constructor
-    Apple(Context context, Point sr, int s) {
+    private Apple(Context context, Point sr, int s) {
 
         super(context, sr, s);
 
@@ -23,6 +26,13 @@ class Apple extends GameObject implements Spawnable{
 
         // Resize the bitmap
         mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, s, s, false);
+    }
+
+    // Provide access to the apple, creating it if necessary
+    public static Apple getApple(Context context, Point sr, int s) {
+        if(apple == null)
+            apple = new Apple(context, sr, s);
+        return apple;
     }
 
     // This is called every time an apple is eaten
