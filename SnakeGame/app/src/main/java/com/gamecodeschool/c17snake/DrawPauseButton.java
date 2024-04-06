@@ -70,7 +70,7 @@ public class DrawPauseButton extends SurfaceView {
     //Method Overloading
     public void drawButton(Paint paint) {
         // Set color for the button background
-        paint.setColor(Color.argb(255, 203, 67, 53));
+        paint.setColor(Color.argb(100, 203, 67, 53));
 
         // Get screen dimensions
         Point screenDimensions = getScreenDimensions();
