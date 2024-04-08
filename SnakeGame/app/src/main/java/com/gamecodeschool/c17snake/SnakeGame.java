@@ -64,7 +64,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     private Bitmap mBackgroundBitmap;
 
     private DrawPauseButton drawPauseButton;
-    private Update update;
     private UpdateSystem updateSystem;
 
     // This is the constructor method that gets called
