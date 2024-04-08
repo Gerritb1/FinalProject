@@ -409,18 +409,20 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 xCoordinate, 190, mPaint);
     }
 
-
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
         if ((motionEvent.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
-            if (mPaused) {
-                // If the game is paused, resume the game
+            if (isFirstPause) {
+                // If the game beginning, start the game
                 mPaused = false;
                 newGame();
-            } else if (mPauseButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
+            }else if(mPaused && mPauseButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())){
+                //If the game is paused, resume the game
+                mPaused = false;
+            }else if (mPauseButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
                 // If the pause button is touched, pause the game
                 mPaused = true;
-            } else {
+            } else if (!mPaused) {
                 // If the game is running and not paused, handle snake movement
                 mSnake.switchHeading(motionEvent);
             }
