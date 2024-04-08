@@ -101,7 +101,26 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         updateSystem = new UpdateSystem();
     }
 
-    // Method to set dependencies, called by the Injector
+ //Builder for buildDesign Pattern Still under develelopment
+   /* public SnakeGame() {
+
+
+          DrawBuilder builder = new DrawBuilder()
+                .setCanvas(mCanvas)
+                .setPaint(mPaint)
+                .setFirstPause(isFirstPause)
+                .setPaused(mPaused);
+
+        this.drawTapToPlayBehavior = builder.setMessage("Tap to play").buildDrawTapToPlay();
+        this.drawNamesBehavior = builder.setMessage("John Doe").buildDrawNames();
+        this.checkDrawConditionsBehavior = builder.buildCheckDrawConditions(drawTapToPlayBehavior, drawNamesBehavior);
+        this.drawAppleBehavior = builder.buildDrawApple();
+        this.drawColorSizeBehavior = builder.buildDrawColorSize();
+        this.drawPausedBehavior = builder.buildDrawPaused();
+    }*/
+
+
+    // Dependency injector for DI design still under development
    /* public void setDependencies(Snake snake, Apple apple, SoundPool soundPool, int eatSoundID, int crashID, Point screenSize) {
         this.mSnake = snake;
         this.mApple = apple;
