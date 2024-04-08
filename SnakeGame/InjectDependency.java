@@ -10,9 +10,9 @@ public class InjectDependency implements Injector {
         } else if (target instanceof SnakeGame) {
             // Inject dependencies into SnakeGame
             SnakeGame snakeGame = (SnakeGame) target;
-            // Add code here to inject dependencies into SnakeGame, if needed
+            // Need more dependency injection code I think
         }
-        // Add more conditions for other classes if needed
+        // More stuff
     }
 }
 
