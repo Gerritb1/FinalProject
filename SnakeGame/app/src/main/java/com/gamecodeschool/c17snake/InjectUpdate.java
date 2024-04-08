@@ -23,7 +23,6 @@ public class InjectUpdate {
             // Create instances of Snake and Apple
             Snake snake = new Snake(context, mr, ss);
             Apple apple = new Apple(context, mr, ss);
-            Update update = new Update(context, snake, apple); // Adjust the Update constructor accordingly
 
             // Inject dependencies into SnakeGame
             SnakeGame snakeGame = (SnakeGame) target;
