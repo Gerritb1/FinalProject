@@ -60,13 +60,12 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     private Snake mSnake;
     // And an apple
     private Apple mApple;
-    
+
     private Bitmap mBackgroundBitmap;
 
     private DrawPauseButton drawPauseButton;
-   
+    private Update update;
     private UpdateSystem updateSystem;
-
 
     // This is the constructor method that gets called
     // from SnakeActivity
@@ -77,7 +76,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         fontTryCatch(context);
 
         // Create the size of the button
-        createPauseButton(size);
+        //createPauseButton(size);
 
         // Refactored
         loadBackgroundImage(context, size);
@@ -100,6 +99,16 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
         //Initialize the drawButtonPause
         drawPauseButton = DrawPauseButton.getDrawPauseButton(context, this);
+        updateSystem = new UpdateSystem();
+    }
+
+    // Method to set dependencies, called by the Injector
+    public void setDependencies(Snake snake, Apple apple, SoundPool soundPool, int eatSoundID, int crashID, Point screenSize) {
+        this.mSnake = snake;
+        this.mApple = apple;
+        this.mSP = soundPool;
+        this.mEat_ID = eatSoundID;
+        this.mCrashID = crashID;
     }
 
     public boolean isPaused() {
@@ -146,16 +155,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
     // Overload
     // Create the size of the button
-    protected void createPauseButton(Point size) {
-        int buttonWidth = size.x / 6;
-        int buttonHeight = size.y / 12;
-        int buttonLeft = (size.x - buttonWidth) / 2;
-        int buttonTop = size.y / 10;
 
-        mPauseButtonRect = new Rect(buttonLeft, buttonTop, buttonLeft + buttonWidth, buttonTop + buttonHeight);
-        mPauseButtonPaint = new Paint();
-        mPauseButtonPaint.setColor(Color.RED);
-    }
 
     //Refactored
     @Override
@@ -170,6 +170,11 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 .setMaxStreams(5)
                 .setAudioAttributes(audioAttributes)
                 .build();
+    }
+
+    // Method to return screen dimensions
+    public Point getScreenDimensions() {
+        return drawPauseButton.getScreenDimensions();
     }
 
     //Refactored
@@ -288,14 +293,14 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     }
 
     // Refactored
-   public void drawConditions() {
+    public void drawConditions() {
         if (isFirstPause && mPaused) {
             // Draw the "Tap to play" prompt if the game is initially paused
             drawPaused();
         } else if(mPaused) {
             // Draw the names if the game is paused
             drawNames();
-            
+
             // Draw the pause button only if the game is paused and not rendering "Tap to play"
             drawPauseButton.drawButton(mCanvas, mPaint);
         }
@@ -342,7 +347,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             drawNames();
         }
 
-        
+
     }
 
     // Refactored
