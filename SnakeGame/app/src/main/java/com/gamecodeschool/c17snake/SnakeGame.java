@@ -64,6 +64,9 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     private Bitmap mBackgroundBitmap;
 
     private DrawPauseButton drawPauseButton;
+   
+    private UpdateSystem updateSystem;
+
 
     // This is the constructor method that gets called
     // from SnakeActivity
@@ -212,38 +215,12 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     public void run() {
         while (mPlaying) {
             if(!mPaused) {
-                // Update 10 times a second
-                if (updateRequired()) {
+                if (updateSystem.updateRequired()) {
                     update();
                 }
             }
-
             draw();
         }
-    }
-
-    // Check to see if it is time for an update
-    @Override
-    public boolean updateRequired() {
-
-        // Run at 10 frames per second
-        final long TARGET_FPS = 10;
-        // There are 1000 milliseconds in a second
-        final long MILLIS_PER_SECOND = 1000;
-
-        // Are we due to update the frame
-        if(mNextFrameTime <= System.currentTimeMillis()){
-
-            // Setup when the next update will be triggered
-            mNextFrameTime =System.currentTimeMillis()
-                    + MILLIS_PER_SECOND / TARGET_FPS;
-
-            // Return true so that the update and draw
-            // methods are executed
-            return true;
-        }
-
-        return false;
     }
 
     @Override
