@@ -41,14 +41,5 @@ public class Update {
             // Additional update logic as needed
         }
     }
-
-    protected boolean updateRequired() {
-        if (mNextFrameTime <= System.currentTimeMillis()) {
-            mNextFrameTime = System.currentTimeMillis() + MILLIS_PER_SECOND / TARGET_FPS;
-            return true;
-        }
-        return false;
-    }*/
-
-
+*/
 }
