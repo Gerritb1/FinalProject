@@ -291,28 +291,40 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         }
     }
 
-    // Refactored
+    
+   // Refactored
     public void drawConditions() {
+        // Check and draw conditions based on game state (paused, tap to play, etc.)
+        checkDrawConditions();
+
+        // Draw the pause button in any case except for the initial "Tap to play" state
+        if (!isFirstPause || !mPaused) {
+            drawPauseButton.drawButton(mCanvas, mPaint);
+        }
+
+        // Draw game elements if not paused
+        if (!mPaused) {
+            drawApple();
+        }
+    }
+
+    //Refactored for extraction
+    public void checkDrawConditions() {
         if (isFirstPause && mPaused) {
             // Draw the "Tap to play" prompt if the game is initially paused
             drawPaused();
-        } else if(mPaused) {
+        } else if (mPaused) {
             // Draw the names if the game is paused
             drawNames();
-
-            // Draw the pause button only if the game is paused and not rendering "Tap to play"
-            drawPauseButton.drawButton(mCanvas, mPaint);
         }
+    }
 
-        else {
-            // Draw the pause button only if the game is paused and not rendering "Tap to play"
-            drawPauseButton.drawButton(mCanvas, mPaint);
 
-            if (!mPaused) {
-                // Draw the apple only if the game is not paused
-                mApple.draw(mCanvas, mPaint);
-            }
-        }
+    //Refactored for extraction
+    public void drawApple() {
+        // Draw the apple only if the game is not paused
+        mApple.draw(mCanvas, mPaint);
+
     }
 
     // Refactored
