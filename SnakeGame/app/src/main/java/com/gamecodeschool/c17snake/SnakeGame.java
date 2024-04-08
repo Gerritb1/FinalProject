@@ -102,13 +102,13 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     }
 
     // Method to set dependencies, called by the Injector
-    public void setDependencies(Snake snake, Apple apple, SoundPool soundPool, int eatSoundID, int crashID, Point screenSize) {
+   /* public void setDependencies(Snake snake, Apple apple, SoundPool soundPool, int eatSoundID, int crashID, Point screenSize) {
         this.mSnake = snake;
         this.mApple = apple;
         this.mSP = soundPool;
         this.mEat_ID = eatSoundID;
         this.mCrashID = crashID;
-    }
+    }*/
 
     public boolean isPaused() {
         return mPaused;
