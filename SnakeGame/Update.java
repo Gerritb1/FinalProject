@@ -40,7 +40,7 @@ public class Update {
             }
             // Additional update logic as needed
         }
-    }*/
+    }
 
     protected boolean updateRequired() {
         if (mNextFrameTime <= System.currentTimeMillis()) {
@@ -48,7 +48,7 @@ public class Update {
             return true;
         }
         return false;
-    }
+    }*/
 
 
 }
