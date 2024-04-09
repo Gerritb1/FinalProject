@@ -60,6 +60,11 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     private Snake mSnake;
     // And an apple
     private Apple mApple;
+    // And two rock objects
+    private Rock rock1;
+    private Rock rock2;
+    private Rock rock3;
+    private Rock rock4;
 
     private Bitmap mBackgroundBitmap;
 
@@ -222,6 +227,24 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         mNumBlocksHigh = size.y / blockSize;
 
         // Call the constructors of our two game objects by using the Singelton pattern
+        // Initializing the rocks
+        rock1 = Rock.getRock1(context,
+                new Point(NUM_BLOCKS_WIDE,
+                        mNumBlocksHigh),
+                blockSize);
+        rock2 = Rock.getRock2(context,
+                new Point(NUM_BLOCKS_WIDE,
+                        mNumBlocksHigh),
+                blockSize);
+        rock3 = Rock.getRock3(context,
+                new Point(NUM_BLOCKS_WIDE,
+                        mNumBlocksHigh),
+                blockSize);
+        rock4 = Rock.getRock4(context,
+                new Point(NUM_BLOCKS_WIDE,
+                        mNumBlocksHigh),
+                blockSize);
+
         mApple = Apple.getApple(context,
                 new Point(NUM_BLOCKS_WIDE,
                         mNumBlocksHigh),
@@ -253,6 +276,10 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         if (!mPaused && isFirstPause) {
             mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
             mApple.spawn();
+            rock1.spawn();
+            rock2.spawn();
+            rock3.spawn();
+            rock4.spawn();
         }
 
         isFirstPause = mPaused;
@@ -265,10 +292,14 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         if (!mPaused) {
             mSnake.move();
 
-            if (mSnake.checkDinner(mApple.getLocation())) {
+            if (mSnake.checkDinner(mApple.getLocation())) {/////////////
                 mApple.spawn();
                 mScore++;
                 mSP.play(mEat_ID, 1, 1, 0, 0, 1);
+            }
+
+            if (mSnake.hitRock(rock1.getLocation()) || mSnake.hitRock(rock2.getLocation()) || mSnake.hitRock(rock3.getLocation()) || mSnake.hitRock(rock4.getLocation())){
+                resetGame();
             }
 
             if (mSnake.detectDeath()) {
@@ -281,6 +312,14 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     private void resetGame() {
         if (!mPaused) {
             mScore = 0;
+            rock1.spawn();
+            rock1.hide();
+            rock2.spawn();
+            rock2.hide();
+            rock3.spawn();
+            rock3.hide();
+            rock4.spawn();
+            rock4.hide();
             mApple.spawn();
             mApple.hide(); // Hide the apple upon resetting the game
             mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
@@ -324,6 +363,8 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         // Draw game elements if not paused
         if (!mPaused) {
             drawApple();
+            drawRock();
+
         }
     }
 
@@ -346,6 +387,15 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
     }
 
+    public void drawRock() {
+        // Draw the rock only if the game is not paused
+        rock1.draw(mCanvas, mPaint);
+        rock2.draw(mCanvas, mPaint);
+        rock3.draw(mCanvas, mPaint);
+        rock4.draw(mCanvas, mPaint);
+
+    }
+
     // Refactored
     @Override
     public void drawColorSize() {
@@ -356,7 +406,11 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         // Draw the score
         mCanvas.drawText("" + mScore, 20, 120, mPaint);
 
-        // Draw the apple and the snake
+        // Draw the Rock, apple, and the snake
+        rock1.draw(mCanvas, mPaint);
+        rock2.draw(mCanvas, mPaint);
+        rock3.draw(mCanvas, mPaint);
+        rock4.draw(mCanvas, mPaint);
         mApple.draw(mCanvas, mPaint);
         mSnake.draw(mCanvas, mPaint);
     }
