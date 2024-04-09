@@ -64,10 +64,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     private Bitmap mBackgroundBitmap;
 
     private DrawPauseButton drawPauseButton;
-    private GameStateManager gameStateManager;
-    private GameState gameState;
-
-    private PauseState pauseState;
+    private UpdateSystem updateSystem;
 
     // This is the constructor method that gets called
     // from SnakeActivity
@@ -78,7 +75,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         fontTryCatch(context);
 
         // Create the size of the button
-        createPauseButton(size);
+        //createPauseButton(size);
 
         // Refactored
         loadBackgroundImage(context, size);
@@ -101,19 +98,40 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
         //Initialize the drawButtonPause
         drawPauseButton = DrawPauseButton.getDrawPauseButton(context, this);
-        gameStateManager = new GameStateManager(this);
-        gameState = new GameState(this);
+        updateSystem = new UpdateSystem();
     }
+
+    //Builder for buildDesign Pattern Still under develelopment
+   /* public SnakeGame() {
+
+
+          DrawBuilder builder = new DrawBuilder()
+                .setCanvas(mCanvas)
+                .setPaint(mPaint)
+                .setFirstPause(isFirstPause)
+                .setPaused(mPaused);
+
+        this.drawTapToPlayBehavior = builder.setMessage("Tap to play").buildDrawTapToPlay();
+        this.drawNamesBehavior = builder.setMessage("John Doe").buildDrawNames();
+        this.checkDrawConditionsBehavior = builder.buildCheckDrawConditions(drawTapToPlayBehavior, drawNamesBehavior);
+        this.drawAppleBehavior = builder.buildDrawApple();
+        this.drawColorSizeBehavior = builder.buildDrawColorSize();
+        this.drawPausedBehavior = builder.buildDrawPaused();
+    }*/
+
+
+    // Dependency injector for DI design still under development
+   /* public void setDependencies(Snake snake, Apple apple, SoundPool soundPool, int eatSoundID, int crashID, Point screenSize) {
+        this.mSnake = snake;
+        this.mApple = apple;
+        this.mSP = soundPool;
+        this.mEat_ID = eatSoundID;
+        this.mCrashID = crashID;
+    }*/
 
     public boolean isPaused() {
         return mPaused;
     }
-    //Needed for state design
-    public void setPaused(boolean isPaused) {
-        this.mPaused = isPaused;
-        // Additional actions can be taken here when pausing or resuming
-    }
-
 
     // Refactored
     @Override
@@ -155,16 +173,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
     // Overload
     // Create the size of the button
-    protected void createPauseButton(Point size) {
-        int buttonWidth = size.x / 6;
-        int buttonHeight = size.y / 12;
-        int buttonLeft = (size.x - buttonWidth) / 2;
-        int buttonTop = size.y / 10;
 
-        mPauseButtonRect = new Rect(buttonLeft, buttonTop, buttonLeft + buttonWidth, buttonTop + buttonHeight);
-        mPauseButtonPaint = new Paint();
-        mPauseButtonPaint.setColor(Color.RED);
-    }
 
     //Refactored
     @Override
@@ -179,6 +188,11 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 .setMaxStreams(5)
                 .setAudioAttributes(audioAttributes)
                 .build();
+    }
+
+    // Method to return screen dimensions
+    public Point getScreenDimensions() {
+        return drawPauseButton.getScreenDimensions();
     }
 
     //Refactored
@@ -224,44 +238,17 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     public void run() {
         while (mPlaying) {
             if(!mPaused) {
-                // Update 10 times a second
-                if (updateRequired()) {
-                    gameStateManager.update(); // Invoke current state's update logic
+                if (updateSystem.updateRequired()) {
+                    update();
                 }
             }
-
             draw();
         }
-    }
-
-    // Check to see if it is time for an update
-    @Override
-    public boolean updateRequired() {
-
-        // Run at 10 frames per second
-        final long TARGET_FPS = 10;
-        // There are 1000 milliseconds in a second
-        final long MILLIS_PER_SECOND = 1000;
-
-        // Are we due to update the frame
-        if(mNextFrameTime <= System.currentTimeMillis()){
-
-            // Setup when the next update will be triggered
-            mNextFrameTime =System.currentTimeMillis()
-                    + MILLIS_PER_SECOND / TARGET_FPS;
-
-            // Return true so that the update and draw
-            // methods are executed
-            return true;
-        }
-
-        return false;
     }
 
     @Override
     public void newGame() {
 
-        gameStateManager.setGameState(new GameState(this));
         // Reset the snake and spawn the apple if it's not paused and it's the first pause
         if (!mPaused && isFirstPause) {
             mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
@@ -323,28 +310,40 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         }
     }
 
+
     // Refactored
     public void drawConditions() {
+        // Check and draw conditions based on game state (paused, tap to play, etc.)
+        checkDrawConditions();
+
+        // Draw the pause button in any case except for the initial "Tap to play" state
+        if (!isFirstPause || !mPaused) {
+            drawPauseButton.drawButton(mCanvas, mPaint);
+        }
+
+        // Draw game elements if not paused
+        if (!mPaused) {
+            drawApple();
+        }
+    }
+
+    //Refactored for extraction
+    public void checkDrawConditions() {
         if (isFirstPause && mPaused) {
             // Draw the "Tap to play" prompt if the game is initially paused
             drawPaused();
-        } else if(mPaused) {
+        } else if (mPaused) {
             // Draw the names if the game is paused
             drawNames();
-
-            // Draw the pause button only if the game is paused and not rendering "Tap to play"
-            drawPauseButton.drawButton(mCanvas, mPaint);
         }
+    }
 
-        else {
-            // Draw the pause button only if the game is paused and not rendering "Tap to play"
-            drawPauseButton.drawButton(mCanvas, mPaint);
 
-            if (!mPaused) {
-                // Draw the apple only if the game is not paused
-                mApple.draw(mCanvas, mPaint);
-            }
-        }
+    //Refactored for extraction
+    public void drawApple() {
+        // Draw the apple only if the game is not paused
+        mApple.draw(mCanvas, mPaint);
+
     }
 
     // Refactored
@@ -429,18 +428,20 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 xCoordinate, 190, mPaint);
     }
 
-
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
         if ((motionEvent.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
-            if (mPaused) {
-                // If the game is paused, resume the game
+            if (isFirstPause) {
+                // If the game beginning, start the game
                 mPaused = false;
                 newGame();
-            } else if (mPauseButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
+            }else if(mPaused && mPauseButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())){
+                //If the game is paused, resume the game
+                mPaused = false;
+            }else if (mPauseButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
                 // If the pause button is touched, pause the game
                 mPaused = true;
-            } else {
+            } else if (!mPaused) {
                 // If the game is running and not paused, handle snake movement
                 mSnake.switchHeading(motionEvent);
             }
@@ -452,17 +453,19 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     // Stop the thread
     @Override
     public void pause() {
-
-        gameStateManager.setPauseState(new PauseState(this)); // Switch to PauseState
+        mPlaying = false;
         try {
             mThread.join();
         } catch (InterruptedException e) {
-            // Handle the exception
+            // Error
         }
     }
 
+    // Start the thread
     @Override
     public void resume() {
-        pauseState.resume();
+        mPlaying = true;
+        mThread = new Thread(this);
+        mThread.start();
     }
 }

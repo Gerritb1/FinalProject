@@ -9,6 +9,11 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.view.MotionEvent;
 
+import com.gamecodeschool.HeadRotate;
+
+import java.util.HashMap;
+import java.util.Map;
+
 class Snake extends GameObject implements Movable, Collidable {
 
     // Where is the centre of the screen
@@ -35,6 +40,11 @@ class Snake extends GameObject implements Movable, Collidable {
     // Maintain a single global reference to the snake
     private static Snake snake;
 
+    Map <Heading, HeadRotate> headMap
+            = new HashMap<Heading, HeadRotate>();
+
+
+
     private Snake(Context context, Point mr, int ss) {
 
         super(context, mr, ss);
@@ -44,6 +54,8 @@ class Snake extends GameObject implements Movable, Collidable {
 
         // Refactored, Overload
         headMovement(ss);
+
+        populateMap();
 
         // Create and scale the body
         mBitmapBody = BitmapFactory
@@ -57,6 +69,55 @@ class Snake extends GameObject implements Movable, Collidable {
         // The halfway point across the screen in pixels
         // Used to detect which side of screen was pressed
         halfWayPoint = mr.x * ss / 2;
+    }
+
+    //Populates the headMap
+    public void populateMap(){
+        headMap.put(Heading.UP, new HeadRotate() {
+            @Override
+            public void rotate(Canvas canvas, Paint paint) {
+                canvas.drawBitmap(mBitmapHeadUp,
+                        segmentLocations.get(0).x
+                                * mSegmentSize,
+                        segmentLocations.get(0).y
+                                * mSegmentSize, paint);
+            }
+        });
+
+        headMap.put(Heading.RIGHT, new HeadRotate() {
+            @Override
+            public void rotate(Canvas canvas, Paint paint) {
+                canvas.drawBitmap(mBitmapHeadRight,
+                        segmentLocations.get(0).x
+                                * mSegmentSize,
+                        segmentLocations.get(0).y
+                                * mSegmentSize, paint);
+            }
+        });
+
+        headMap.put(Heading.LEFT, new HeadRotate() {
+            @Override
+            public void rotate(Canvas canvas, Paint paint) {
+                canvas.drawBitmap(mBitmapHeadLeft,
+                        segmentLocations.get(0).x
+                                * mSegmentSize,
+                        segmentLocations.get(0).y
+                                * mSegmentSize, paint);
+            }
+        });
+
+        headMap.put(Heading.DOWN, new HeadRotate() {
+            @Override
+            public void rotate(Canvas canvas, Paint paint) {
+                canvas.drawBitmap(mBitmapHeadDown,
+                        segmentLocations.get(0).x
+                                * mSegmentSize,
+                        segmentLocations.get(0).y
+                                * mSegmentSize, paint);
+            }
+        });
+
+
     }
 
     // Provide access to the snake, creating it if necessary
@@ -253,35 +314,7 @@ class Snake extends GameObject implements Movable, Collidable {
         if (!segmentLocations.isEmpty()) {
             // All the code from this method goes here
             // Draw the head
-            switch (heading) {
-                case RIGHT: canvas.drawBitmap(mBitmapHeadRight,
-                            segmentLocations.get(0).x
-                                    * mSegmentSize,
-                            segmentLocations.get(0).y
-                                    * mSegmentSize, paint);
-                    break;
-
-                case LEFT: canvas.drawBitmap(mBitmapHeadLeft,
-                            segmentLocations.get(0).x
-                                    * mSegmentSize,
-                            segmentLocations.get(0).y
-                                    * mSegmentSize, paint);
-                    break;
-
-                case UP: canvas.drawBitmap(mBitmapHeadUp,
-                            segmentLocations.get(0).x
-                                    * mSegmentSize,
-                            segmentLocations.get(0).y
-                                    * mSegmentSize, paint);
-                    break;
-
-                case DOWN: canvas.drawBitmap(mBitmapHeadDown,
-                            segmentLocations.get(0).x
-                                    * mSegmentSize,
-                            segmentLocations.get(0).y
-                                    * mSegmentSize, paint);
-                    break;
-            }
+            headMap.get(heading).rotate(canvas, paint);
 
             // Refactored
             DrawSnakeBody(canvas, paint);
