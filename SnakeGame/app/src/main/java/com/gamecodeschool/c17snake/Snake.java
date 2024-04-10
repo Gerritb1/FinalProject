@@ -9,8 +9,6 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.view.MotionEvent;
 
-import com.gamecodeschool.HeadRotate;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +40,12 @@ class Snake extends GameObject implements Movable, Collidable {
 
     Map <Heading, HeadRotate> headMap
             = new HashMap<Heading, HeadRotate>();
-
+    Map<Heading, HeadRotate> moveMap
+            = new HashMap<Heading, HeadRotate>();
+    Map<Heading, HeadRotate> ifMap
+            = new HashMap<Heading, HeadRotate>();
+    Map<Heading, HeadRotate> elseMap
+            = new HashMap<Heading, HeadRotate>();
 
 
     private Snake(Context context, Point mr, int ss) {
@@ -55,7 +58,7 @@ class Snake extends GameObject implements Movable, Collidable {
         // Refactored, Overload
         headMovement(ss);
 
-        populateMap();
+        populateHeadMap();
 
         // Create and scale the body
         mBitmapBody = BitmapFactory
@@ -70,9 +73,94 @@ class Snake extends GameObject implements Movable, Collidable {
         // Used to detect which side of screen was pressed
         halfWayPoint = mr.x * ss / 2;
     }
+    public void populateElseMap(){
+        elseMap.put(Heading.UP, new HeadRotate() {
+            @Override
+            public void rotate(Canvas canvas, Paint paint) {
+                heading = Heading.LEFT;
+            }
+        });
+        elseMap.put(Heading.LEFT, new HeadRotate() {
+            @Override
+            public void rotate(Canvas canvas, Paint paint) {
+                heading = Heading.DOWN;
+            }
+        });
+        elseMap.put(Heading.RIGHT, new HeadRotate() {
+            @Override
+            public void rotate(Canvas canvas, Paint paint) {
+                heading = Heading.UP;
+            }
+        });
 
+        elseMap.put(Heading.DOWN, new HeadRotate() {
+            @Override
+            public void rotate(Canvas canvas, Paint paint) {
+                heading = Heading.RIGHT;
+            }
+        });
+
+    }
+    public void populateIfMap(){
+        ifMap.put(Heading.UP, new HeadRotate() {
+            @Override
+            public void rotate(Canvas canvas, Paint paint) {
+                heading = Heading.RIGHT;
+            }
+        });
+
+        ifMap.put(Heading.RIGHT, new HeadRotate() {
+            @Override
+            public void rotate(Canvas canvas, Paint paint) {
+                heading = Heading.DOWN;
+            }
+        });
+
+        ifMap.put(Heading.LEFT, new HeadRotate() {
+            @Override
+            public void rotate(Canvas canvas, Paint paint) {
+                heading = Heading.UP;
+            }
+        });
+
+        ifMap.put(Heading.DOWN, new HeadRotate() {
+            @Override
+            public void rotate(Canvas canvas, Paint paint) {
+                heading = Heading.LEFT;
+            }
+        });
+    }
+    public void populateMoveMap(Point p){
+        moveMap.put(Heading.UP, new HeadRotate() {
+            @Override
+            public void rotate(Canvas canvas, Paint paint) {
+                p.y--;
+            }
+        });
+
+        moveMap.put(Heading.RIGHT, new HeadRotate() {
+            @Override
+            public void rotate(Canvas canvas, Paint paint) {
+                p.x++;
+            }
+        });
+
+        moveMap.put(Heading.LEFT, new HeadRotate() {
+            @Override
+            public void rotate(Canvas canvas, Paint paint) {
+                p.x--;
+            }
+        });
+
+        moveMap.put(Heading.DOWN, new HeadRotate() {
+            @Override
+            public void rotate(Canvas canvas, Paint paint) {
+                p.y++;
+            }
+        });
+    }
     //Populates the headMap
-    public void populateMap(){
+    public void populateHeadMap(){
         headMap.put(Heading.UP, new HeadRotate() {
             @Override
             public void rotate(Canvas canvas, Paint paint) {
@@ -212,30 +300,16 @@ class Snake extends GameObject implements Movable, Collidable {
     public void move() {
         //Refactored
         movingLoop();
+        Canvas c =new Canvas();
+        Paint paint = new Paint();
 
         // Move the head in the appropriate heading
         // Get the existing head position
         Point p = segmentLocations.get(0);
+        populateMoveMap(p);
 
         // Move it appropriately
-        switch (heading) {
-            case UP:
-                p.y--;
-                break;
-
-            case RIGHT:
-                p.x++;
-                break;
-
-            case DOWN:
-                p.y++;
-                break;
-
-            case LEFT:
-                p.x--;
-                break;
-        }
-
+        moveMap.get(heading).rotate(c, paint);
     }
 
     // Refactored
@@ -337,40 +411,17 @@ class Snake extends GameObject implements Movable, Collidable {
     // Handle changing direction
     @Override
     public void switchHeading(MotionEvent motionEvent) {
-
+        Canvas c = new Canvas();
+        Paint p = new Paint();
+        populateIfMap();
+        populateElseMap();
         // Is the tap on the right hand side?
         if (motionEvent.getX() >= halfWayPoint) {
-            switch (heading) {
-                // Rotate right
-                case UP:
-                    heading = Heading.RIGHT;
-                    break;
-                case RIGHT:
-                    heading = Heading.DOWN;
-                    break;
-                case DOWN:
-                    heading = Heading.LEFT;
-                    break;
-                case LEFT:
-                    heading = Heading.UP;
-                    break;
-            }
+            ifMap.get(heading).rotate(c, p);
+
         } else {
             // Rotate left
-            switch (heading) {
-                case UP:
-                    heading = Heading.LEFT;
-                    break;
-                case LEFT:
-                    heading = Heading.DOWN;
-                    break;
-                case DOWN:
-                    heading = Heading.RIGHT;
-                    break;
-                case RIGHT:
-                    heading = Heading.UP;
-                    break;
-            }
+           elseMap.get(heading).rotate(c, p);
         }
     }
 
