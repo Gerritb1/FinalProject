@@ -235,6 +235,17 @@ class Snake extends GameObject implements Movable, Collidable {
         return false;
     }
 
+    public boolean hitRock(Point l) {
+        //if (snakeXs[0] == l.x && snakeYs[0] == l.y) {
+        boolean dead = false;
+
+        if (segmentLocations.get(0).x == l.x &&
+                segmentLocations.get(0).y == l.y) {
+            dead = true;
+        }
+        return dead;
+    }
+
     @Override
     public void draw(Canvas canvas, Paint paint) {
 
