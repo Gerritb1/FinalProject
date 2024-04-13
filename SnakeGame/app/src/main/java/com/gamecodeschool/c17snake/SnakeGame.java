@@ -60,6 +60,9 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     // And an apple
     private Apple mApple;
 
+    //And an Yellow Apple
+    private YellowApple yApple;
+
     // And four rock objects
     private Rock rock1;
     private Rock rock2;
@@ -232,6 +235,11 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                         mNumBlocksHigh),
                 blockSize);
 
+        yApple = YellowApple.getYellowApple(context,
+                new Point(NUM_BLOCKS_WIDE,
+                        mNumBlocksHigh),
+                blockSize);
+
         mSnake = Snake.getSnake(context,
                 new Point(NUM_BLOCKS_WIDE,
                         mNumBlocksHigh),
@@ -286,6 +294,9 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         if (!mPaused && isFirstPause) {
             mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
             mApple.spawn();
+            if(mScore > 3) {
+                yApple.spawn();
+            }
             for(Rock rock: rocks) {
                 rock.spawn();
             }
@@ -303,6 +314,17 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             if (mSnake.checkDinner(mApple.getLocation())) {
                 mApple.spawn();
                 mScore++;
+                mSP.play(mEat_ID, 1, 1, 0, 0, 1);
+            }
+
+            // Check if the score is above 3 and spawn the yellow apple
+            if (mScore > 3 && !yApple.isSpawned()) {
+                yApple.spawn();
+            }
+
+            if (mSnake.checkDinner(yApple.getLocation())) {
+                yApple.spawn();
+                mScore+=2;
                 mSP.play(mEat_ID, 1, 1, 0, 0, 1);
             }
 
@@ -328,6 +350,12 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 rock.hide();
             }
 
+            if(yApple.isSpawned()) {
+
+                yApple.hide();
+                yApple.spawned = false;
+
+            }
             mApple.spawn();
             mApple.hide(); // Hide the apple upon resetting the game
             mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
@@ -372,6 +400,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         if (!mPaused) {
             drawApple();
             drawRock();
+            drawYellowApple();
         }
     }
 
@@ -402,6 +431,10 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
     }
 
+    public void drawYellowApple() {
+        yApple.draw(mCanvas, mPaint);
+    }
+
     // Refactored
     @Override
     public void drawColorSize() {
@@ -412,9 +445,10 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         // Draw the score
         mCanvas.drawText("" + mScore, 20, 120, mPaint);
 
-        // Draw the apple and the snake
+        // Draw the apples and the snake
         mApple.draw(mCanvas, mPaint);
         mSnake.draw(mCanvas, mPaint);
+        yApple.draw(mCanvas, mPaint);
 
         // Draw the Rocks
         for(Rock rock: rocks) {
