@@ -370,6 +370,17 @@ class Snake extends GameObject implements Movable, Collidable {
         return false;
     }
 
+    // Method to grow the snake body as many segment as you want
+    public void grow(int segments) {
+        // Get the last segment of the snake's body
+        Point lastSegment = segmentLocations.get(segmentLocations.size() - 1);
+
+        // Add new body segments to the snake's body
+        for (int i = 0; i < segments; i++) {
+            segmentLocations.add(new Point(lastSegment.x, lastSegment.y));
+        }
+    }
+
     public boolean hitRock(Point l) {
         //if (snakeXs[0] == l.x && snakeYs[0] == l.y) {
         boolean dead = false;
