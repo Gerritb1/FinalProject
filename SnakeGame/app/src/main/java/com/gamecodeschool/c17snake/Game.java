@@ -17,8 +17,6 @@ public interface Game {
 
     void callConstructors(Context context, Point size);
 
-    boolean updateRequired();
-
     void newGame();
 
     void update();
