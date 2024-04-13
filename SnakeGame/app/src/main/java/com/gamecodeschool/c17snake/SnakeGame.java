@@ -324,8 +324,11 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
             if (mSnake.checkDinner(yApple.getLocation())) {
                 yApple.spawn();
-                mScore+=2;
+                mScore+=3;
                 mSP.play(mEat_ID, 1, 1, 0, 0, 1);
+
+                // to grow the snake body segment by 3, since 2+1=3
+                mSnake.grow(2);
             }
 
             for(Rock rock: rocks) {
