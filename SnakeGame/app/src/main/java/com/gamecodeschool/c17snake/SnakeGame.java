@@ -1,5 +1,3 @@
-package com.gamecodeschool.c17snake;
-
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
@@ -73,9 +71,9 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     private Bitmap mBackgroundBitmap;
     private final DrawPauseButton drawPauseButton;
     private final UpdateSystem updateSystem;
-    private NameDrawer DrawNames;
+    private TextDrawer DrawNames;
     private Context mContext;
-    private NameDrawer nameDrawer;
+    private TextDrawer textDrawer;
 
     // This is the constructor method that gets called
     // from SnakeActivity
@@ -407,18 +405,19 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             drawPaused();
         } else if (mPaused) {
             // Draw the names if the game is paused
-            if (nameDrawer == null) {
-                nameDrawer = new NameDrawer(getContext(), mCanvas, mPaint, this, DrawPauseButton.getDrawPauseButton(getContext(), this));
-                nameDrawer.drawNames();
+            if (textDrawer == null) {
+                textDrawer = new TextDrawer(getContext(), mCanvas, mPaint, this);
+                textDrawer.setDrawPauseButton(DrawPauseButton.getDrawPauseButton(getContext(), this));
+                textDrawer.drawNames();
             }
 
             // Check if NameDrawer instance is not null before calling drawNames
-            if (nameDrawer != null) {
-                nameDrawer.setDrawPauseButton(DrawPauseButton.getDrawPauseButton(getContext(), this));
-                nameDrawer.drawNames();
+            if (textDrawer != null) {
+                textDrawer.drawNames();
             }
         }
     }
+
 
     @Override
     public void drawColorSize() {
@@ -471,38 +470,17 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         mPaint.setTypeface(mCustomFont);
 
         if (isFirstPause && mPaused) {
-            //Refactored
-            drawTapToPlay();
-            if (DrawNames != null) {
-                DrawNames.drawNames();
+            if(textDrawer == null) {
+                // Instantiate TextDrawer preparing for Injection
+                textDrawer = new TextDrawer(mContext, mCanvas, mPaint, this);
+                textDrawer.setDrawPauseButton(drawPauseButton); //Injecting
             }
+
+                //Refactored
+            textDrawer.drawTapToPlay();
+            textDrawer.drawNames();
         }
-
-
     }
-
-    // Refactored
-    public void drawTapToPlay() {
-        // Draw the "Tap to play" message if the game is initially paused
-        String message = getResources().getString(R.string.tap_to_play);
-
-        // Get the width and height of the message
-        float messageWidth = mPaint.measureText(message);
-        float messageHeight = mPaint.getFontMetrics().bottom - mPaint.getFontMetrics().top;
-
-        // Get the screen dimensions
-        Point screenDimensions = drawPauseButton.getScreenDimensions();
-        int screenWidth = screenDimensions.x;
-        int screenHeight = screenDimensions.y;
-
-        // Calculate the position to center the text horizontally and vertically
-        float centerX = (screenWidth - messageWidth) / 2;
-        float centerY = (screenHeight + messageHeight) / 2;
-
-        // Draw the "Tap to play" message centered on the screen
-        mCanvas.drawText(message, centerX, centerY, mPaint);
-    }
-
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
