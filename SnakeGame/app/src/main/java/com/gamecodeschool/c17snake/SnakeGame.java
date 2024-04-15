@@ -470,6 +470,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     }
 
     // Refactored
+  
     @Override
     public void drawPaused() {
         // Set the size and color of the mPaint for the text
@@ -481,9 +482,11 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         if (isFirstPause && mPaused) {
             //Refactored
             drawTapToPlay();
-
-            drawNames();
+            if (DrawNames != null) {
+                DrawNames.drawNames();
+            }
         }
+
 
     }
 
