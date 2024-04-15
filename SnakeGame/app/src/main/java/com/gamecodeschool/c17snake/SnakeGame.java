@@ -73,6 +73,9 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     private Bitmap mBackgroundBitmap;
     private final DrawPauseButton drawPauseButton;
     private final UpdateSystem updateSystem;
+    private NameDrawer DrawNames;
+    private Context mContext;
+    private NameDrawer nameDrawer;
 
     // This is the constructor method that gets called
     // from SnakeActivity
@@ -107,6 +110,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
         //Refactored
         listOfRocks();
+        this.mContext = context;
 
     }
 
@@ -134,16 +138,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         this.drawAppleBehavior = builder.buildDrawApple();
         this.drawColorSizeBehavior = builder.buildDrawColorSize();
         this.drawPausedBehavior = builder.buildDrawPaused();
-    }*/
-
-
-    // Dependency injector for DI design still under development
-   /* public void setDependencies(Snake snake, Apple apple, SoundPool soundPool, int eatSoundID, int crashID, Point screenSize) {
-        this.mSnake = snake;
-        this.mApple = apple;
-        this.mSP = soundPool;
-        this.mEat_ID = eatSoundID;
-        this.mCrashID = crashID;
     }*/
 
     public boolean isPaused() {
@@ -388,7 +382,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         }
     }
 
-
     // Refactored
     public void drawConditions() {
         // Check and draw conditions based on game state (paused, tap to play, etc.)
@@ -407,14 +400,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         }
     }
 
-    public void drawRock() {
-        // Draw the rock only if the game is not paused
-        for(Rock rock: rocks) {
-            rock.draw(mCanvas, mPaint);
-        }
-
-    }
-
+    //Refactored for extraction
     public void checkDrawConditions() {
         if (isFirstPause && mPaused) {
             // Draw the "Tap to play" prompt if the game is initially paused
@@ -428,26 +414,12 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
             // Check if NameDrawer instance is not null before calling drawNames
             if (nameDrawer != null) {
-                //Injecting Dependencies
                 nameDrawer.setDrawPauseButton(DrawPauseButton.getDrawPauseButton(getContext(), this));
                 nameDrawer.drawNames();
             }
         }
     }
 
-
-    //Refactored for extraction
-    public void drawApple() {
-        // Draw the apple only if the game is not paused
-        mApple.draw(mCanvas, mPaint);
-
-    }
-
-    public void drawYellowApple() {
-        yApple.draw(mCanvas, mPaint);
-    }
-
-    // Refactored
     @Override
     public void drawColorSize() {
         // Set the size and color of the mPaint for the text
@@ -469,8 +441,27 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
     }
 
+
+    public void drawRock() {
+        // Draw the rock only if the game is not paused
+        for(Rock rock: rocks) {
+            rock.draw(mCanvas, mPaint);
+        }
+
+    }
+
+    //Refactored for extraction
+    public void drawApple() {
+        // Draw the apple only if the game is not paused
+        mApple.draw(mCanvas, mPaint);
+
+    }
+
+    public void drawYellowApple() {
+        yApple.draw(mCanvas, mPaint);
+    }
+
     // Refactored
-  
     @Override
     public void drawPaused() {
         // Set the size and color of the mPaint for the text
@@ -491,7 +482,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     }
 
     // Refactored
-    @Override
     public void drawTapToPlay() {
         // Draw the "Tap to play" message if the game is initially paused
         String message = getResources().getString(R.string.tap_to_play);
@@ -512,6 +502,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         // Draw the "Tap to play" message centered on the screen
         mCanvas.drawText(message, centerX, centerY, mPaint);
     }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
