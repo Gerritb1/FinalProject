@@ -31,8 +31,6 @@ public interface Game {
 
     void drawTapToPlay();
 
-    void drawNames();
-
     void pause();
 
     void resume();
