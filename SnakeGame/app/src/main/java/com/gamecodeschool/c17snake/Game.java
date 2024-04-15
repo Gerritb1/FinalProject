@@ -29,8 +29,6 @@ public interface Game {
 
     void drawPaused();
 
-    void drawTapToPlay();
-
     void pause();
 
     void resume();
