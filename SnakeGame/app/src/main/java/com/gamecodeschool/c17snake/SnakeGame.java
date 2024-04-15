@@ -415,14 +415,23 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
     }
 
-    //Refactored for extraction
     public void checkDrawConditions() {
         if (isFirstPause && mPaused) {
             // Draw the "Tap to play" prompt if the game is initially paused
             drawPaused();
         } else if (mPaused) {
             // Draw the names if the game is paused
-            drawNames();
+            if (nameDrawer == null) {
+                nameDrawer = new NameDrawer(getContext(), mCanvas, mPaint, this, DrawPauseButton.getDrawPauseButton(getContext(), this));
+                nameDrawer.drawNames();
+            }
+
+            // Check if NameDrawer instance is not null before calling drawNames
+            if (nameDrawer != null) {
+                //Injecting Dependencies
+                nameDrawer.setDrawPauseButton(DrawPauseButton.getDrawPauseButton(getContext(), this));
+                nameDrawer.drawNames();
+            }
         }
     }
 
@@ -476,7 +485,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             drawNames();
         }
 
-
     }
 
     // Refactored
@@ -500,31 +508,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
         // Draw the "Tap to play" message centered on the screen
         mCanvas.drawText(message, centerX, centerY, mPaint);
-    }
-
-    // Draws names of the students who worked together to make the code better
-    @Override
-    public void drawNames() {
-        mPaint.setColor(Color.argb(255, 255, 255, 255));
-        mPaint.setTextSize(30);
-
-        // Get the screen dimensions
-        Point screenDimensions = drawPauseButton.getScreenDimensions();
-        int screenWidth = screenDimensions.x;
-
-        // Calculate the x-coordinate to position the names
-        int xCoordinate = screenWidth - 340; // Adjust this value as needed
-
-        mCanvas.drawText(getResources().getString(R.string.name1),
-                xCoordinate, 50, mPaint);
-        mCanvas.drawText(getResources().getString(R.string.name2),
-                xCoordinate, 85, mPaint);
-        mCanvas.drawText(getResources().getString(R.string.name3),
-                xCoordinate, 120, mPaint);
-        mCanvas.drawText(getResources().getString(R.string.name4),
-                xCoordinate, 155, mPaint);
-        mCanvas.drawText(getResources().getString(R.string.name5),
-                xCoordinate, 190, mPaint);
     }
 
     @Override
