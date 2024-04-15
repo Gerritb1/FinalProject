@@ -1,5 +1,6 @@
 package com.gamecodeschool.c17snake;
 
-public interface INames {
+public interface IText {
     void drawNames();
+    void drawTapToPlay();
 }
