@@ -381,6 +381,15 @@ class Snake extends GameObject implements Movable, Collidable {
         }
     }
 
+    // Method to shrink the snake body as many segment as you want
+    public void shrink(int segments) {
+        // Remove segments from the snake's body starting from the tail
+        for (int i = 0; i < segments; i++) {
+            Point lastSegment = segmentLocations.get(segmentLocations.size() - 1);
+            segmentLocations.remove(lastSegment);
+        }
+    }
+
     public boolean hitRock(Point l) {
         //if (snakeXs[0] == l.x && snakeYs[0] == l.y) {
         boolean dead = false;
