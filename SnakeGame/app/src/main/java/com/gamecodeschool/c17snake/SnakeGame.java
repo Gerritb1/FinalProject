@@ -76,8 +76,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     private TextDrawer DrawNames;
     private Context mContext;
     private TextDrawer textDrawer;
-    private Point mr;
-    private int ss;
 
     // This is the constructor method that gets called
     // from SnakeActivity
@@ -373,17 +371,9 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             // Draw the background image
             mCanvas.drawBitmap(mBackgroundBitmap, 0, 0, null);
 
-            if (textDrawer == null) {
-                // Instantiate the TextDrawer obj/Prepare for injection
-                //textDrawer = new TextDrawer(getContext(), mCanvas, mPaint, this);
-               // textDrawer.setSnake(Snake.getSnake(getContext(),mr,ss)); // Inject dependencies
-                // Draw the score and other game elements
-              // textDrawer.drawColorSize();
-                // Draw the score
-                textDrawer = new TextDrawer(getContext(), mCanvas, mPaint, this);
-                textDrawer.setDrawPauseButton(DrawPauseButton.getDrawPauseButton(getContext(), this));
-                textDrawer.drawColorSize();
-            }
+            // Draw the score
+            drawColorSize();
+
             // Refactored
             drawConditions();
 
@@ -407,7 +397,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             drawApple();
             drawRock();
             drawYellowApple();
-            drawSnake();
         }
     }
 
@@ -432,11 +421,34 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     }
 
 
+    @Override
+    public void drawColorSize() {
+        // Set the size and color of the mPaint for the text
+        mPaint.setColor(Color.argb(255, 255, 255, 255));
+        mPaint.setTextSize(120);
+
+        // Draw the score
+        mCanvas.drawText("" + mScore, 20, 120, mPaint);
+
+        // Draw the apples and the snake
+        mApple.draw(mCanvas, mPaint);
+        mSnake.draw(mCanvas, mPaint);
+        yApple.draw(mCanvas, mPaint);
+
+        // Draw the Rocks
+        for(Rock rock: rocks) {
+            rock.draw(mCanvas, mPaint);
+        }
+
+    }
+
+
     public void drawRock() {
         // Draw the rock only if the game is not paused
         for(Rock rock: rocks) {
             rock.draw(mCanvas, mPaint);
         }
+
     }
 
     //Refactored for extraction
@@ -449,14 +461,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     public void drawYellowApple() {
         yApple.draw(mCanvas, mPaint);
     }
-
-    //Refactored for extraction
-    public void drawSnake() {
-        mSnake.draw(mCanvas, mPaint);
-
-    }
-
-
 
     // Refactored
     @Override
@@ -474,7 +478,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 textDrawer.setDrawPauseButton(drawPauseButton); //Injecting
             }
 
-                //Refactored
+            //Refactored
             textDrawer.drawTapToPlay();
             textDrawer.drawNames();
         }
