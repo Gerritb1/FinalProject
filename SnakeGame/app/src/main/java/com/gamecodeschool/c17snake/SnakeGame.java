@@ -318,7 +318,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 yApple.spawn();
             }
 
-            if (mSnake.checkDinner(yApple.getLocation())) {
+            if (mSnake.bigCheckDinner(yApple.getLocation())) {
                 yApple.spawn();
                 mScore+=3;
                 mSP.play(mEat_ID, 1, 1, 0, 0, 1);
