@@ -25,8 +25,6 @@ public interface Game {
 
     void drawConditions();
 
-    void drawColorSize();
-
     void drawPaused();
 
     void pause();
