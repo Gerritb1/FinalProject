@@ -36,33 +36,6 @@ public class TextDrawer extends SurfaceView implements IText {
     public void setDrawPauseButton(DrawPauseButton getScreen) {this.getScreen = getScreen; }
     public void setSnake(Snake snake){ mSnake = snake;}
 
-    @Override //Extracted from SnakeGame
-    public void drawColorSize() {
-
-        Point screenDimensions = getScreen.getScreenDimensions();
-        mSnake = Snake.getSnake(getContext(), mr, ss);
-        setSnake(mSnake);
-        // Ensure that mApple, mSnake, yApple, and rocks are not null before drawing
-        if (mApple != null && mSnake != null && yApple != null && rocks != null) {
-            // Set the size and color of the mPaint for the text
-
-            mPaint.setColor(Color.argb(255, 255, 255, 255));
-            mPaint.setTextSize(120);
-
-            // Draw the score
-            mCanvas.drawText("" + mScore, 20, 120, mPaint);
-
-            // Draw the apples, snake, and rocks
-            mApple.draw(mCanvas, mPaint);
-            yApple.draw(mCanvas, mPaint);
-            mSnake.draw(mCanvas,mPaint);
-
-            for (Rock rock : rocks) {
-                rock.draw(mCanvas, mPaint);
-            }
-        }
-    }
-
     // Method for drawing names
     @Override
     public void drawNames() { //Extracted from SnakeGame
