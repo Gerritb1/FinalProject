@@ -28,7 +28,7 @@ class Rock extends GameObject implements Spawnable{
         mBitmapRock = BitmapFactory.decodeResource(context.getResources(), R.drawable.rock);
 
         // Resize the bitmap
-        mBitmapRock = Bitmap.createScaledBitmap(mBitmapRock, s, s, false);
+        mBitmapRock = Bitmap.createScaledBitmap(mBitmapRock, s * 2, s * 2, false);
     }
 
     // Provide access to the rock, creating it if necessary
