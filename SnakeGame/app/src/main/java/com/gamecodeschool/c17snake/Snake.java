@@ -370,6 +370,35 @@ class Snake extends GameObject implements Movable, Collidable {
         return false;
     }
 
+    public boolean bigCheckDinner(Point l) {
+        // Calculate the boundaries of the yellow apple
+        int appleSize = mSegmentSize * 2; // Size of the yellow apple
+
+        // Calculate the boundaries of the apple
+        int appleLeft = l.x * mSegmentSize;
+        int appleRight = appleLeft + appleSize;
+        int appleTop = l.y * mSegmentSize;
+        int appleBottom = appleTop + appleSize;
+
+        // Calculate the boundaries of the snake's head
+        int headLeft = segmentLocations.get(0).x * mSegmentSize;
+        int headRight = headLeft + mSegmentSize;
+        int headTop = segmentLocations.get(0).y * mSegmentSize;
+        int headBottom = headTop + mSegmentSize;
+
+        // Check if the head of the snake intersects with the apple
+        if (headLeft < appleRight && headRight
+                > appleLeft && headTop
+                < appleBottom && headBottom > appleTop) {
+            // Add a new Point to the list located off-screen
+            // This is OK because on the next call to move, it will take the position of the segment in front of it
+            segmentLocations.add(new Point(-10, -10));
+            return true; // Collision detected
+        }
+
+        return false; // No collision
+    }
+
     // Method to grow the snake body as many segment as you want
     public void grow(int segments) {
         // Get the last segment of the snake's body
@@ -382,15 +411,35 @@ class Snake extends GameObject implements Movable, Collidable {
     }
 
     public boolean hitRock(Point l) {
-        //if (snakeXs[0] == l.x && snakeYs[0] == l.y) {
+
         boolean dead = false;
 
-        if (segmentLocations.get(0).x == l.x &&
-                segmentLocations.get(0).y == l.y) {
-            dead = true;
+        // Calculate the boundaries of the rock
+        int rockSize = mSegmentSize * 2; // Size of the rock
+
+        // Calculate the boundaries of the rock
+        int rockLeft = l.x * mSegmentSize;
+        int rockRight = rockLeft + rockSize;
+        int rockTop = l.y * mSegmentSize;
+        int rockBottom = rockTop + rockSize;
+
+        // Calculate the boundaries of the snake's head
+        int headLeft = segmentLocations.get(0).x * mSegmentSize;
+        int headRight = headLeft + mSegmentSize;
+        int headTop = segmentLocations.get(0).y * mSegmentSize;
+        int headBottom = headTop + mSegmentSize;
+
+        // Check if the head of the snake intersects with the rock
+        if (headLeft < rockRight && headRight
+                > rockLeft && headTop
+                < rockBottom && headBottom > rockTop) {
+            dead = true; // Collision detected, snake should be dead
         }
+
         return dead;
     }
+
+
 
     @Override
     public void draw(Canvas canvas, Paint paint) {
