@@ -351,9 +351,9 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 mSnake.grow(2);
             }
 
-            if (mSnake.checkDinner(pApple.getLocation())) {
+            if (mSnake.bigCheckDinner(pApple.getLocation())) {
                 mScore -= 2;
-                if (mScore <= 0) {
+                if (mScore < 0) {
                     resetGame();
                 } else {
                     pApple.hide();
@@ -362,7 +362,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                         yApple.hide();
                     }
                     mSP.play(mEat_ID, 1, 1, 0, 0, 1);
-                    // to grow the snake body segment by 3, since 2+1=3
+
                     mSnake.shrink(3);
                     randomNumber = random.nextInt(mScore + 1);
                 }
