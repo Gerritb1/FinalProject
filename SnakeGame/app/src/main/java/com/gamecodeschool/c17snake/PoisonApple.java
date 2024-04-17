@@ -8,7 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import java.util.Random;
 
-class YellowApple extends GameObject implements Spawnable{
+class PoisonApple extends GameObject implements Spawnable{
 
     // An image to represent the apple
     private Bitmap mBitmapApple;
@@ -16,25 +16,25 @@ class YellowApple extends GameObject implements Spawnable{
     public boolean spawned;
 
     // Maintain a single global reference to the apple
-    private static YellowApple yellowApple;
+    private static PoisonApple poisonApple;
 
     /// Set up the apple in the constructor
-    private YellowApple(Context context, Point sr, int s) {
+    private PoisonApple(Context context, Point sr, int s) {
 
         super(context, sr, s);
 
         // Load the image to the bitmap
-        mBitmapApple = BitmapFactory.decodeResource(context.getResources(), R.drawable.yellowapple);
+        mBitmapApple = BitmapFactory.decodeResource(context.getResources(), R.drawable.poisonapple);
 
         // Resize the bitmap
-        mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, s * 2, s * 2, false);
+        mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, s, s, false);
     }
 
     // Provide access to the apple, creating it if necessary
-    public static YellowApple getYellowApple(Context context, Point sr, int s) {
-        if(yellowApple == null)
-            yellowApple = new YellowApple(context, sr, s);
-        return yellowApple;
+    public static PoisonApple getPoisonApple(Context context, Point sr, int s) {
+        if(poisonApple == null)
+            poisonApple = new PoisonApple(context, sr, s);
+        return poisonApple;
     }
 
     // This is called every time an apple is eaten
@@ -66,7 +66,7 @@ class YellowApple extends GameObject implements Spawnable{
     @Override
     public void hide() {
         // Set the apple's location outside the visible screen
-        location.set(-10, -10); // Set the location outside the visible screen
+        location.set(-1, -1); // Set the location outside the visible screen
         spawned = false;
     }
 

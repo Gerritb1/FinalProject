@@ -19,6 +19,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import androidx.core.content.res.ResourcesCompat;
 import java.util.*;
+import java.util.Random;
 
 class SnakeGame extends SurfaceView implements Runnable, Game {
 
@@ -62,6 +63,9 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
     //And an Yellow Apple
     private YellowApple yApple;
+
+    // And a Poisoned Apple
+    private PoisonApple pApple;
 
     // And four rock objects
     private Rock rock1;
@@ -234,6 +238,11 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                         mNumBlocksHigh),
                 blockSize);
 
+        pApple = PoisonApple.getPoisonApple(context,
+                new Point(NUM_BLOCKS_WIDE,
+                        mNumBlocksHigh),
+                blockSize);
+
         mSnake = Snake.getSnake(context,
                 new Point(NUM_BLOCKS_WIDE,
                         mNumBlocksHigh),
@@ -302,27 +311,65 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     // Update the newGame() method to set isFirstPause to true
     @Override
     public void update() {
+        Random random = new Random();
+
+        // Random number variable for spawning the poisoned apple randomly
+        int randomNumber = 0;
         if (!mPaused) {
             mSnake.move();
 
             if (mSnake.checkDinner(mApple.getLocation())) {
                 mApple.spawn();
+                if (yApple.isSpawned()) {
+                    yApple.hide();
+                }
+                if (pApple.isSpawned()) {
+                    pApple.hide();
+                }
                 mScore++;
                 mSP.play(mEat_ID, 1, 1, 0, 0, 1);
+                randomNumber = random.nextInt(mScore + 1);
             }
 
-            // Check if the score is above 3 and spawn the yellow apple
-            if (mScore > 3 && !yApple.isSpawned()) {
+            // Check if the score is a dividable by 4 and spawn the yellow apple
+            if ((mScore > 0) && (mScore % 4 == 0) && !yApple.isSpawned()) {
                 yApple.spawn();
             }
 
             if (mSnake.bigCheckDinner(yApple.getLocation())) {
-                yApple.spawn();
+                yApple.hide();
+                mApple.spawn();
+                if(pApple.isSpawned()){
+                    pApple.hide();
+                }
                 mScore+=3;
                 mSP.play(mEat_ID, 1, 1, 0, 0, 1);
 
+                randomNumber = random.nextInt(mScore+5);
+
                 // to grow the snake body segment by 3, since 2+1=3
                 mSnake.grow(2);
+            }
+
+            if (mSnake.checkDinner(pApple.getLocation())) {
+                mScore -= 2;
+                if (mScore <= 0) {
+                    resetGame();
+                } else {
+                    pApple.hide();
+                    mApple.spawn();
+                    if (yApple.isSpawned()) {
+                        yApple.hide();
+                    }
+                    mSP.play(mEat_ID, 1, 1, 0, 0, 1);
+                    // to grow the snake body segment by 3, since 2+1=3
+                    mSnake.shrink(3);
+                    randomNumber = random.nextInt(mScore + 1);
+                }
+            }
+
+            if ((mScore > 0) && (randomNumber == mScore) && !pApple.isSpawned()) {
+                pApple.spawn();
             }
 
             for(Rock rock: rocks) {
@@ -351,6 +398,13 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
                 yApple.hide();
                 yApple.spawned = false;
+
+            }
+
+            if(pApple.isSpawned()) {
+
+                pApple.hide();
+                pApple.spawned = false;
 
             }
             mApple.spawn();
@@ -397,6 +451,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             drawApple();
             drawRock();
             drawYellowApple();
+            drawPoisonApple();
         }
     }
 
@@ -434,6 +489,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         mApple.draw(mCanvas, mPaint);
         mSnake.draw(mCanvas, mPaint);
         yApple.draw(mCanvas, mPaint);
+        pApple.draw(mCanvas, mPaint);
 
         // Draw the Rocks
         for(Rock rock: rocks) {
@@ -460,6 +516,10 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
     public void drawYellowApple() {
         yApple.draw(mCanvas, mPaint);
+    }
+
+    private void drawPoisonApple() {
+        pApple.draw(mCanvas, mPaint);
     }
 
     // Refactored
