@@ -328,7 +328,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 }
                 mScore++;
                 mSP.play(mEat_ID, 1, 1, 0, 0, 1);
-                randomNumber = random.nextInt(mScore + 1);
+                randomNumber = random.nextInt(4);
             }
 
             // Check if the score is a dividable by 4 and spawn the yellow apple
@@ -345,7 +345,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 mScore+=3;
                 mSP.play(mEat_ID, 1, 1, 0, 0, 1);
 
-                randomNumber = random.nextInt(mScore+5);
+                randomNumber = random.nextInt(3);
 
                 // to grow the snake body segment by 3, since 2+1=3
                 mSnake.grow(2);
@@ -364,11 +364,11 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                     mSP.play(mEat_ID, 1, 1, 0, 0, 1);
 
                     mSnake.shrink(3);
-                    randomNumber = random.nextInt(mScore + 1);
+                    randomNumber = random.nextInt(5);
                 }
             }
 
-            if ((mScore > 0) && (randomNumber == mScore) && !pApple.isSpawned()) {
+            if ((mScore > 0) && (randomNumber == 2) && !pApple.isSpawned()) {
                 pApple.spawn();
             }
 
