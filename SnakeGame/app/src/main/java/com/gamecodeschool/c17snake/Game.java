@@ -30,4 +30,5 @@ public interface Game {
     void pause();
 
     void resume();
+    void drawColorSize();
 }
