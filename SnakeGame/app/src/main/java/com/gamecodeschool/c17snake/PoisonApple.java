@@ -27,7 +27,7 @@ class PoisonApple extends GameObject implements Spawnable{
         mBitmapApple = BitmapFactory.decodeResource(context.getResources(), R.drawable.poisonapple);
 
         // Resize the bitmap
-        mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, s, s, false);
+        mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, s * 2, s * 2, false);
     }
 
     // Provide access to the apple, creating it if necessary
