@@ -81,6 +81,10 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     private Context mContext;
     private TextDrawer textDrawer;
 
+    private Random random;
+
+    private int randomNumber = 0;
+
     // This is the constructor method that gets called
     // from SnakeActivity
     protected SnakeGame(Context context, Point size) {
@@ -115,6 +119,8 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         //Refactored
         listOfRocks();
         this.mContext = context;
+
+        random = new Random();
 
     }
 
@@ -311,66 +317,17 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     // Update the newGame() method to set isFirstPause to true
     @Override
     public void update() {
-        Random random = new Random();
-
-        // Random number variable for spawning the poisoned apple randomly
-        int randomNumber = 0;
         if (!mPaused) {
             mSnake.move();
 
-            if (mSnake.checkDinner(mApple.getLocation())) {
-                mApple.spawn();
-                if (yApple.isSpawned()) {
-                    yApple.hide();
-                }
-                if (pApple.isSpawned()) {
-                    pApple.hide();
-                }
-                mScore++;
-                mSP.play(mEat_ID, 1, 1, 0, 0, 1);
-                randomNumber = random.nextInt(4);
-            }
+            // Refactored, this is for the red apple
+            updateMApple();
 
-            // Check if the score is a dividable by 4 and spawn the yellow apple
-            if ((mScore > 0) && (mScore % 4 == 0) && !yApple.isSpawned()) {
-                yApple.spawn();
-            }
+            // Refactored, this is for the yellow apple
+            updateYApple();
 
-            if (mSnake.bigCheckDinner(yApple.getLocation())) {
-                yApple.hide();
-                mApple.spawn();
-                if(pApple.isSpawned()){
-                    pApple.hide();
-                }
-                mScore+=3;
-                mSP.play(mEat_ID, 1, 1, 0, 0, 1);
-
-                randomNumber = random.nextInt(3);
-
-                // to grow the snake body segment by 3, since 2+1=3
-                mSnake.grow(2);
-            }
-
-            if (mSnake.bigCheckDinner(pApple.getLocation())) {
-                mScore -= 2;
-                if (mScore < 0) {
-                    resetGame();
-                } else {
-                    pApple.hide();
-                    mApple.spawn();
-                    if (yApple.isSpawned()) {
-                        yApple.hide();
-                    }
-                    mSP.play(mEat_ID, 1, 1, 0, 0, 1);
-
-                    mSnake.shrink(3);
-                    randomNumber = random.nextInt(5);
-                }
-            }
-
-            if ((mScore > 0) && (randomNumber == 2) && !pApple.isSpawned()) {
-                pApple.spawn();
-            }
+            // Refactored, this is for the poison apple
+            updatePApple();
 
             for(Rock rock: rocks) {
                 if (mSnake.hitRock(rock.getLocation())) {
@@ -385,34 +342,100 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         }
     }
 
+    // Refactored, this is for the red apple
+    public void updateMApple() {
+        if (mSnake.checkDinner(mApple.getLocation())) {
+            mApple.spawn();
+            if (yApple.isSpawned()) {
+                yApple.hide();
+            }
+            if (pApple.isSpawned()) {
+                pApple.hide();
+            }
+            mScore++;
+            mSP.play(mEat_ID, 1, 1, 0, 0, 1);
+            randomNumber = random.nextInt(4);
+        }
+    }
+
+    // Refactored, this is for the yellow apple
+    public void updateYApple() {
+        // Check if the score is a dividable by 4 and spawn the yellow apple
+        if ((mScore > 0) && (mScore % 4 == 0) && !yApple.isSpawned()) {
+            yApple.spawn();
+        }
+
+        if (mSnake.bigCheckDinner(yApple.getLocation())) {
+            yApple.hide();
+            mApple.spawn();
+            if(pApple.isSpawned()){
+                pApple.hide();
+            }
+            mScore+=3;
+            mSP.play(mEat_ID, 1, 1, 0, 0, 1);
+
+            randomNumber = random.nextInt(3);
+
+            // to grow the snake body segment by 3, since 2+1=3
+            mSnake.grow(2);
+        }
+    }
+
+    // Refactored, this is for the poison apple
+    public void updatePApple() {
+        if (mSnake.bigCheckDinner(pApple.getLocation())) {
+            mScore -= 2;
+            if (mScore < 0) {
+                resetGame();
+            } else {
+                pApple.hide();
+                mApple.spawn();
+                if (yApple.isSpawned()) {
+                    yApple.hide();
+                }
+                mSP.play(mEat_ID, 1, 1, 0, 0, 1);
+
+                mSnake.shrink(3);
+                randomNumber = random.nextInt(5);
+            }
+        }
+
+        if ((mScore > 0) && (randomNumber == 2) && !pApple.isSpawned()) {
+            pApple.spawn();
+        }
+    }
+
     private void resetGame() {
         if (!mPaused) {
             mScore = 0;
 
-            for(Rock rock: rocks) {
-                rock.spawn();
-                rock.hide();
-            }
+            // Refactored
+            spawnHide();
 
-            if(yApple.isSpawned()) {
-
-                yApple.hide();
-                yApple.spawned = false;
-
-            }
-
-            if(pApple.isSpawned()) {
-
-                pApple.hide();
-                pApple.spawned = false;
-
-            }
             mApple.spawn();
             mApple.hide(); // Hide the apple upon resetting the game
             mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
             mSnake.hide(); // Hide the snake upon resetting the game
             isFirstPause = true; // Set isFirstPause to true upon resetting the game
             mPaused = true; // Set mPaused to true upon resetting the game
+        }
+    }
+
+    // Refactored
+    public void spawnHide() {
+        for(Rock rock: rocks) {
+            rock.spawn();
+            rock.hide();
+        }
+
+        if(yApple.isSpawned()) {
+            yApple.hide();
+            yApple.spawned = false;
+        }
+
+        if(pApple.isSpawned()) {
+            pApple.hide();
+            pApple.spawned = false;
         }
     }
 
