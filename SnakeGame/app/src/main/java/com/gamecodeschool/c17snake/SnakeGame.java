@@ -471,10 +471,8 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
         // Draw game elements if not paused
         if (!mPaused) {
-            drawApple();
-            drawRock();
-            drawYellowApple();
-            drawPoisonApple();
+            // Refactored
+            drawSpawnables();
         }
     }
 
@@ -521,27 +519,17 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
     }
 
-
-    public void drawRock() {
+    // Refactored
+    public void drawSpawnables() {
         // Draw the rock only if the game is not paused
         for(Rock rock: rocks) {
             rock.draw(mCanvas, mPaint);
         }
-
-    }
-
-    //Refactored for extraction
-    public void drawApple() {
         // Draw the apple only if the game is not paused
         mApple.draw(mCanvas, mPaint);
 
-    }
-
-    public void drawYellowApple() {
         yApple.draw(mCanvas, mPaint);
-    }
 
-    private void drawPoisonApple() {
         pApple.draw(mCanvas, mPaint);
     }
 
