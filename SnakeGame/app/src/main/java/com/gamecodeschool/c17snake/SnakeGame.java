@@ -132,24 +132,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         rocks.add(rock4);
     }
 
-    //Builder for buildDesign Pattern Still under develelopment
-   /* public SnakeGame() {
-
-
-          DrawBuilder builder = new DrawBuilder()
-                .setCanvas(mCanvas)
-                .setPaint(mPaint)
-                .setFirstPause(isFirstPause)
-                .setPaused(mPaused);
-
-        this.drawTapToPlayBehavior = builder.setMessage("Tap to play").buildDrawTapToPlay();
-        this.drawNamesBehavior = builder.setMessage("John Doe").buildDrawNames();
-        this.checkDrawConditionsBehavior = builder.buildCheckDrawConditions(drawTapToPlayBehavior, drawNamesBehavior);
-        this.drawAppleBehavior = builder.buildDrawApple();
-        this.drawColorSizeBehavior = builder.buildDrawColorSize();
-        this.drawPausedBehavior = builder.buildDrawPaused();
-    }*/
-
     public boolean isPaused() {
         return mPaused;
     }
