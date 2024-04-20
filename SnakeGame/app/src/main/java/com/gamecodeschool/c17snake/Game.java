@@ -17,8 +17,6 @@ public interface Game {
 
     void callConstructors(Context context, Point size);
 
-    boolean updateRequired();
-
     void newGame();
 
     void update();
@@ -27,15 +25,11 @@ public interface Game {
 
     void drawConditions();
 
-    void drawColorSize();
-
     void drawPaused();
-
-    void drawTapToPlay();
-
-    void drawNames();
 
     void pause();
 
     void resume();
+    
+    void drawColorSize();
 }
