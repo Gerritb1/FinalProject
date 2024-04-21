@@ -17,7 +17,7 @@ class Apple extends GameObject implements Spawnable{
     private static Apple apple;
 
     /// Set up the apple in the constructor
-    private Apple(Context context, Point sr, int s) {
+    protected Apple(Context context, Point sr, int s) {
 
         super(context, sr, s);
 
