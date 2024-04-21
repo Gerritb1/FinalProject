@@ -19,7 +19,7 @@ class Snake extends GameObject implements Movable, Collidable {
     private int halfWayPoint;
 
     // For tracking movement Heading
-    private enum Heading {
+    protected enum Heading {
         UP, RIGHT, DOWN, LEFT
     }
 
@@ -37,6 +37,7 @@ class Snake extends GameObject implements Movable, Collidable {
 
     // Maintain a single global reference to the snake
     private static Snake snake;
+    private ElseMap else_map;
 
     Map <Heading, HeadRotate> headMap
             = new HashMap<Heading, HeadRotate>();
@@ -46,6 +47,15 @@ class Snake extends GameObject implements Movable, Collidable {
             = new HashMap<Heading, HeadRotate>();
     Map<Heading, HeadRotate> elseMap
             = new HashMap<Heading, HeadRotate>();
+
+    public ElseMap getElseMap() {
+        return else_map;
+    }
+
+    public void setElseMap(ElseMap else_map) {
+        this.else_map = else_map;
+    }
+
 
 
     private Snake(Context context, Point mr, int ss) {
@@ -59,47 +69,18 @@ class Snake extends GameObject implements Movable, Collidable {
         headMovement(ss);
 
         populateHeadMap();
+        populateHeadMap();
 
+         //Preparing for injection
+        ElseMap elseMapInstance = new ElseMap((ElseMap) else_map);
+        elseMapInstance.populateElseMap(new HashMap<>()); // Injecting
+
+        setElseMap(elseMapInstance); //Setting the ElseMap instance
         // Create and scale the body
-        mBitmapBody = BitmapFactory
-                .decodeResource(context.getResources(),
-                        R.drawable.body);
+        mBitmapBody = BitmapFactory.decodeResource(context.getResources(), R.drawable.body);
+        mBitmapBody = Bitmap.createScaledBitmap(mBitmapBody, ss, ss, false);
 
-        mBitmapBody = Bitmap
-                .createScaledBitmap(mBitmapBody,
-                        ss, ss, false);
-
-        // The halfway point across the screen in pixels
-        // Used to detect which side of screen was pressed
         halfWayPoint = mr.x * ss / 2;
-    }
-    public void populateElseMap(){
-        elseMap.put(Heading.UP, new HeadRotate() {
-            @Override
-            public void rotate(Canvas canvas, Paint paint) {
-                heading = Heading.LEFT;
-            }
-        });
-        elseMap.put(Heading.LEFT, new HeadRotate() {
-            @Override
-            public void rotate(Canvas canvas, Paint paint) {
-                heading = Heading.DOWN;
-            }
-        });
-        elseMap.put(Heading.RIGHT, new HeadRotate() {
-            @Override
-            public void rotate(Canvas canvas, Paint paint) {
-                heading = Heading.UP;
-            }
-        });
-
-        elseMap.put(Heading.DOWN, new HeadRotate() {
-            @Override
-            public void rotate(Canvas canvas, Paint paint) {
-                heading = Heading.RIGHT;
-            }
-        });
-
     }
     public void populateIfMap(){
         ifMap.put(Heading.UP, new HeadRotate() {
@@ -479,17 +460,18 @@ class Snake extends GameObject implements Movable, Collidable {
     // Handle changing direction
     @Override
     public void switchHeading(MotionEvent motionEvent) {
-        Canvas c = new Canvas();
-        Paint p = new Paint();
+        Canvas mCanvas = new Canvas();
+        Paint mPaint = new Paint();
         populateIfMap();
-        populateElseMap();
+        getElseMap().populateElseMap(new HashMap<>()); // Assuming getMap() returns the ElseMap instance
+
         // Is the tap on the right hand side?
         if (motionEvent.getX() >= halfWayPoint) {
-            ifMap.get(heading).rotate(c, p);
-
+            ifMap.get(heading).rotate(mCanvas, mPaint);
         } else {
             // Rotate left
-           elseMap.get(heading).rotate(c, p);
+            getElseMap().populateElseMap(new HashMap<>()); // Update this line to call populateElseMap on the ElseMap instance
+            elseMap.get(heading).rotate(mCanvas, mPaint); // Assuming 'elseMap' is the reference to the ElseMap instance
         }
     }
 
