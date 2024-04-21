@@ -4,13 +4,12 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-<<<<<<< Updated upstream
+Updated upstream
     <list default="true" id="be50f442-e7c0-4c5b-b2c3-a135faa8c4de" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/SnakeGame/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/SnakeGame/.idea/misc.xml" afterDir="false" />
     </list>
-=======
     <list default="true" id="2dbf286d-bcce-44b4-9941-ad2c91fbc65b" name="Changes" comment="" />
->>>>>>> Stashed changes
+     Stashed changes
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -19,12 +18,12 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-<<<<<<< Updated upstream
+Updated upstream
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="2epYW9xHuUvwS4mcYyOm7AclO4G" />
-=======
+
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$/SnakeGame">
       <ProjectState />
@@ -50,12 +49,12 @@
   &quot;associatedIndex&quot;: 7
 }</component>
   <component name="ProjectId" id="2eqjUuO2ddZXWuDjrJk56AEyx5N" />
->>>>>>> Stashed changes
+  Stashed changes
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-<<<<<<< Updated upstream
+ Updated upstream
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -74,7 +73,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1712603015519</updated>
-=======
+
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
