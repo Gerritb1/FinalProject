@@ -8,7 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import java.util.Random;
 
-public class Trash extends GameObject implements Spawnable{
+public class Trash extends Rock implements Spawnable{
     private Bitmap mBitmapTrash;
     private static Trash trash1;
     private static Trash trash2;
