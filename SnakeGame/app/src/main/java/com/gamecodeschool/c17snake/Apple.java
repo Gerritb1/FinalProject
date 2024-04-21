@@ -29,7 +29,7 @@ class Apple extends GameObject {
         mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, s, s, false);
     }
     
-    // Provide access to the apple, creating it if necessary
+    //Template Getter
     public static GameObject customGet(Context context, Point sr, int s) {
         if (apple == null) {
             apple = new Apple(context, sr, s);
