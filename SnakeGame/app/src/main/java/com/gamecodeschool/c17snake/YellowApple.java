@@ -8,67 +8,62 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import java.util.Random;
 
-class YellowApple extends GameObject implements Spawnable{
+class YellowApple extends Apple {
 
-    // An image to represent the apple
-    private Bitmap mBitmapApple;
+    // An image to represent the yellow apple
+    private Bitmap mBitmapYellowApple;
 
     public boolean spawned;
 
-    // Maintain a single global reference to the apple
+    // Maintain a single global reference to the yellow apple
     private static YellowApple yellowApple;
 
-    /// Set up the apple in the constructor
-    private YellowApple(Context context, Point sr, int s) {
-
+    /// Set up the yellow apple in the constructor
+    YellowApple(Context context, Point sr, int s) {
         super(context, sr, s);
 
-        // Load the image to the bitmap
-        mBitmapApple = BitmapFactory.decodeResource(context.getResources(), R.drawable.yellowapple);
+        // Load the image to the yellow apple bitmap
+        mBitmapYellowApple = BitmapFactory.decodeResource(context.getResources(), R.drawable.yellowapple);
 
-        // Resize the bitmap
-        mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, s * 2, s * 2, false);
+        // Resize the yellow apple bitmap
+        mBitmapYellowApple = Bitmap.createScaledBitmap(mBitmapYellowApple, s * 2, s * 2, false);
     }
 
-    // Provide access to the apple, creating it if necessary
-    public static YellowApple getYellowApple(Context context, Point sr, int s) {
-        if(yellowApple == null)
+    // template method cus
+    public static GameObject customGet(Context context, Point sr, int s) {
+        if (yellowApple == null) {
             yellowApple = new YellowApple(context, sr, s);
+        }
         return yellowApple;
     }
 
-    // This is called every time an apple is eaten
+    // This is called every time a yellow apple is eaten
     @Override
     public void spawn() {
-        // Choose two random values and place the apple
-        Random random = new Random();
-        location.x = random.nextInt(mSpawnRange.x) + 1;
-        location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+        super.spawn();
         spawned = true;
     }
 
+    
+
+@Override
     public boolean isSpawned() {
         return spawned;
     }
 
-    // Draw the apple
+    // Draw the yellow apple
     @Override
     public void draw(Canvas canvas, Paint paint) {
-        //canvas.drawBitmap(mBitmapApple,
-        //        location.x * mSize, location.y * mSize, paint);
         if (spawned) {
-            canvas.drawBitmap(mBitmapApple,
-                    location.x * size, location.y * size, paint);
+            canvas.drawBitmap(mBitmapYellowApple, location.x * size, location.y * size, paint);
         }
     }
 
-    // Method to hide the apple
+    // Method to hide the yellow apple
     @Override
     public void hide() {
-        // Set the apple's location outside the visible screen
+        // Set the yellow apple's location outside the visible screen
         location.set(-10, -10); // Set the location outside the visible screen
         spawned = false;
     }
-
-
 }
