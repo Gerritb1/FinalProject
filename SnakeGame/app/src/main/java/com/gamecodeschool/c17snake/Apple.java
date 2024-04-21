@@ -6,9 +6,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
-import java.util.Random;
 
-class Apple extends GameObject implements Spawnable{
+
+class Apple extends GameObject {
 
     // An image to represent the apple
     private Bitmap mBitmapApple;
@@ -16,8 +16,9 @@ class Apple extends GameObject implements Spawnable{
     // Maintain a single global reference to the apple
     private static Apple apple;
 
+
     /// Set up the apple in the constructor
-    private Apple(Context context, Point sr, int s) {
+    protected Apple(Context context, Point sr, int s) {
 
         super(context, sr, s);
 
@@ -27,24 +28,20 @@ class Apple extends GameObject implements Spawnable{
         // Resize the bitmap
         mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, s, s, false);
     }
-
+    
     // Provide access to the apple, creating it if necessary
-    public static Apple getApple(Context context, Point sr, int s) {
-        if(apple == null)
+    public static GameObject customGet(Context context, Point sr, int s) {
+        if (apple == null) {
             apple = new Apple(context, sr, s);
+        }
         return apple;
     }
-
     // This is called every time an apple is eaten
-    @Override
     public void spawn() {
-        // Choose two random values and place the apple
-        Random random = new Random();
-        location.x = random.nextInt(mSpawnRange.x) + 1;
-        location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+        super.spawn();
+        spawned = true;
     }
-
-
+    
     // Draw the apple
     @Override
     public void draw(Canvas canvas, Paint paint) {
@@ -60,5 +57,4 @@ class Apple extends GameObject implements Spawnable{
         // Set the apple's location outside the visible screen
         location.set(-1, -1); // Set the location outside the visible screen
     }
-
 }
