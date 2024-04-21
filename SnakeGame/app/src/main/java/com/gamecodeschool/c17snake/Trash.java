@@ -8,13 +8,12 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import java.util.Random;
 
-public class Trash extends Rock implements Spawnable{
+public class Trash extends GameObject implements Spawnable{
     private Bitmap mBitmapTrash;
     private static Trash trash1;
     private static Trash trash2;
     private static Trash trash3;
     private static Trash trash4;
-
 
     /// Set up the rock in the constructor
     private Trash(Context context, Point sr, int s) {
@@ -44,11 +43,16 @@ public class Trash extends Rock implements Spawnable{
         canvas.drawBitmap(mBitmapTrash,
                 location.x * size, location.y * size, paint);
     }
-    public void chanceToSpawn(int score, int chance){
+
+    @Override
+    public void hide() {
+        // Set the trash's location outside the visible screen
+        location.set(-10, -10); // Set the location outside the visible screen
+    }
+
+    public boolean chanceToSpawn(int score){
         Random rand = new Random();
-        if (rand.nextInt(score) > chance) {
-            this.spawn();
-        }
+        return rand.nextInt(score) > 3;
     }
 
     // Provide access to the trash, creating it if necessary
