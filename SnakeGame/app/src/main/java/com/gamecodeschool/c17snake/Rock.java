@@ -20,7 +20,7 @@ class Rock extends GameObject implements Spawnable{
     private static Rock rock4;
 
     /// Set up the rock in the constructor
-    Rock(Context context, Point sr, int s) {
+    protected Rock(Context context, Point sr, int s) {
 
         super(context, sr, s);
 
@@ -73,4 +73,12 @@ class Rock extends GameObject implements Spawnable{
         canvas.drawBitmap(mBitmapRock,
                 location.x * size, location.y * size, paint);
     }
+
+    // Method to hide the rock
+    @Override
+    public void hide() {
+        // Set the rock's location outside the visible screen
+        location.set(-10, -10); // Set the location outside the visible screen
+    }
+
 }
