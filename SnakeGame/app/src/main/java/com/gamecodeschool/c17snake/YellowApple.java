@@ -8,7 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import java.util.Random;
 
-class YellowApple extends Apple {
+public class YellowApple extends AppleAdapter {
 
     // An image to represent the yellow apple
     private Bitmap mBitmapYellowApple;
@@ -29,8 +29,7 @@ class YellowApple extends Apple {
         mBitmapYellowApple = Bitmap.createScaledBitmap(mBitmapYellowApple, s * 2, s * 2, false);
     }
 
-    // template method cus
-    public static GameObject customGet(Context context, Point sr, int s) {
+    public static YellowApple getYellowApple(Context context, Point sr, int s) {
         if (yellowApple == null) {
             yellowApple = new YellowApple(context, sr, s);
         }
@@ -44,9 +43,6 @@ class YellowApple extends Apple {
         spawned = true;
     }
 
-    
-
-@Override
     public boolean isSpawned() {
         return spawned;
     }

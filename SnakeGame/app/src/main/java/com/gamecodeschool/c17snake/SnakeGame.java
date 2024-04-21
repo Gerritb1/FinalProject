@@ -59,7 +59,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     // A snake ssss
     private Snake mSnake;
     // And an apple
-    private Apple mApple;
+    private AppleAdapter mApple;
 
     //And an Yellow Apple
     private YellowApple yApple;
@@ -73,6 +73,12 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     private Rock rock3;
     private Rock rock4;
     private ArrayList<Rock> rocks;
+
+    private Trash trash1;
+    private Trash trash2;
+    private Trash trash3;
+    private Trash trash4;
+    private ArrayList<Trash> trashStuff;
 
     private Bitmap mBackgroundBitmap;
     private final DrawPauseButton drawPauseButton;
@@ -118,6 +124,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
         //Refactored
         listOfRocks();
+        listOfTrash();
         this.mContext = context;
 
         random = new Random();
@@ -131,6 +138,32 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         rocks.add(rock3);
         rocks.add(rock4);
     }
+
+    public void listOfTrash() {
+        trashStuff = new ArrayList<>();
+        trashStuff.add(trash1);
+        trashStuff.add(trash2);
+        trashStuff.add(trash3);
+        trashStuff.add(trash4);
+    }
+
+    //Builder for buildDesign Pattern Still under develelopment
+   /* public SnakeGame() {
+
+
+          DrawBuilder builder = new DrawBuilder()
+                .setCanvas(mCanvas)
+                .setPaint(mPaint)
+                .setFirstPause(isFirstPause)
+                .setPaused(mPaused);
+
+        this.drawTapToPlayBehavior = builder.setMessage("Tap to play").buildDrawTapToPlay();
+        this.drawNamesBehavior = builder.setMessage("John Doe").buildDrawNames();
+        this.checkDrawConditionsBehavior = builder.buildCheckDrawConditions(drawTapToPlayBehavior, drawNamesBehavior);
+        this.drawAppleBehavior = builder.buildDrawApple();
+        this.drawColorSizeBehavior = builder.buildDrawColorSize();
+        this.drawPausedBehavior = builder.buildDrawPaused();
+    }*/
 
     public boolean isPaused() {
         return mPaused;
@@ -214,9 +247,10 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         // Work out how many pixels each block is
         int blockSize = size.x / NUM_BLOCKS_WIDE;
         mNumBlocksHigh = size.y / blockSize;
+        mApple = new AppleAdapter(context, new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), blockSize);
 
         // Call the constructors of our two game objects by using the Singelton pattern
-        mApple = Apple.getApple(context,
+        mApple = AppleAdapter.getApple(context,
                 new Point(NUM_BLOCKS_WIDE,
                         mNumBlocksHigh),
                 blockSize);
@@ -238,7 +272,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
         //Refactored
         rockInitialization(context, size);
-
+        trashInitialization(context, size);
     }
 
     //Refactored
@@ -261,6 +295,30 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                         mNumBlocksHigh),
                 blockSize);
         rock4 = Rock.getRock4(context,
+                new Point(NUM_BLOCKS_WIDE,
+                        mNumBlocksHigh),
+                blockSize);
+    }
+
+    public void trashInitialization(Context context, Point size) {
+        // Work out how many pixels each block is
+        int blockSize = size.x / NUM_BLOCKS_WIDE;
+        mNumBlocksHigh = size.y / blockSize;
+
+        // Initializing the trash
+        trash1 = Trash.getTrash1(context,
+                new Point(NUM_BLOCKS_WIDE,
+                        mNumBlocksHigh),
+                blockSize);
+        trash2 = Trash.getTrash2(context,
+                new Point(NUM_BLOCKS_WIDE,
+                        mNumBlocksHigh),
+                blockSize);
+        trash3 = Trash.getTrash3(context,
+                new Point(NUM_BLOCKS_WIDE,
+                        mNumBlocksHigh),
+                blockSize);
+        trash4 = Trash.getTrash4(context,
                 new Point(NUM_BLOCKS_WIDE,
                         mNumBlocksHigh),
                 blockSize);
@@ -291,6 +349,10 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             for(Rock rock: rocks) {
                 rock.spawn();
             }
+
+            for(Trash trash: trashStuff) {
+                trash.spawn();
+            }
         }
 
         isFirstPause = mPaused;
@@ -313,6 +375,12 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
             for(Rock rock: rocks) {
                 if (mSnake.hitRock(rock.getLocation())) {
+                    resetGame();
+                }
+            }
+
+            for(Trash trash: trashStuff) {
+                if (mSnake.hitRock(trash.getLocation())) {//hitRock has same functionality as a "hitSnake" would ******
                     resetGame();
                 }
             }
@@ -499,6 +567,11 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             rock.draw(mCanvas, mPaint);
         }
 
+        // Draw the Trash
+        for(Trash trash: trashStuff) {
+            trash.draw(mCanvas, mPaint);
+        }
+
     }
 
     // Refactored
@@ -507,6 +580,12 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         for(Rock rock: rocks) {
             rock.draw(mCanvas, mPaint);
         }
+
+        // Draw the Trash only if the game is not paused
+        for(Trash trash: trashStuff) {
+            trash.draw(mCanvas, mPaint);
+        }
+
         // Draw the apple only if the game is not paused
         mApple.draw(mCanvas, mPaint);
 
