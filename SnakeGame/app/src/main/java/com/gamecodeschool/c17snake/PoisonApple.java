@@ -8,7 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import java.util.Random;
 
-class PoisonApple extends GameObject implements Spawnable{
+class PoisonApple extends Apple {
 
     // An image to represent the apple
     private Bitmap mBitmapApple;
@@ -19,7 +19,7 @@ class PoisonApple extends GameObject implements Spawnable{
     private static PoisonApple poisonApple;
 
     /// Set up the apple in the constructor
-    private PoisonApple(Context context, Point sr, int s) {
+    PoisonApple(Context context, Point sr, int s) {
 
         super(context, sr, s);
 
@@ -30,23 +30,22 @@ class PoisonApple extends GameObject implements Spawnable{
         mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, s * 2, s * 2, false);
     }
 
-    // Provide access to the apple, creating it if necessary
-    public static PoisonApple getPoisonApple(Context context, Point sr, int s) {
-        if(poisonApple == null)
+    // Template Getter
+    public static GameObject customGet(Context context, Point sr, int s) {
+        if (poisonApple == null) {
             poisonApple = new PoisonApple(context, sr, s);
+        }
         return poisonApple;
     }
 
-    // This is called every time an apple is eaten
+    // This is called from GameObject everytime an apple is eaten
     @Override
     public void spawn() {
-        // Choose two random values and place the apple
-        Random random = new Random();
-        location.x = random.nextInt(mSpawnRange.x) + 1;
-        location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+        super.spawn();
         spawned = true;
     }
 
+    @Override
     public boolean isSpawned() {
         return spawned;
     }
