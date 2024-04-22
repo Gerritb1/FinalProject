@@ -8,7 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import java.util.Random;
 
-public class Trash extends ObjectAdapter{
+public class Trash extends Rock implements Spawnable{
     private Bitmap mBitmapTrash;
     private static Trash trash1;
     private static Trash trash2;
@@ -28,6 +28,7 @@ public class Trash extends ObjectAdapter{
     }
 
     // This is called when the chance spawn works
+    @Override
     public void spawn() {
         // Choose two random values and place the trash
         Random random = new Random();

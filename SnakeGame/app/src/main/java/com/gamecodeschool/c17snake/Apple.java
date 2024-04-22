@@ -8,33 +8,31 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import java.util.Random;
 
-class PoisonApple extends Apple implements Spawnable{
+class Apple extends GameObject implements Spawnable{
 
     // An image to represent the apple
     private Bitmap mBitmapApple;
 
-    public boolean spawned;
-
     // Maintain a single global reference to the apple
-    private static PoisonApple poisonApple;
+    private static Apple apple;
 
     /// Set up the apple in the constructor
-    private PoisonApple(Context context, Point sr, int s) {
+    protected Apple(Context context, Point sr, int s) {
 
         super(context, sr, s);
 
         // Load the image to the bitmap
-        mBitmapApple = BitmapFactory.decodeResource(context.getResources(), R.drawable.poisonapple);
+        mBitmapApple = BitmapFactory.decodeResource(context.getResources(), R.drawable.apple);
 
         // Resize the bitmap
-        mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, s * 2, s * 2, false);
+        mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, s, s, false);
     }
 
     // Provide access to the apple, creating it if necessary
-    public static PoisonApple getPoisonApple(Context context, Point sr, int s) {
-        if(poisonApple == null)
-            poisonApple = new PoisonApple(context, sr, s);
-        return poisonApple;
+    public static Apple getApple(Context context, Point sr, int s) {
+        if(apple == null)
+            apple = new Apple(context, sr, s);
+        return apple;
     }
 
     // This is called every time an apple is eaten
@@ -44,22 +42,16 @@ class PoisonApple extends Apple implements Spawnable{
         Random random = new Random();
         location.x = random.nextInt(mSpawnRange.x) + 1;
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
-        spawned = true;
     }
 
-    public boolean isSpawned() {
-        return spawned;
-    }
 
     // Draw the apple
     @Override
     public void draw(Canvas canvas, Paint paint) {
         //canvas.drawBitmap(mBitmapApple,
         //        location.x * mSize, location.y * mSize, paint);
-        if (spawned) {
-            canvas.drawBitmap(mBitmapApple,
-                    location.x * size, location.y * size, paint);
-        }
+        canvas.drawBitmap(mBitmapApple,
+                location.x * size, location.y * size, paint);
     }
 
     // Method to hide the apple
@@ -67,6 +59,6 @@ class PoisonApple extends Apple implements Spawnable{
     public void hide() {
         // Set the apple's location outside the visible screen
         location.set(-1, -1); // Set the location outside the visible screen
-        spawned = false;
     }
+
 }

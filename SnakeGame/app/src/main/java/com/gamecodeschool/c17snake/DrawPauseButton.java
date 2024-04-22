@@ -26,10 +26,11 @@ public class DrawPauseButton extends SurfaceView {
     // Maintain a single global reference to the DrawPauseButton
     private static DrawPauseButton drawPauseButton;
 
-    private DrawPauseButton(Context context, SnakeGame snakeGame) {
+    protected DrawPauseButton(Context context, SnakeGame snakeGame) {
         super(context);
         this.snakeGame = snakeGame;
     }
+
 
     // Provide access to the DrawPauseButton, creating it if necessary
     public static DrawPauseButton getDrawPauseButton(Context context, SnakeGame snakeGame) {
@@ -37,6 +38,7 @@ public class DrawPauseButton extends SurfaceView {
             drawPauseButton = new DrawPauseButton(context, snakeGame);
         return drawPauseButton;
     }
+
 
     public Point getScreenDimensions() {
         WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);

@@ -12,11 +12,11 @@ import android.view.MotionEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-class Snake extends ObjectAdapter implements Movable, Collidable {
+class Snake extends GameObject implements Movable, Collidable {
 
     // Where is the centre of the screen
     // horizontally in pixels?
-    int halfWayPoint;
+    private int halfWayPoint;
 
     // For tracking movement Heading
     private enum Heading {
@@ -204,6 +204,8 @@ class Snake extends ObjectAdapter implements Movable, Collidable {
                                 * mSegmentSize, paint);
             }
         });
+
+
     }
 
     // Provide access to the snake, creating it if necessary
@@ -225,6 +227,7 @@ class Snake extends ObjectAdapter implements Movable, Collidable {
             segmentLocations.get(i).y = -1;
         }
     }
+
 
     // Refactored
     @Override
@@ -443,6 +446,8 @@ class Snake extends ObjectAdapter implements Movable, Collidable {
 
         return dead;
     }
+
+
 
     @Override
     public void draw(Canvas canvas, Paint paint) {
