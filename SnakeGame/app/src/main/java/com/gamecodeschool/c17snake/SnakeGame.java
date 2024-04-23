@@ -97,6 +97,10 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     // MediaPlayer for background music
     private MediaPlayer mBackgroundMusic;
 
+    // This tracks which piece of trash we're on
+    private int trashPiece = 0;
+    private int trashChance = 2;
+
     // This is the constructor method that gets called
     // from SnakeActivity
     protected SnakeGame(Context context, Point size) {
@@ -373,6 +377,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
             for(Trash trash: trashStuff) {
                 trash.spawn();
+                trash.hide();
             }
         }
 
@@ -431,6 +436,14 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 pApple.hide();
             }
             mScore++;
+
+            for(int i = 0; i < 4; i++ ) {
+                trashStuff.get(trashPiece).chanceToSpawn(mScore, trashChance);
+                trashPiece = (trashPiece+1)%3;
+                trashChance+= 2;
+            }
+            trashChance = 2;
+
             mSP.play(mEat_ID, 1, 1, 0, 0, 1);
             randomNumber = random.nextInt(4);
         }
@@ -450,6 +463,14 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 pApple.hide();
             }
             mScore+=3;
+
+            for(int i = 0; i < 4; i++ ) {
+                trashStuff.get(trashPiece).chanceToSpawn(mScore, trashChance);
+                trashPiece = (trashPiece+1)%3;
+                trashChance+= 2;
+            }
+            trashChance = 2;
+
             mSP.play(mEat_ID, 1, 1, 0, 0, 1);
 
             randomNumber = random.nextInt(3);
