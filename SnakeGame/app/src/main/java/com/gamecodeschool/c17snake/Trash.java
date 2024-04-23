@@ -15,6 +15,7 @@ public class Trash extends Rock implements Spawnable{
     private static Trash trash3;
     private static Trash trash4;
 
+
     /// Set up the rock in the constructor
     private Trash(Context context, Point sr, int s) {
 
@@ -50,9 +51,11 @@ public class Trash extends Rock implements Spawnable{
         location.set(-10, -10); // Set the location outside the visible screen
     }
 
-    public boolean chanceToSpawn(int score){
+    public void chanceToSpawn(int score, int chance){
         Random rand = new Random();
-        return rand.nextInt(score) > 3;
+        if (rand.nextInt(score) > chance) {
+            this.spawn();
+        }
     }
 
     // Provide access to the trash, creating it if necessary
