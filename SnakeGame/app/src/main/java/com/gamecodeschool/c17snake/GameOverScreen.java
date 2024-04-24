@@ -11,22 +11,26 @@ import android.graphics.Typeface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import androidx.core.content.res.ResourcesCompat;
+
 public class GameOverScreen extends SurfaceView {
-    private SnakeGame snakeGame;
     private Canvas gCanvas;
     private Paint gPaint;
     private SurfaceHolder gSurfaceHolder;
-    private Typeface customFont;
     private TextDrawer textDrawer;
+    private SnakeGame snakeGame;
+    private Context gContext;
 
 
 
-    public GameOverScreen(Context context, Point size) {
+    public GameOverScreen(Context context, SnakeGame snakeGame) {
         super(context);
         gPaint = new Paint();
         gCanvas = new Canvas();
         gSurfaceHolder = getHolder();
         textDrawer = new TextDrawer(context, gCanvas, gPaint);
+        this.snakeGame = snakeGame;
+        gContext = context;
 
     }
 
@@ -34,14 +38,10 @@ public class GameOverScreen extends SurfaceView {
 
     private void drawGameOver(){
        gCanvas = snakeGame.mSurfaceHolder.lockCanvas();
-
        gCanvas.drawColor(Color.BLACK);
-       gPaint.setColor(Color.RED);
-       String message = "a";
-       //Point tst = textDrawer.getMessageDimensions(message);
 
-
-
+       Typeface customFont = ResourcesCompat.getFont(gContext, R.font.retro);
+       textDrawer.drawGameOver(customFont);
 
 
 

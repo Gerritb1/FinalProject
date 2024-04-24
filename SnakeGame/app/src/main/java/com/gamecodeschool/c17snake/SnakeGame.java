@@ -492,12 +492,12 @@ class SnakeGame extends SurfaceView implements Runnable {
             if (textDrawer == null) {
                 textDrawer = new TextDrawer(mContext, mCanvas, mPaint);
 
-                textDrawer.drawNames();
+                textDrawer.drawNames(mCustomFont);
             }
 
             // Check if NameDrawer instance is not null before calling drawNames
             if (textDrawer != null) {
-                textDrawer.drawNames();
+                textDrawer.drawNames(mCustomFont);
             }
         }
     }
@@ -553,8 +553,9 @@ class SnakeGame extends SurfaceView implements Runnable {
             }
 
             //Refactored
-            textDrawer.drawTapToPlay();
-            textDrawer.drawNames();
+            textDrawer.drawTapToPlay( ResourcesCompat.getFont(mContext, R.font.retro));
+
+            textDrawer.drawNames(mCustomFont);
         }
     }
 

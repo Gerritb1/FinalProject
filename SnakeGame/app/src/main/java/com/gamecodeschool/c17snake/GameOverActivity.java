@@ -5,15 +5,11 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Display;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class GameOverActivity extends Activity {
 
     private GameOverScreen gameOverScreen;
+    private SnakeGame snakeGame;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,9 +19,8 @@ public class GameOverActivity extends Activity {
 
         // Initialize the result into a Point object
         Point size = new Point();
-        display.getSize(size);
 
-        gameOverScreen = new GameOverScreen(this, size);
+        gameOverScreen = new GameOverScreen(this, snakeGame);
 
         setContentView(gameOverScreen);
 

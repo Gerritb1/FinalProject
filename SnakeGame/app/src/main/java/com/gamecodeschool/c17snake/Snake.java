@@ -12,7 +12,7 @@ import android.view.MotionEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-class Snake extends GameObject implements Movable, Collidable {
+class Snake extends GameObject{
 
     // Where is the centre of the screen
     // horizontally in pixels?
@@ -230,7 +230,6 @@ class Snake extends GameObject implements Movable, Collidable {
 
 
     // Refactored
-    @Override
     public void headMovement(Context context, int ss) {
         // Create and scale the bitmaps
         mBitmapHeadRight = BitmapFactory
@@ -296,7 +295,6 @@ class Snake extends GameObject implements Movable, Collidable {
         segmentLocations.add(new Point(w / 2, h / 2));
     }
 
-    @Override
     public void move() {
         //Refactored
         movingLoop();
@@ -313,7 +311,6 @@ class Snake extends GameObject implements Movable, Collidable {
     }
 
     // Refactored
-    @Override
     public void movingLoop() {
         // Move the body
         // Start at the back and move it
@@ -327,7 +324,6 @@ class Snake extends GameObject implements Movable, Collidable {
         }
     }
 
-    @Override
     public boolean detectDeath() {
         // Has the snake died?
         boolean dead = false;
@@ -353,7 +349,6 @@ class Snake extends GameObject implements Movable, Collidable {
         return dead;
     }
 
-    @Override
     public boolean checkDinner(Point l) {
         //if (snakeXs[0] == l.x && snakeYs[0] == l.y) {
         if (segmentLocations.get(0).x == l.x &&
@@ -477,7 +472,6 @@ class Snake extends GameObject implements Movable, Collidable {
 
 
     // Handle changing direction
-    @Override
     public void switchHeading(MotionEvent motionEvent) {
         Canvas c = new Canvas();
         Paint p = new Paint();
