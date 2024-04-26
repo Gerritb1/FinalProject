@@ -71,8 +71,12 @@ public class TextDrawer extends Screens{
         mPaint.setTypeface(customFont);
         mPaint.setTextSize(150);
         String scoreString = "" + score;
+        String scoreMessage = "Your Score: ";
 
-        mCanvas.drawText(scoreString, );
+        Point centerPoint = getCenterPoint(getScreenDimensions(), getMessageDimensions(scoreString, mPaint));
+
+        mCanvas.drawText(scoreString, centerPoint.x, 50, mPaint);
+        mCanvas.drawText(scoreMessage, centerPoint.x - 20, 50, mPaint);
     }
 
 }

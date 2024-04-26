@@ -14,40 +14,31 @@ import android.view.SurfaceView;
 import androidx.core.content.res.ResourcesCompat;
 
 public class GameOverScreen extends SurfaceView {
-    private Canvas gCanvas;
-    private Paint gPaint;
-    private SurfaceHolder gSurfaceHolder;
-    private TextDrawer textDrawer;
-    private SnakeGame snakeGame;
-    private Context gContext;
 
-
-
-    public GameOverScreen(Context context, SnakeGame snakeGame) {
+    public GameOverScreen(Context context, int score) {
         super(context);
-        gPaint = new Paint();
-        gCanvas = new Canvas();
-        gSurfaceHolder = getHolder();
-        textDrawer = new TextDrawer(context, gCanvas, gPaint);
-        this.snakeGame = snakeGame;
-        gContext = context;
+        drawGameOver(context, score);
 
     }
 
 
+    private void drawGameOver(Context context, int score){
+       SurfaceHolder gSurfaceHolder = getHolder();
+       Canvas gCanvas = gSurfaceHolder.lockCanvas();
+       Paint gPaint = new Paint();
+       TextDrawer textDrawer = new TextDrawer(context, gCanvas, gPaint);
 
-    private void drawGameOver(){
-       gCanvas = snakeGame.mSurfaceHolder.lockCanvas();
        gCanvas.drawColor(Color.BLACK);
 
-       Typeface customFont = ResourcesCompat.getFont(gContext, R.font.retro);
+       Typeface customFont = ResourcesCompat.getFont(context, R.font.retro);
        textDrawer.drawGameOver(customFont);
+       textDrawer.drawScore(score, customFont);
+
+       gSurfaceHolder.unlockCanvasAndPost(gCanvas);
+
 
 
 
     }
 
-    private SnakeGame getSnakeGame(){
-        return snakeGame;
-    }
 }
