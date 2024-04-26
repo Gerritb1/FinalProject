@@ -19,12 +19,17 @@ public class GameOverActivity extends Activity {
 
         // Initialize the result into a Point object
         Point size = new Point();
+        int score = 0;
 
-        gameOverScreen = new GameOverScreen(this, snakeGame);
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            score = extras.getInt("key");
+            //The key argument here must match that used in the other activity
+        }
+
+        gameOverScreen = new GameOverScreen(this, score);
 
         setContentView(gameOverScreen);
-
-
 
     }
 }

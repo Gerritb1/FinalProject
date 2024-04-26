@@ -1,6 +1,7 @@
 package com.gamecodeschool.c17snake;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.graphics.Canvas;
@@ -339,9 +340,10 @@ class SnakeGame extends SurfaceView implements Runnable {
 
             if (mSnake.detectDeath()) {
                 // Reset the score and the game if snake dies
-                resetGame();
-
-
+                //resetGame();
+                Intent gameOver = new Intent(mContext, GameOverActivity.class);
+                gameOver.putExtra("key", mScore);
+                mContext.startActivity(gameOver);
 
 
             }
@@ -596,5 +598,13 @@ class SnakeGame extends SurfaceView implements Runnable {
         mPlaying = true;
         mThread = new Thread(this);
         mThread.start();
+    }
+
+    public int getmScore() {
+        return mScore;
+    }
+
+    public void setmScore(int mScore) {
+        this.mScore = mScore;
     }
 }
