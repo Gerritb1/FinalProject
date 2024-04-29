@@ -37,7 +37,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     private SoundPool mSP;
     private int mEat_ID = -1;
     private int mCrashID = -1;
-
+    private int mCrashIDTrash = -1;
     private int mCrashIDRock = -1;
 
     // The size in segments of the playable area
@@ -241,20 +241,11 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     @Override
     public void tryCatch(Context context) {
         try {
-            //AssetManager assetManager = context.getAssets();
-            //AssetFileDescriptor descriptor;
-
-            // Prepare the sounds in memory
-            //descriptor = assetManager.openFd("get_apple.ogg");
-            //mEat_ID = mSP.load(descriptor, 0);
-
-            //descriptor = assetManager.openFd("snake_death.ogg");
-            //mCrashID = mSP.load(descriptor, 0);
-
             // Load the sounds from the raw folder
             mEat_ID = mSP.load(context, R.raw.get_apple, 1);
-            mCrashID = mSP.load(context, R.raw.trash_sound, 1);
+            mCrashIDTrash = mSP.load(context, R.raw.trash_sound, 1);
             mCrashIDRock = mSP.load(context, R.raw.rock_sound, 1);
+            
             //} catch (IOException e) {
             // Error
             //}
@@ -363,9 +354,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     public void newGame() {
         // Reset the snake and spawn the apple if it's not paused and it's the first pause
         if (!mPaused && isFirstPause) {
-            if(mBackgroundMusic.isPlaying()) {
-                mBackgroundMusic.pause();
-            }
+            
             mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
             mApple.spawn();
             if(mScore > 3) {
@@ -411,7 +400,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
             for(Trash trash: trashStuff) {
                 if (mSnake.hitRock(trash.getLocation())) {//hitRock has same functionality as a "hitSnake" would ******
-                    mSP.play(mCrashID, 1, 1, 0, 0, 1);
+                    mSP.play(mCrashIDTrash, 1, 1, 0, 0, 1);
                     resetGame();
                     mBackgroundMusic.pause();
                 }
@@ -508,6 +497,11 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     private void resetGame() {
         if (!mPaused) {
             mScore = 0;
+
+            if (mBackgroundMusic.isPlaying()) {
+                mBackgroundMusic.pause();
+                mBackgroundMusic.seekTo(0); // Rewind the background music to the beginning
+            }
 
             // Refactored
             spawnHide();
