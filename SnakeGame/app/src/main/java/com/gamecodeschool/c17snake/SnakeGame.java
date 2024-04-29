@@ -245,6 +245,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             mEat_ID = mSP.load(context, R.raw.get_apple, 1);
             mCrashIDTrash = mSP.load(context, R.raw.trash_sound, 1);
             mCrashIDRock = mSP.load(context, R.raw.rock_sound, 1);
+            mCrashID = mSP.load(context, R.raw.game_over_sound, 1);
             
             //} catch (IOException e) {
             // Error
@@ -389,12 +390,14 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             // Refactored, this is for the poison apple
             updatePApple();
 
+            boolean snakeHitRock = false;
+            boolean snakeHitTrash = false;
+
             for(Rock rock: rocks) {
                 if (mSnake.hitRock(rock.getLocation())) {
-                    mSP.play(mCrashIDRock, 1, 1, 0, 0, 1);
+                    mSP.play(mCrashIDTrash, 1, 1, 0, 0, 1);
+                    snakeHitTrash = true;
                     resetGame();
-                    mBackgroundMusic.pause();
-
                 }
             }
 
@@ -406,10 +409,10 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 }
             }
 
-            if (mSnake.detectDeath()) {
+            if (mSnake.detectDeath() && !snakeHitTrash && !snakeHitRock) {
+                mSP.play(mCrashID, 1, 1, 0, 0, 1);
                 // Reset the score and the game if snake dies
                 resetGame();
-                mBackgroundMusic.pause();
             }
         }
     }
