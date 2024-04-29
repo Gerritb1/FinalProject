@@ -36,6 +36,8 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     // for playing sound effects
     private SoundPool mSP;
     private int mEat_ID = -1;
+    private int yEat_ID = -1;
+    private int pEat_ID = -1;
     private int mCrashID = -1;
     private int mCrashIDTrash = -1;
     private int mCrashIDRock = -1;
@@ -246,10 +248,9 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             mCrashIDTrash = mSP.load(context, R.raw.trash_sound, 1);
             mCrashIDRock = mSP.load(context, R.raw.rock_sound, 1);
             mCrashID = mSP.load(context, R.raw.game_over_sound, 1);
-            
-            //} catch (IOException e) {
-            // Error
-            //}
+            yEat_ID = mSP.load(context, R.raw.yellow_apple_sound, 1);
+            pEat_ID = mSP.load(context, R.raw.poison_apple_sound, 1);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -355,7 +356,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     public void newGame() {
         // Reset the snake and spawn the apple if it's not paused and it's the first pause
         if (!mPaused && isFirstPause) {
-            
+
             mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
             mApple.spawn();
             if(mScore > 3) {
@@ -395,8 +396,8 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
             for(Rock rock: rocks) {
                 if (mSnake.hitRock(rock.getLocation())) {
-                    mSP.play(mCrashIDTrash, 1, 1, 0, 0, 1);
-                    snakeHitTrash = true;
+                    mSP.play(mCrashIDRock, 1, 1, 0, 0, 1);
+                    snakeHitRock = true;
                     resetGame();
                 }
             }
@@ -404,9 +405,10 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             for(Trash trash: trashStuff) {
                 if (mSnake.hitRock(trash.getLocation())) {//hitRock has same functionality as a "hitSnake" would ******
                     mSP.play(mCrashIDTrash, 1, 1, 0, 0, 1);
+                    snakeHitTrash = true;
                     resetGame();
-                    mBackgroundMusic.pause();
                 }
+
             }
 
             if (mSnake.detectDeath() && !snakeHitTrash && !snakeHitRock) {
@@ -463,7 +465,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             }
             trashChance = 2;
 
-            mSP.play(mEat_ID, 1, 1, 0, 0, 1);
+            mSP.play(yEat_ID, 1, 1, 0, 0, 1);
 
             randomNumber = random.nextInt(3);
 
@@ -478,14 +480,13 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             mScore -= 2;
             if (mScore < 0) {
                 resetGame();
-                mBackgroundMusic.pause();
             } else {
                 pApple.hide();
                 mApple.spawn();
                 if (yApple.isSpawned()) {
                     yApple.hide();
                 }
-                mSP.play(mEat_ID, 1, 1, 0, 0, 1);
+                mSP.play(pEat_ID, 1, 1, 0, 0, 1);
 
                 mSnake.shrink(3);
                 randomNumber = random.nextInt(5);
@@ -695,10 +696,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     @Override
     public void pause() {
         mPlaying = false;
-        if(mBackgroundMusic.isPlaying()) {
-            mBackgroundMusic.pause();
-        }
-        mBackgroundMusic.pause();
         try {
             mThread.join();
         } catch (InterruptedException e) {
