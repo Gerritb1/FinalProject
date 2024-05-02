@@ -25,15 +25,10 @@ public interface Game {
 
     void drawConditions();
 
-    void drawColorSize();
-
     void drawPaused();
-
-    void drawTapToPlay();
-
-    void drawNames();
 
     void pause();
 
     void resume();
+    void drawColorSize();
 }

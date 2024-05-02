@@ -8,7 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import java.util.Random;
 
-class YellowApple extends GameObject implements Spawnable{
+class YellowApple extends Apple implements Spawnable{
 
     // An image to represent the apple
     private Bitmap mBitmapApple;
@@ -27,7 +27,7 @@ class YellowApple extends GameObject implements Spawnable{
         mBitmapApple = BitmapFactory.decodeResource(context.getResources(), R.drawable.yellowapple);
 
         // Resize the bitmap
-        mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, s, s, false);
+        mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, s * 2, s * 2, false);
     }
 
     // Provide access to the apple, creating it if necessary
@@ -66,7 +66,8 @@ class YellowApple extends GameObject implements Spawnable{
     @Override
     public void hide() {
         // Set the apple's location outside the visible screen
-        location.set(-1, -1); // Set the location outside the visible screen
+        location.set(-10, -10); // Set the location outside the visible screen
+        spawned = false;
     }
 
 
