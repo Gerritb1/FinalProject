@@ -509,6 +509,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             public void run() {
                 // After 5 seconds, reset the vulnerability
                 isVulnerable = false;
+
                 // After 5 seconds, reset the vulnerability
                 mSnake.setVulnerable(false);
             }
@@ -567,8 +568,14 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             isFirstPause = true; // Set isFirstPause to true upon resetting the game
             mPaused = true; // Set mPaused to true upon resetting the game
 
+            mSnake.setVulnerable(false);
+            isVulnerable = false;
+            
             // Cancel the vulnerability timer
             cancelVulnerabilityTimer();
+
+            // Reset the vulnerability state
+
         }
     }
 
