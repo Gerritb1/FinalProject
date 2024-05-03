@@ -6,40 +6,43 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.util.DisplayMetrics;
 
 import java.util.Random;
 
-class Bomb extends GameObject implements Spawnable {
+public class Bomb extends GameObject implements Spawnable{
 
     private Bitmap mBitmapBomb;
-    boolean spawned;
-    private boolean readyToShoot;
 
-    private Bitmap mBitmapApple;
+    private static Bomb mBomb;
+    private boolean readyToExplode = false;
+    protected boolean spawned;
 
-    // Maintain a single global reference to the apple
-    private static Apple apple;
-
-    /// Set up the apple in the constructor
-    protected Bomb(Context context, Point sr, int s) {
-        super(context, sr, s);
-
-        // Load the image to the bitmap
+    public Bomb(Context context, Point location, int size) {
+        super(context, location, size);
         mBitmapBomb = BitmapFactory.decodeResource(context.getResources(), R.drawable.bomb);
-
-        // Resize the bitmap to be bigger based on the provided size s
-        int newSize = s * 2; // Increase the size by a factor of 2 (adjust this factor based on desired increase)
-        mBitmapBomb = Bitmap.createScaledBitmap(mBitmapBomb, newSize, newSize, false);
+        mBitmapBomb = Bitmap.createScaledBitmap(mBitmapBomb, size, size, false);
     }
 
-    private static Bomb bomb;
-
-    public static Bomb getBomb(Context context, Point sr, int s) {
-        if (bomb == null) {
-            bomb = new Bomb(context, sr, s);
+    // Provide access to the bomb, creating it if necessary
+    public static Bomb getBomb(Context context, Point location, int size) {
+        if (mBomb == null) {
+            mBomb = new Bomb(context, location, size);
         }
-        return bomb;
+        return mBomb;
+    }
+
+    @Override
+    public void draw(Canvas canvas, Paint paint) {
+        // Draw the bomb image at the location of the snake's mouth
+
+        if (spawned) {
+            canvas.drawBitmap(mBitmapBomb,
+                    location.x * size, location.y * size, paint);
+        }
+        if (segmentLocations.size() > 0) {
+            Point mouthLocation = segmentLocations.get(0);
+            canvas.drawBitmap(mBitmapBomb, mouthLocation.x * size, mouthLocation.y * size, paint);
+        }
     }
 
     @Override
@@ -48,20 +51,7 @@ class Bomb extends GameObject implements Spawnable {
         Random random = new Random();
         location.x = random.nextInt(mSpawnRange.x) + 1;
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
-    }
-    public boolean isSpawned() {
-        return spawned;
-    }
-
-    private Context mContext;
-
-    public void setContext(Context context) {
-        mContext = context;
-    }
-
-    @Override
-    public void draw(Canvas canvas, Paint paint) {
-        canvas.drawBitmap(mBitmapBomb, location.x * size, location.y * size, paint);
+        spawned = true;
     }
 
     @Override
@@ -69,9 +59,19 @@ class Bomb extends GameObject implements Spawnable {
         location.set(-10, -10);
     }
 
-    // Method to set the ready to shoot flag
-    public void setReadyToShoot(boolean readyToShoot) {
-        this.readyToShoot = readyToShoot;
+
+    public void checkSnakeCollision(Snake snake) {
+        if (snake.bigCheckDinner(location)) {
+            readyToExplode = true;
+            location.set(-10, -10); // Move the bomb off-screen
+        }
     }
 
+    public boolean isSpawned() {
+        return spawned;
+    }
+
+    public boolean isReadyToExplode() {
+        return readyToExplode;
+    }
 }
