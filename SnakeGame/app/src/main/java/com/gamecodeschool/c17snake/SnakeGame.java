@@ -109,6 +109,9 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
     private Bomb mBomb;
 
+    private TriggerButton drawTriggerButton;
+    private TriggerButton mTriggerButton;
+
     // This is the constructor method that gets called
     // from SnakeActivity
     protected SnakeGame(Context context, Point size) {
@@ -136,14 +139,21 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         // Create the pause button
         createPauseButton();
 
+        //Create the trigger button
+        createTriggerButton();
+
         // Refactored
         initialize(context);
     }
 
     // Refactored
     public void initialize(Context context) {
-        //Initialize the drawButtonPause
+
+        //Initialize the buttons
         drawPauseButton = DrawPauseButton.getDrawPauseButton(context, this);
+        drawTriggerButton = TriggerButton.getDrawTriggerButton(context, this);
+
+        //Initialize the update system
         updateSystem = new UpdateSystem();
 
         //Refactored
@@ -216,6 +226,12 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         mPauseButtonPaint = new Paint();
         mPauseButtonPaint.setColor(Color.RED); // Adjust color as needed
     }
+
+    private void createTriggerButton() {
+        mTriggerButton = new TriggerButton(getContext(), this);
+    }
+
+
 
     //Refactored
     @Override
@@ -634,9 +650,11 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         // Check and draw conditions based on game state (paused, tap to play, etc.)
         checkDrawConditions();
 
+
         // Draw the pause button in any case except for the initial "Tap to play" state
         if (!isFirstPause || !mPaused) {
             drawPauseButton.drawButton(mCanvas, mPaint);
+            drawTriggerButton.drawButton(mCanvas, mPaint);
         }
 
         // Draw game elements if not paused
