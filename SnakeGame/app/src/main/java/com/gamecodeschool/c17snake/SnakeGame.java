@@ -1,8 +1,6 @@
 package com.gamecodeschool.c17snake;
 
 import android.content.Context;
-import android.content.res.AssetFileDescriptor;
-import android.content.res.AssetManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -14,13 +12,13 @@ import android.media.SoundPool;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import java.io.IOException;
 import android.media.MediaPlayer;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import androidx.core.content.res.ResourcesCompat;
 import java.util.*;
 import java.util.Random;
+import android.os.Handler;
 
 class SnakeGame extends SurfaceView implements Runnable, Game {
 
@@ -106,6 +104,9 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     // For vulnerability of the snake
     private boolean isVulnerable = false;
 
+    private Handler handler;
+    private Runnable vulnerabilityTimer;
+
     // This is the constructor method that gets called
     // from SnakeActivity
     protected SnakeGame(Context context, Point size) {
@@ -153,6 +154,8 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         // Initialize background music
         mBackgroundMusic = MediaPlayer.create(context, R.raw.background_music);
         mBackgroundMusic.setLooping(true);
+
+        handler = new Handler();
     }
 
     public void listOfRocks() {
@@ -487,6 +490,32 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
             // Set the snake as vulnerable
             isVulnerable = true;
+
+            // Start the vulnerability timer
+            startVulnerabilityTimer();
+        }
+    }
+
+    private void startVulnerabilityTimer() {
+        // Cancel any existing timer first
+        cancelVulnerabilityTimer();
+
+        // Create a new Runnable for the timer
+        vulnerabilityTimer = new Runnable() {
+            @Override
+            public void run() {
+                // After 5 seconds, reset the vulnerability
+                isVulnerable = false;
+            }
+        };
+
+        // 5 seconds for the vulnerability
+        handler.postDelayed(vulnerabilityTimer, 5000);
+    }
+
+    private void cancelVulnerabilityTimer() {
+        if (vulnerabilityTimer != null) {
+            handler.removeCallbacks(vulnerabilityTimer);
         }
     }
 
@@ -532,6 +561,9 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             mSnake.hide(); // Hide the snake upon resetting the game
             isFirstPause = true; // Set isFirstPause to true upon resetting the game
             mPaused = true; // Set mPaused to true upon resetting the game
+
+            // Cancel the vulnerability timer
+            cancelVulnerabilityTimer();
         }
     }
 
