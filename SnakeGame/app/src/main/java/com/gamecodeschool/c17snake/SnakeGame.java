@@ -491,6 +491,9 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             // Set the snake as vulnerable
             isVulnerable = true;
 
+            // Set the snake as vulnerable
+            mSnake.setVulnerable(true);
+
             // Start the vulnerability timer
             startVulnerabilityTimer();
         }
@@ -506,6 +509,8 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             public void run() {
                 // After 5 seconds, reset the vulnerability
                 isVulnerable = false;
+                // After 5 seconds, reset the vulnerability
+                mSnake.setVulnerable(false);
             }
         };
 
