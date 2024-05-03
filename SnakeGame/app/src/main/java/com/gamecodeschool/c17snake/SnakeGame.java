@@ -388,8 +388,22 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             // Refactored
             updateDeath();
 
-            mBomb.checkSnakeCollision(mSnake);
+            updateBomb();
         }
+    }
+
+    public void updateBomb() {
+        // Spawn the bomb if it hasn't been spawned yet
+        if (!mBomb.spawned) {
+            mBomb.spawn();
+            mBomb.spawned = true;
+        }
+
+        // Check for collision with the snake
+        mBomb.checkSnakeCollision(mSnake);
+
+        // Draw the bomb on the canvas
+        mBomb.draw(mCanvas, mPaint);
     }
 
     // Refactored
@@ -589,6 +603,10 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             pApple.hide();
             pApple.spawned = false;
         }
+        if(mBomb.isSpawned()) {
+            mBomb.hide();
+            mBomb.spawned = false;
+        }
     }
 
     @Override
@@ -663,6 +681,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         mSnake.draw(mCanvas, mPaint);
         yApple.draw(mCanvas, mPaint);
         pApple.draw(mCanvas, mPaint);
+        mBomb.draw(mCanvas, mPaint);
 
         // Draw the Rocks
         for(Rock rock: rocks) {
@@ -694,6 +713,8 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         yApple.draw(mCanvas, mPaint);
 
         pApple.draw(mCanvas, mPaint);
+
+        mBomb.draw(mCanvas, mPaint);
     }
 
     // Refactored
