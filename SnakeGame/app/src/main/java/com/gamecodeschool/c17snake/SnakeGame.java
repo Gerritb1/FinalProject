@@ -103,6 +103,9 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     private int trashPiece = 0;
     private int trashChance = 2;
 
+    // For vulnerability of the snake
+    private boolean isVulnerable = false;
+
     // This is the constructor method that gets called
     // from SnakeActivity
     protected SnakeGame(Context context, Point size) {
@@ -403,16 +406,24 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         boolean snakeHitTrash = false;
         for(Rock rock: rocks) {
             if (mSnake.hitRock(rock.getLocation())) {
-                mSP.play(mCrashIDRock, 1, 1, 0, 0, 1);
+                if(!isVulnerable) {
+                    mSP.play(mCrashIDRock, 1, 1, 0, 0, 1);
+                }
                 snakeHitRock = true;
-                resetGame();
+                if(!isVulnerable) {
+                    resetGame();
+                }
             }
         }
         for(Trash trash: trashStuff) {
             if (mSnake.hitRock(trash.getLocation())) {//hitRock has same functionality as a "hitSnake" would ******
-                mSP.play(mCrashIDTrash, 1, 1, 0, 0, 1);
+                if(!isVulnerable) {
+                    mSP.play(mCrashIDTrash, 1, 1, 0, 0, 1);
+                }
                 snakeHitTrash = true;
-                resetGame();
+                if(!isVulnerable) {
+                    resetGame();
+                }
             }
 
         }
@@ -473,6 +484,9 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
             // to grow the snake body segment by 3, since 2+1=3
             mSnake.grow(2);
+
+            // Set the snake as vulnerable
+            isVulnerable = true;
         }
     }
 
