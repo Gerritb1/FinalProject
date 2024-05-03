@@ -47,6 +47,7 @@ class Snake extends GameObject implements Movable, Collidable {
     Map<Heading, HeadRotate> elseMap
             = new HashMap<Heading, HeadRotate>();
 
+    private boolean isVulnerable = false;
 
     private Snake(Context context, Point mr, int ss) {
 
@@ -73,6 +74,11 @@ class Snake extends GameObject implements Movable, Collidable {
         // Used to detect which side of screen was pressed
         halfWayPoint = mr.x * ss / 2;
     }
+
+    public void setVulnerable(boolean vulnerable) {
+        isVulnerable = vulnerable;
+    }
+
     public void populateElseMap(){
         elseMap.put(Heading.UP, new HeadRotate() {
             @Override
@@ -447,19 +453,27 @@ class Snake extends GameObject implements Movable, Collidable {
         return dead;
     }
 
-
-
     @Override
     public void draw(Canvas canvas, Paint paint) {
 
         // Don't run this code if ArrayList has nothing in it
         if (!segmentLocations.isEmpty()) {
-            // All the code from this method goes here
+            // Save the original alpha value
+            int originalAlpha = paint.getAlpha();
+
+            // If the snake is vulnerable, set the alpha value to make it semi-transparent
+            if (isVulnerable) {
+                paint.setAlpha(128);
+            }
+
             // Draw the head
             headMap.get(heading).rotate(canvas, paint);
 
             // Refactored
             DrawSnakeBody(canvas, paint);
+
+            // Restore the original alpha value if it is not vulnerable
+            paint.setAlpha(originalAlpha);
         }
     }
 
@@ -474,7 +488,6 @@ class Snake extends GameObject implements Movable, Collidable {
                             * mSegmentSize, paint);
         }
     }
-
 
     // Handle changing direction
     @Override
@@ -492,4 +505,5 @@ class Snake extends GameObject implements Movable, Collidable {
             elseMap.get(heading).rotate(c, p);
         }
     }
+
 }
