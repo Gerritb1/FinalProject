@@ -18,6 +18,9 @@ public class Bomb extends GameObject implements Spawnable {
     protected boolean spawned;
     private int screenWidth;
     private int screenHeight;
+    private Canvas mCanvas;
+    private Paint mPaint;
+    private Snake mSnake;
 
     public Bomb(Context context, Point location, int size) {
         super(context, location, size);
@@ -31,16 +34,17 @@ public class Bomb extends GameObject implements Spawnable {
         }
         return mBomb;
     }
-
-    // Setter method to update the screen width
-    public void setScreenWidth(int screenWidth) {
-        this.screenWidth = screenWidth;
+    // Add a method to move the bomb
+    public void moveBomb() {
+        if (isSpawned() && !isReadyToExplode()) {
+            // Move the bomb towards the direction it was shot
+            for (int i = segmentLocations.size() - 1; i > 0; i--) {
+                segmentLocations.get(i).x = segmentLocations.get(i - 1).x;
+                segmentLocations.get(i).y = segmentLocations.get(i - 1).y;
+            }
+        }
     }
 
-    // Setter method to update the screen height
-    public void setScreenHeight(int screenHeight) {
-        this.screenHeight = screenHeight;
-    }
 
     @Override
     public void draw(Canvas canvas, Paint paint) {
@@ -67,6 +71,7 @@ public class Bomb extends GameObject implements Spawnable {
     public void hide() {
         location.set(-10, -10);
     }
+
 
     // Check for collision with the snake
     public void checkSnakeCollision(Snake snake) {
