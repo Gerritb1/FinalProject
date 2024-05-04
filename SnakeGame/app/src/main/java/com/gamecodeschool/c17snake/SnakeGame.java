@@ -779,8 +779,8 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             // Check if the trigger button is touched and trigger bomb shooting action
             if (mTriggerButton.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
                 // Trigger the bomb shooting action
-                Point direction = mBomb.calculateBombDirection(motionEvent); // Call the method without 'mBomb.' since it's in the same class
-                mBomb.shootBomb(direction); // Assuming 'mBomb' is the instance of the Bomb class
+                Point direction = mBomb.calculateBombDirection(motionEvent); 
+                mBomb.shootBomb(direction); 
             }
             return true;
         }
