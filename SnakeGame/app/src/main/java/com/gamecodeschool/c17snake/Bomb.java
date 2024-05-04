@@ -67,6 +67,27 @@ public class Bomb extends GameObject implements Spawnable{
         }
     }
 
+        // Define the calculateBombDirection method to determine the shooting direction
+    Point calculateBombDirection(MotionEvent motionEvent) {
+        
+        // Implement the logic to calculate the direction based on the touch event
+        int touchX = (int) motionEvent.getX();
+        int touchY = (int) motionEvent.getY();
+
+        // Calculate the direction vector from the touch coordinates
+        int directionX = touchX - mBomb.getLocation().x; 
+        int directionY = touchY - mBomb.getLocation().y;
+
+        return new Point(directionX, directionY);
+    }
+
+    public void shootBomb(Point direction) {
+        // Set the bomb's new location based on the shooting direction
+        // Update the bomb's position in the game
+        location.x += direction.x;
+        location.y += direction.y;
+    }
+
     public boolean isSpawned() {
         return spawned;
     }
