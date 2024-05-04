@@ -95,6 +95,16 @@ public class TriggerButton extends SurfaceView {
         verticalPosition = screenHeight - buttonHeight - 25;
     }
 
+        public boolean contains(int x, int y) {  //Prototype for shooting
+        // Check if the provided coordinates (x, y) are within the boundaries of the button
+        int buttonLeft = horizontalPosition;
+        int buttonRight = horizontalPosition + buttonWidth;
+        int buttonTop = verticalPosition;
+        int buttonBottom = verticalPosition + buttonHeight;
+
+        return x >= buttonLeft && x <= buttonRight && y >= buttonTop && y <= buttonBottom;
+    }
+
     //Getter for screen dimensions
     private Point getScreenDimensions() {
 
