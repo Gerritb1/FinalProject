@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import java.util.Random;
@@ -81,8 +82,9 @@ public class Bomb extends GameObject implements Spawnable {
         }
     }
 
-    // Calculate the shooting direction based on touch event
+    // Add log statement to calculateBombDirection method
     public Point calculateBombDirection(MotionEvent motionEvent) {
+        Log.d("Bomb", "Calculating bomb direction");
         // Implement the logic to calculate the direction based on the touch event
         int touchX = (int) motionEvent.getX();
         int touchY = (int) motionEvent.getY();
@@ -94,8 +96,9 @@ public class Bomb extends GameObject implements Spawnable {
         return new Point(directionX, directionY);
     }
 
-    // Update the bomb's position based on shooting direction
+    // Add log statement to shootBomb method
     public void shootBomb(Point direction) {
+        Log.d("Bomb", "Shooting bomb");
         // Set the bomb's new location based on the shooting direction
         int newX = getLocation().x + direction.x;
         int newY = getLocation().y + direction.y;
@@ -104,6 +107,9 @@ public class Bomb extends GameObject implements Spawnable {
         if (newX >= 0 && newX < screenWidth && newY >= 0 && newY < screenHeight) {
             getLocation().x = newX;
             getLocation().y = newY;
+
+            // Call moveBomb to update bomb's movement
+            moveBomb();
         }
     }
 
