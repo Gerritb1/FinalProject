@@ -6,16 +6,18 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.view.MotionEvent;
 
 import java.util.Random;
 
-public class Bomb extends GameObject implements Spawnable{
+public class Bomb extends GameObject implements Spawnable {
 
     private Bitmap mBitmapBomb;
-
     private static Bomb mBomb;
     private boolean readyToExplode = false;
     protected boolean spawned;
+    private int screenWidth;
+    private int screenHeight;
 
     public Bomb(Context context, Point location, int size) {
         super(context, location, size);
@@ -23,7 +25,6 @@ public class Bomb extends GameObject implements Spawnable{
         mBitmapBomb = Bitmap.createScaledBitmap(mBitmapBomb, size, size, false);
     }
 
-    // Provide access to the bomb, creating it if necessary
     public static Bomb getBomb(Context context, Point location, int size) {
         if (mBomb == null) {
             mBomb = new Bomb(context, location, size);
@@ -31,13 +32,21 @@ public class Bomb extends GameObject implements Spawnable{
         return mBomb;
     }
 
+    // Setter method to update the screen width
+    public void setScreenWidth(int screenWidth) {
+        this.screenWidth = screenWidth;
+    }
+
+    // Setter method to update the screen height
+    public void setScreenHeight(int screenHeight) {
+        this.screenHeight = screenHeight;
+    }
+
     @Override
     public void draw(Canvas canvas, Paint paint) {
         // Draw the bomb image at the location of the snake's mouth
-
         if (spawned) {
-            canvas.drawBitmap(mBitmapBomb,
-                    location.x * size, location.y * size, paint);
+            canvas.drawBitmap(mBitmapBomb, location.x * size, location.y * size, paint);
         }
         if (segmentLocations.size() > 0) {
             Point mouthLocation = segmentLocations.get(0);
@@ -59,7 +68,7 @@ public class Bomb extends GameObject implements Spawnable{
         location.set(-10, -10);
     }
 
-
+    // Check for collision with the snake
     public void checkSnakeCollision(Snake snake) {
         if (snake.bigCheckDinner(location)) {
             readyToExplode = true;
@@ -67,25 +76,30 @@ public class Bomb extends GameObject implements Spawnable{
         }
     }
 
-        // Define the calculateBombDirection method to determine the shooting direction
-    Point calculateBombDirection(MotionEvent motionEvent) {
-        
+    // Calculate the shooting direction based on touch event
+    public Point calculateBombDirection(MotionEvent motionEvent) {
         // Implement the logic to calculate the direction based on the touch event
         int touchX = (int) motionEvent.getX();
         int touchY = (int) motionEvent.getY();
 
         // Calculate the direction vector from the touch coordinates
-        int directionX = touchX - mBomb.getLocation().x; 
-        int directionY = touchY - mBomb.getLocation().y;
+        int directionX = touchX - getLocation().x;
+        int directionY = touchY - getLocation().y;
 
         return new Point(directionX, directionY);
     }
 
+    // Update the bomb's position based on shooting direction
     public void shootBomb(Point direction) {
         // Set the bomb's new location based on the shooting direction
-        // Update the bomb's position in the game
-        location.x += direction.x;
-        location.y += direction.y;
+        int newX = getLocation().x + direction.x;
+        int newY = getLocation().y + direction.y;
+
+        // Check if the new position is within the bounds of the game screen
+        if (newX >= 0 && newX < screenWidth && newY >= 0 && newY < screenHeight) {
+            getLocation().x = newX;
+            getLocation().y = newY;
+        }
     }
 
     public boolean isSpawned() {
