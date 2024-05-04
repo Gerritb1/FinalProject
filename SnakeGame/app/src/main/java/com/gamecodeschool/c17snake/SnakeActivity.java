@@ -7,36 +7,33 @@ import android.view.Display;
 
 public class SnakeActivity extends Activity {
 
-    // Declare an instance of SnakeGame
     SnakeGame mSnakeGame;
+    Bomb mBomb; // Declare the Bomb instance
 
-    // Set the game up
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Get the pixel dimensions of the screen
         Display display = getWindowManager().getDefaultDisplay();
-
-        // Initialize the result into a Point object
         Point size = new Point();
         display.getSize(size);
 
-        // Create a new instance of the SnakeEngine class
         mSnakeGame = new SnakeGame(this, size);
 
-        // Make snakeEngine the view of the Activity
+        // Initialize the Bomb instance
+        Point bombLocation = new Point(size.x / 2, size.y / 2); // Set the initial location of the bomb
+        mBomb = Bomb.getBomb(this, bombLocation, 50); // Initialize the Bomb instance
+
+
         setContentView(mSnakeGame);
     }
 
-    // Start the thread in snakeEngine
     @Override
     protected void onResume() {
         super.onResume();
         mSnakeGame.resume();
     }
 
-    // Stop the thread in snakeEngine
     @Override
     protected void onPause() {
         super.onPause();
