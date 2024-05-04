@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -22,12 +23,8 @@ public class TriggerButton extends SurfaceView {
     private int horizontalPosition;
     private int verticalPosition;
 
-    private Snake mSnake;
-
     private Context mContext;
     private SnakeGame mSnakeGame;
-
-    private Bomb mBomb;
 
     private static TriggerButton drawTriggerButton;
 
@@ -91,15 +88,6 @@ public class TriggerButton extends SurfaceView {
         verticalPosition = screenHeight - buttonHeight - 25;
     }
 
-    public boolean contains(int x, int y) {
-        int buttonLeft = horizontalPosition;
-        int buttonRight = horizontalPosition + buttonWidth;
-        int buttonTop = verticalPosition;
-        int buttonBottom = verticalPosition + buttonHeight;
-
-        return x >= buttonLeft && x <= buttonRight && y >= buttonTop && y <= buttonBottom;
-    }
-
     private Point getScreenDimensions() {
         WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
@@ -108,37 +96,5 @@ public class TriggerButton extends SurfaceView {
         screenWidth = metrics.widthPixels;
         screenHeight = metrics.heightPixels;
         return new Point(screenWidth, screenHeight);
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        int action = event.getAction();
-        int touchX = (int) event.getX();
-        int touchY = (int) event.getY();
-
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
-                if (contains(touchX, touchY)) {
-                    // Calculate the shooting direction based on the touch coordinates
-                    Point bombLocation = new Point(touchX, touchY);
-
-                    // Calculate the direction vector towards the target location
-                    int dx = bombLocation.x - mBomb.getLocation().x;
-                    int dy = bombLocation.y - mBomb.getLocation().y;
-
-                    // Normalize the direction vector
-                    double magnitude = Math.sqrt(dx * dx + dy * dy);
-                    int directionX = (int) (dx / magnitude);
-                    int directionY = (int) (dy / magnitude);
-
-                    // Shoot the bomb in the calculated direction
-                    mBomb.shootBomb(new Point(directionX, directionY));
-
-                    return true; // Event handled
-                }
-                break;
-        }
-
-        return super.onTouchEvent(event);
     }
 }
