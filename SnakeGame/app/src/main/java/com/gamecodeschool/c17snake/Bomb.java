@@ -20,8 +20,8 @@ public class Bomb extends GameObject implements Spawnable {
     protected boolean spawned;
     private int screenWidth;
     private int screenHeight;
-    private android.R.attr direction;
-
+    private Point mShootDirection;
+    
     public Bomb(Context context, Point location, int size) {
         super(context, location, size);
         mBitmapBomb = BitmapFactory.decodeResource(context.getResources(), R.drawable.bomb);
@@ -34,8 +34,6 @@ public class Bomb extends GameObject implements Spawnable {
         }
         return mBomb;
     }
-    // Add a method to move the bomb
-
 
     @Override
     public void draw(Canvas canvas, Paint paint) {
@@ -83,12 +81,11 @@ public class Bomb extends GameObject implements Spawnable {
         int directionY = touchY - getLocation().y;
 
         // Set the calculated direction for later use
-        Point direction = new Point(directionX, directionY);
+        mShootDirection = new Point(directionX, directionY);
 
-        return direction;
+        return mShootDirection;
     }
 
-    // Add log statement to shootBomb method
     public void shootBomb(Point direction) {
         Log.d("Bomb", "Shooting bomb");
         if (direction != null) {
@@ -106,12 +103,13 @@ public class Bomb extends GameObject implements Spawnable {
             }
         }
     }
+    
     // Update the bomb's position to move in a straight line
     public void moveBomb() {
         if (isSpawned() && !isReadyToExplode()) {
             // Move the bomb towards the direction it was shot
-            getLocation().x += direction.x;
-            getLocation().y += direction.y;
+            getLocation().x += mShootDirection.x;
+            getLocation().y += mShootDirection.y;
 
             // Optionally, you can update the segment locations as well if needed
             for (int i = segmentLocations.size() - 1; i > 0; i--) {
