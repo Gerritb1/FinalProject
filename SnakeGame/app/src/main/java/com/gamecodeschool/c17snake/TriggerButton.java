@@ -46,13 +46,23 @@ public class TriggerButton extends SurfaceView {
         paint.setStyle(Paint.Style.FILL);
         canvas.drawCircle(horizontalPosition + buttonWidth/2, verticalPosition + buttonHeight/2, Math.min(buttonWidth, buttonHeight)/2, paint);
 
-        // Draw the bomb.png image traced onto the button
+        // Draw the transparent bomb.png image scaled to fit the button
         Bitmap bombImage = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.bomb);
         if (bombImage != null) {
-            // Calculate the position to center the image within the button
-            float imageLeft = horizontalPosition + (buttonWidth - bombImage.getWidth()) / 2;
-            float imageTop = verticalPosition + (buttonHeight - bombImage.getHeight()) / 2;
-            canvas.drawBitmap(bombImage, imageLeft, imageTop, paint);
+            // Calculate the position and size to fit the image within the button
+            float imageWidth = (float) (Math.min(buttonWidth, buttonHeight) * 0.8); // Cast the result to float
+            float imageHeight = (float) (imageWidth * ((float) bombImage.getHeight() / bombImage.getWidth())); // Cast the result to float
+
+            float imageLeft = horizontalPosition + ((float) (buttonWidth - imageWidth) / 2); // Cast the result to float
+            float imageTop = verticalPosition + ((float) (buttonHeight - imageHeight) / 2); // Cast the result to float
+
+            // Create a new paint object for drawing the transparent image
+            Paint transparentPaint = new Paint();
+            transparentPaint.setAlpha(150); // Set the alpha value for transparency (0 for fully transparent, 255 for fully opaque)
+
+            // Draw the scaled and transparent bomb.png image
+            Bitmap scaledBombImage = Bitmap.createScaledBitmap(bombImage, (int) imageWidth, (int) imageHeight, true);
+            canvas.drawBitmap(scaledBombImage, imageLeft, imageTop, transparentPaint);
         }
     }
 
