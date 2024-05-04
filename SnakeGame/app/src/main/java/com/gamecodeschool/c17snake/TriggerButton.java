@@ -1,5 +1,3 @@
-package com.gamecodeschool.c17snake;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -119,14 +117,20 @@ public class TriggerButton extends SurfaceView {
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 if (contains(touchX, touchY)) {
-                    // Pass the required arguments to getSnake method
-                    mBomb = mBomb.getBomb(getContext(), new Point(touchX, touchY), 0);
+                    // Calculate the shooting direction based on the touch coordinates
+                    Point bombLocation = new Point(touchX, touchY);
 
-                    // Calculate the shooting direction based on the touch coordinates within the SnakeGame class
-                    Point direction = mBomb.calculateBombDirection(event);
+                    // Calculate the direction vector towards the target location
+                    int dx = bombLocation.x - mBomb.getLocation().x;
+                    int dy = bombLocation.y - mBomb.getLocation().y;
+
+                    // Normalize the direction vector
+                    double magnitude = Math.sqrt(dx * dx + dy * dy);
+                    int directionX = (int) (dx / magnitude);
+                    int directionY = (int) (dy / magnitude);
 
                     // Shoot the bomb in the calculated direction
-                    mBomb.shootBomb(direction);
+                    mBomb.shootBomb(new Point(directionX, directionY));
 
                     return true; // Event handled
                 }
