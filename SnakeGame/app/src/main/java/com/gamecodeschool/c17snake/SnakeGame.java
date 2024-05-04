@@ -111,6 +111,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
     private TriggerButton drawTriggerButton;
     private TriggerButton mTriggerButton;
+    private boolean isButtonPressed = false;
 
     // This is the constructor method that gets called
     // from SnakeActivity
@@ -418,10 +419,19 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         // Check for collision with the snake
         mBomb.checkSnakeCollision(mSnake);
 
+        // Move the bomb continuously only if the button is pressed
+        if (isButtonPressed) {
+            mBomb.moveBomb();
+        }
+
         // Draw the bomb on the canvas
         mBomb.draw(mCanvas, mPaint);
     }
 
+    // Method to set the button pressed flag
+    public void setButtonPressed(boolean isPressed) {
+        isButtonPressed = isPressed;
+    }
     // Refactored
     public void updateDeath() {
         boolean snakeHitRock = false;
@@ -757,6 +767,8 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         }
     }
 
+    private boolean isTriggerButtonPressed = false;
+
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
         if ((motionEvent.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
@@ -764,10 +776,10 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 // If the game beginning, start the game
                 mPaused = false;
                 newGame();
-            }else if(mPaused && mPauseButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())){
-                //If the game is paused, resume the game
+            } else if (mPaused && mPauseButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
+                // If the game is paused, resume the game
                 mPaused = false;
-            }else if (mPauseButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
+            } else if (mPauseButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
                 // If the pause button is touched, pause the game
                 mPaused = true;
                 mBackgroundMusic.pause();
@@ -776,16 +788,58 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 mSnake.switchHeading(motionEvent);
             }
 
-            // Check if the trigger button is touched and trigger bomb shooting action
             if (mTriggerButton.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
-                // Trigger the bomb shooting action
-                Point direction = mBomb.calculateBombDirection(motionEvent); 
-                mBomb.shootBomb(direction); 
+                // Set the flag for trigger button press
+                isTriggerButtonPressed = true;
+                Point direction = mBomb.calculateBombDirection(motionEvent);
+                mBomb.shootBomb(direction);
                 mBomb.moveBomb();
+            } else {
+                isTriggerButtonPressed = false;
             }
+
             return true;
         }
         return true;
+    }
+
+    // Declare variables for bomb thread and its status
+    private boolean mBombThreadRunning = false;
+    private Thread mBombThread;
+    private MotionEvent motionEvent;
+
+    // Method to start the bomb movement thread
+    private void startBombThread() {
+        mBombThreadRunning = true;
+        mBombThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (mBombThreadRunning) {
+                    // Update bomb movement logic by shooting the bomb
+
+                    Point direction = mBomb.calculateBombDirection(motionEvent);
+                    mBomb.shootBomb(direction);
+
+                    try {
+                        // Adjust the sleep time based on the bomb movement speed
+                        Thread.sleep(0); // Adjust the sleep time accordingly
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        mBombThread.start();
+    }
+
+    // Method to stop the bomb movement thread
+    private void stopBombThread() {
+        mBombThreadRunning = false;
+        try {
+            mBombThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     // Stop the thread
