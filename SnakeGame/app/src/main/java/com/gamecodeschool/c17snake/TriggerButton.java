@@ -110,8 +110,6 @@ public class TriggerButton extends SurfaceView {
         return new Point(screenWidth, screenHeight);
     }
 
-// In the TriggerButton class
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int action = event.getAction();
