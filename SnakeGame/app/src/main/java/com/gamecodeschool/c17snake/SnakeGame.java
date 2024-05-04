@@ -781,6 +781,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 // Trigger the bomb shooting action
                 Point direction = mBomb.calculateBombDirection(motionEvent); 
                 mBomb.shootBomb(direction); 
+                mBomb.moveBomb();
             }
             return true;
         }
