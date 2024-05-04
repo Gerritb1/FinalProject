@@ -9,6 +9,7 @@ import android.graphics.Point;
 import android.util.Log;
 import android.view.MotionEvent;
 
+
 import java.util.Random;
 
 public class Bomb extends GameObject implements Spawnable {
@@ -19,9 +20,7 @@ public class Bomb extends GameObject implements Spawnable {
     protected boolean spawned;
     private int screenWidth;
     private int screenHeight;
-    private Canvas mCanvas;
-    private Paint mPaint;
-    private Snake mSnake;
+    private android.R.attr direction;
 
     public Bomb(Context context, Point location, int size) {
         super(context, location, size);
@@ -36,15 +35,6 @@ public class Bomb extends GameObject implements Spawnable {
         return mBomb;
     }
     // Add a method to move the bomb
-    public void moveBomb() {
-        if (isSpawned() && !isReadyToExplode()) {
-            // Move the bomb towards the direction it was shot
-            for (int i = segmentLocations.size() - 1; i > 0; i--) {
-                segmentLocations.get(i).x = segmentLocations.get(i - 1).x;
-                segmentLocations.get(i).y = segmentLocations.get(i - 1).y;
-            }
-        }
-    }
 
 
     @Override
@@ -73,7 +63,6 @@ public class Bomb extends GameObject implements Spawnable {
         location.set(-10, -10);
     }
 
-
     // Check for collision with the snake
     public void checkSnakeCollision(Snake snake) {
         if (snake.bigCheckDinner(location)) {
@@ -93,23 +82,42 @@ public class Bomb extends GameObject implements Spawnable {
         int directionX = touchX - getLocation().x;
         int directionY = touchY - getLocation().y;
 
-        return new Point(directionX, directionY);
+        // Set the calculated direction for later use
+        Point direction = new Point(directionX, directionY);
+
+        return direction;
     }
 
     // Add log statement to shootBomb method
     public void shootBomb(Point direction) {
         Log.d("Bomb", "Shooting bomb");
-        // Set the bomb's new location based on the shooting direction
-        int newX = getLocation().x + direction.x;
-        int newY = getLocation().y + direction.y;
+        if (direction != null) {
+            // Set the bomb's new location based on the shooting direction
+            int newX = getLocation().x + direction.x;
+            int newY = getLocation().y + direction.y;
 
-        // Check if the new position is within the bounds of the game screen
-        if (newX >= 0 && newX < screenWidth && newY >= 0 && newY < screenHeight) {
-            getLocation().x = newX;
-            getLocation().y = newY;
+            // Check if the new position is within the bounds of the game screen
+            if (newX >= 0 && newX < screenWidth && newY >= 0 && newY < screenHeight) {
+                getLocation().x = newX;
+                getLocation().y = newY;
 
-            // Call moveBomb to update bomb's movement
-            moveBomb();
+                // Call moveBomb to update bomb's movement
+                moveBomb();
+            }
+        }
+    }
+    // Update the bomb's position to move in a straight line
+    public void moveBomb() {
+        if (isSpawned() && !isReadyToExplode()) {
+            // Move the bomb towards the direction it was shot
+            getLocation().x += direction.x;
+            getLocation().y += direction.y;
+
+            // Optionally, you can update the segment locations as well if needed
+            for (int i = segmentLocations.size() - 1; i > 0; i--) {
+                segmentLocations.get(i).x = segmentLocations.get(i - 1).x;
+                segmentLocations.get(i).y = segmentLocations.get(i - 1).y;
+            }
         }
     }
 
