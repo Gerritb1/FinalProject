@@ -25,67 +25,79 @@ public class TriggerButton extends SurfaceView {
     private SnakeGame mSnakeGame;
 
     private static TriggerButton drawTriggerButton;
-
+    
+    //Constructor
     public TriggerButton(Context context, SnakeGame snakeGame) {
         super(context);
         mContext = context;
         mSnakeGame = snakeGame;
     }
 
+
+    //Static getter
     public static TriggerButton getDrawTriggerButton(Context context, SnakeGame snakeGame) {
         if(drawTriggerButton == null)
             drawTriggerButton = new TriggerButton(context, snakeGame);
         return drawTriggerButton;
     }
 
+     //Invokes the drawTransparent Method and draws/configures the bomb.png to shape
     public void drawButton(Canvas canvas, Paint paint) {
-        // Draw the circular transparent button
+        
+        // Draw the circular transparent shape
         drawTransparentButton(paint);
 
-        // Draw the circular shape for the button
+        // Set the shape
         paint.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(horizontalPosition + buttonWidth/2, verticalPosition + buttonHeight/2, Math.min(buttonWidth, buttonHeight)/2, paint);
+        paint.setColor(Color.argb(100, 203, 67, 53)); 
+        canvas.drawCircle(horizontalPosition + buttonWidth/2, verticalPosition + buttonHeight/2, Math.min(buttonWidth, buttonHeight)/2 - 5, paint); // Adjust the radius by subtracting 5
 
         // Draw the transparent bomb.png image scaled to fit the button
         Bitmap bombImage = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.bomb);
+        
         if (bombImage != null) {
-            // Calculate the position and size to fit the image within the button
-            float imageWidth = (float) (Math.min(buttonWidth, buttonHeight) * 0.8); // Cast the result to float
-            float imageHeight = (float) (imageWidth * ((float) bombImage.getHeight() / bombImage.getWidth())); // Cast the result to float
+        
+            // Calculate the size to fit the image within the button
+            float imageWidth = Math.min(buttonWidth, buttonHeight) * 0.8f; // Cast the result to float
+            float imageHeight = imageWidth * ((float) bombImage.getHeight() / bombImage.getWidth());
 
-            float imageLeft = horizontalPosition + ((float) (buttonWidth - imageWidth) / 2); // Cast the result to float
-            float imageTop = verticalPosition + ((float) (buttonHeight - imageHeight) / 2); // Cast the result to float
+            // Calculate the position to center the image within the button
+            float imageLeft = horizontalPosition + (buttonWidth - imageWidth) / 2f + 10; // Rightward shift
+            float imageTop = verticalPosition + (buttonHeight - imageHeight) / 2f;
 
             // Create a new paint object for drawing the transparent image
             Paint transparentPaint = new Paint();
-            transparentPaint.setAlpha(150); // Set the alpha value for transparency (0 for fully transparent, 255 for fully opaque)
+            transparentPaint.setAlpha(150);
 
-            // Draw the scaled and transparent bomb.png image
+            // Draw the scaled and transparent bomb.png image centered on the button
             Bitmap scaledBombImage = Bitmap.createScaledBitmap(bombImage, (int) imageWidth, (int) imageHeight, true);
             canvas.drawBitmap(scaledBombImage, imageLeft, imageTop, transparentPaint);
+            
         }
     }
 
-    // Method to draw the circular transparent button
+    // Method to draw the circular transparent shape
     private void drawTransparentButton(Paint paint) {
-        // Adjust the transparency level by changing the alpha value (50 to 150 for example)
-        paint.setColor(Color.argb(100, 203, 67, 53));
-        // Get screen dimensions
+
+        //Setting the paint color
+        paint.setColor(Color.argb(100, 203, 67, 53)); 
+
+        //Creating an instance for the screen dimensions
         Point screenDimensions = getScreenDimensions();
         screenWidth = screenDimensions.x;
         screenHeight = screenDimensions.y;
 
-        // Define the size and position of the button relative to screen dimensions
-        // Adjust the buttonWidth and buttonHeight to make the button smaller
-        buttonWidth = screenWidth / 15; // Adjust the factor to determine the width
-        buttonHeight = screenHeight / 10; // Adjust the factor to determine the height
+        // Define the size and position of the shape with respect to screen dimensions
+        buttonWidth = screenWidth / 10;
+        buttonHeight = screenHeight / 10;
 
-        // Position the button at the bottom left corner of the screen
-        horizontalPosition = screenWidth - buttonWidth - 100; // Set a margin from the left side of the screen
-        verticalPosition = screenHeight - buttonHeight - 25; // Set a margin from the bottom of the screen
+        horizontalPosition = screenWidth - buttonWidth - 150;
+        verticalPosition = screenHeight - buttonHeight - 25;
     }
 
+    //Getter for screen dimensions
     private Point getScreenDimensions() {
+
         WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         DisplayMetrics metrics = new DisplayMetrics();
@@ -93,5 +105,6 @@ public class TriggerButton extends SurfaceView {
         screenWidth = metrics.widthPixels;
         screenHeight = metrics.heightPixels;
         return new Point(screenWidth, screenHeight);
+        
     }
 }
