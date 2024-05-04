@@ -8,7 +8,6 @@ import android.view.Display;
 public class SnakeActivity extends Activity {
 
     SnakeGame mSnakeGame;
-    Bomb mBomb; // Declare the Bomb instance
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,9 +19,6 @@ public class SnakeActivity extends Activity {
 
         mSnakeGame = new SnakeGame(this, size);
 
-        // Initialize the Bomb instance
-        Point bombLocation = new Point(size.x / 2, size.y / 2); // Set the initial location of the bomb
-        mBomb = Bomb.getBomb(this, bombLocation, 50); // Initialize the Bomb instance
 
 
         setContentView(mSnakeGame);
