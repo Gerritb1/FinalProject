@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -26,10 +27,12 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     private Thread mThread = null;
 
     private boolean isFirstPause = true;
+    private boolean isButtonPressed = false;
 
     // Is the game currently playing and or paused?
     private volatile boolean mPlaying = false;
     private volatile boolean mPaused = true;
+    //private boolean isButtonPressed = false;
 
     // for playing sound effects
     private SoundPool mSP;
@@ -49,6 +52,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
     //Pause button rendering objects
     private Rect mPauseButtonRect;
+    private Rect mTriggerButtonRect;
     private Paint mPauseButtonPaint;
 
     // Objects for drawing
@@ -112,6 +116,9 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     private TriggerButton drawTriggerButton;
     private TriggerButton mTriggerButton;
 
+    private MotionEvent motionEvent;
+    private SnakeGame snakeGame;
+
     // This is the constructor method that gets called
     // from SnakeActivity
     protected SnakeGame(Context context, Point size) {
@@ -160,6 +167,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         listOfRocks();
         listOfTrash();
         this.mContext = context;
+        motionEvent = MotionEvent.obtain(0, 0, MotionEvent.ACTION_DOWN, 0, 0, 0);
 
         random = new Random();
 
@@ -189,6 +197,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     public boolean isPaused() {
         return mPaused;
     }
+
 
     // Refactored
     @Override
@@ -229,8 +238,14 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
     private void createTriggerButton() {
         mTriggerButton = new TriggerButton(getContext(), this);
-    }
 
+        // Create a Rect object representing the trigger button's bounds
+        int buttonWidth = 100; // Set the width of the button
+        int buttonHeight = 100; // Set the height of the button
+        int buttonLeft = 50; // Set the left position of the button
+        int buttonTop = 50; // Set the top position of the button
+        mTriggerButtonRect = new Rect(buttonLeft, buttonTop, buttonLeft + buttonWidth, buttonTop + buttonHeight);
+    }
 
 
     //Refactored
@@ -408,20 +423,58 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         }
     }
 
+
     public void updateBomb() {
         // Spawn the bomb if it hasn't been spawned yet
-        if (!mBomb.spawned) {
+        if (!mBomb.isSpawned()) {
             mBomb.spawn();
-            mBomb.spawned = true;
         }
 
         // Check for collision with the snake
         mBomb.checkSnakeCollision(mSnake);
 
+        // Update the trigger button press status using the correct state
+        if (mTriggerButton != null) {
+
+            mTriggerButton.setPressed(true); // Update the press status using the actual state
+            boolean isButtonPressed = mTriggerButton.isPressed(); // Get the actual state of the trigger button
+            Log.d("SnakeGame", "mTriggerButton state: " + mTriggerButton.isPressed());
+
+            TriggerButton mTriggerButtonRect = TriggerButton.getDrawTriggerButton(mContext, snakeGame);
+
+            if (mTriggerButtonRect != null) {
+                if (isButtonPressed) {
+                    Log.d("SnakeGame", "Trigger button is pressed");
+
+                    // Use the getter method to ensure motionEvent is not null
+                    MotionEvent motionEvent = getMotionEvent();
+                    if (motionEvent != null) {
+                        // Calculate the shooting direction based on the MotionEvent and button state
+                        mBomb.shootBomb(motionEvent, isButtonPressed); // Pass the actual state to shootBomb
+                    } else {
+                        Log.e("SnakeGame", "motionEvent is null. Ensure it is properly initialized.");
+                    }
+                }
+            } else {
+                Log.e("SnakeGame", "mTriggerButtonRect is null. Ensure it is properly initialized.");
+            }
+        } else {
+            Log.e("SnakeGame", "mTriggerButton is null. Make sure it is properly initialized.");
+        }
+
         // Draw the bomb on the canvas
         mBomb.draw(mCanvas, mPaint);
     }
 
+    public MotionEvent getMotionEvent() {
+        return motionEvent;
+    }
+
+
+    // Method to set the button pressed flag
+    public void setButtonPressed(boolean isPressed) {
+        isButtonPressed = isPressed;
+    }
     // Refactored
     public void updateDeath() {
         boolean snakeHitRock = false;
@@ -455,6 +508,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             resetGame();
         }
     }
+
 
     // Refactored, this is for the red apple
     public void updateMApple() {
@@ -760,28 +814,43 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
         if ((motionEvent.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
+            Log.d("TriggerButton", "Touch Event - X: " + motionEvent.getX() + ", Y: " + motionEvent.getY());
+
+            if (mTriggerButtonRect != null) {
+                Log.d("TriggerButton", "Trigger Button Rect: " + mTriggerButtonRect.toShortString());
+            } else {
+                Log.e("TriggerButton", "Trigger Button Rect is null");
+            }
+
             if (isFirstPause) {
                 // If the game beginning, start the game
                 mPaused = false;
                 newGame();
-            }else if(mPaused && mPauseButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())){
-                //If the game is paused, resume the game
+            } else if (mPaused && mPauseButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
+                // If the game is paused, resume the game
                 mPaused = false;
-            }else if (mPauseButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
+            } else if (mPauseButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
                 // If the pause button is touched, pause the game
                 mPaused = true;
                 mBackgroundMusic.pause();
             } else if (!mPaused) {
                 // If the game is running and not paused, handle snake movement
                 mSnake.switchHeading(motionEvent);
-            }
-            
-            // Check if the trigger button is touched and trigger bomb shooting action
-            if (mTriggerButton.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
+            } else if (mTriggerButtonRect != null && mTriggerButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
                 // Trigger the bomb shooting action
-                Point direction = mBomb.calculateBombDirection(motionEvent); 
-                mBomb.shootBomb(direction); 
+                // Update the trigger button press status using the correct state
+                if (mTriggerButtonRect != null) {
+                    mTriggerButton.setPressed(true); // Update the press status of the trigger button
+                    boolean isButtonPressed = mTriggerButton.isPressed(); // Get the actual state of the trigger button
+                    Log.d("TriggerButton", "Trigger button press status: " + isButtonPressed);
+
+                    // Calculate the shooting direction based on the MotionEvent and button state
+                    mBomb.shootBomb(motionEvent, isButtonPressed);
+                } else {
+                    Log.e("TriggerButton", "mTriggerButtonRect is null. Ensure it is properly initialized.");
+                }
             }
+
             return true;
         }
         return true;
