@@ -27,10 +27,12 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     private Thread mThread = null;
 
     private boolean isFirstPause = true;
+    private boolean isButtonPressed = false;
 
     // Is the game currently playing and or paused?
     private volatile boolean mPlaying = false;
     private volatile boolean mPaused = true;
+    //private boolean isButtonPressed = false;
 
     // for playing sound effects
     private SoundPool mSP;
@@ -113,9 +115,9 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
     private TriggerButton drawTriggerButton;
     private TriggerButton mTriggerButton;
-    private boolean isButtonPressed = false;
-    private MotionEvent motionEvent;
 
+    private MotionEvent motionEvent;
+    private SnakeGame snakeGame;
 
     // This is the constructor method that gets called
     // from SnakeActivity
@@ -165,6 +167,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         listOfRocks();
         listOfTrash();
         this.mContext = context;
+        motionEvent = MotionEvent.obtain(0, 0, MotionEvent.ACTION_DOWN, 0, 0, 0);
 
         random = new Random();
 
@@ -235,8 +238,14 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
     private void createTriggerButton() {
         mTriggerButton = new TriggerButton(getContext(), this);
-    }
 
+        // Create a Rect object representing the trigger button's bounds
+        int buttonWidth = 100; // Set the width of the button
+        int buttonHeight = 100; // Set the height of the button
+        int buttonLeft = 50; // Set the left position of the button
+        int buttonTop = 50; // Set the top position of the button
+        mTriggerButtonRect = new Rect(buttonLeft, buttonTop, buttonLeft + buttonWidth, buttonTop + buttonHeight);
+    }
 
 
     //Refactored
@@ -414,6 +423,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         }
     }
 
+
     public void updateBomb() {
         // Spawn the bomb if it hasn't been spawned yet
         if (!mBomb.isSpawned()) {
@@ -423,11 +433,33 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         // Check for collision with the snake
         mBomb.checkSnakeCollision(mSnake);
 
-        if (mTriggerButton.isPressed()) {
-            MotionEvent motionEvent = getMotionEvent(); // Ensure this method returns the MotionEvent correctly
+        // Update the trigger button press status using the correct state
+        if (mTriggerButton != null) {
 
-            // Calculate the shooting direction based on the MotionEvent and button state
-            mBomb.shootBomb(motionEvent, mTriggerButton.isPressed());
+            mTriggerButton.setPressed(true); // Update the press status using the actual state
+            boolean isButtonPressed = mTriggerButton.isPressed(); // Get the actual state of the trigger button
+            Log.d("SnakeGame", "mTriggerButton state: " + mTriggerButton.isPressed());
+
+            TriggerButton mTriggerButtonRect = TriggerButton.getDrawTriggerButton(mContext, snakeGame);
+
+            if (mTriggerButtonRect != null) {
+                if (isButtonPressed) {
+                    Log.d("SnakeGame", "Trigger button is pressed");
+
+                    // Use the getter method to ensure motionEvent is not null
+                    MotionEvent motionEvent = getMotionEvent();
+                    if (motionEvent != null) {
+                        // Calculate the shooting direction based on the MotionEvent and button state
+                        mBomb.shootBomb(motionEvent, isButtonPressed); // Pass the actual state to shootBomb
+                    } else {
+                        Log.e("SnakeGame", "motionEvent is null. Ensure it is properly initialized.");
+                    }
+                }
+            } else {
+                Log.e("SnakeGame", "mTriggerButtonRect is null. Ensure it is properly initialized.");
+            }
+        } else {
+            Log.e("SnakeGame", "mTriggerButton is null. Make sure it is properly initialized.");
         }
 
         // Draw the bomb on the canvas
@@ -476,6 +508,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             resetGame();
         }
     }
+
 
     // Refactored, this is for the red apple
     public void updateMApple() {
@@ -778,12 +811,16 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         }
     }
 
-    private boolean isTriggerButtonPressed = false;
-
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
         if ((motionEvent.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
             Log.d("TriggerButton", "Touch Event - X: " + motionEvent.getX() + ", Y: " + motionEvent.getY());
+
+            if (mTriggerButtonRect != null) {
+                Log.d("TriggerButton", "Trigger Button Rect: " + mTriggerButtonRect.toShortString());
+            } else {
+                Log.e("TriggerButton", "Trigger Button Rect is null");
+            }
 
             if (isFirstPause) {
                 // If the game beginning, start the game
@@ -799,9 +836,19 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             } else if (!mPaused) {
                 // If the game is running and not paused, handle snake movement
                 mSnake.switchHeading(motionEvent);
-            } else if (mTriggerButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
+            } else if (mTriggerButtonRect != null && mTriggerButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
                 // Trigger the bomb shooting action
-                mBomb.shootBomb(motionEvent, isTriggerButtonPressed);
+                // Update the trigger button press status using the correct state
+                if (mTriggerButtonRect != null) {
+                    mTriggerButton.setPressed(true); // Update the press status of the trigger button
+                    boolean isButtonPressed = mTriggerButton.isPressed(); // Get the actual state of the trigger button
+                    Log.d("TriggerButton", "Trigger button press status: " + isButtonPressed);
+
+                    // Calculate the shooting direction based on the MotionEvent and button state
+                    mBomb.shootBomb(motionEvent, isButtonPressed);
+                } else {
+                    Log.e("TriggerButton", "mTriggerButtonRect is null. Ensure it is properly initialized.");
+                }
             }
 
             return true;
