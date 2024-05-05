@@ -7,6 +7,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
+import android.hardware.GeomagneticField;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -28,6 +30,15 @@ public class TriggerButton extends SurfaceView {
 
     private static TriggerButton drawTriggerButton;
 
+    Rect mTriggerButtonRect;
+
+    private boolean isTriggerButtonPressed = false;
+
+    public boolean isShot() {
+        isTriggerButtonPressed = true;
+        return isTriggerButtonPressed;
+    }
+
     public TriggerButton(Context context, SnakeGame snakeGame) {
         super(context);
         mContext = context;
@@ -44,16 +55,15 @@ public class TriggerButton extends SurfaceView {
         // Draw the circular transparent button
         drawTransparentButton(paint);
 
-        // Set the same gray color as the PauseButton for the circular shape of the button
+        //Set paint style to fill
         paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.argb(100, 203, 67, 53)); // Match the gray color from PauseButton
         canvas.drawCircle(horizontalPosition + buttonWidth / 2, verticalPosition + buttonHeight / 2, Math.min(buttonWidth, buttonHeight) / 2 - 5, paint); // Adjust the radius by subtracting 5
 
         // Draw the transparent bomb.png image scaled to fit the button
         Bitmap bombImage = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.bomb);
         if (bombImage != null) {
             // Calculate the size to fit the image within the button
-            float imageWidth = Math.min(buttonWidth, buttonHeight) * 0.8f; // Cast the result to float
+            float imageWidth = Math.min(buttonWidth, buttonHeight) * 0.8f;
             float imageHeight = imageWidth * ((float) bombImage.getHeight() / bombImage.getWidth());
 
             // Calculate the position to center the image within the button
@@ -71,8 +81,7 @@ public class TriggerButton extends SurfaceView {
     }
 
 
-    // Method to draw the circular transparent button
-    private void drawTransparentButton(Paint paint) {
+    public void drawTransparentButton(Paint paint) {
         // Set the same gray color as the PauseButton for the circular transparent button
         paint.setColor(Color.argb(100, 203, 67, 53)); // Match the gray color from PauseButton
 
@@ -86,6 +95,9 @@ public class TriggerButton extends SurfaceView {
 
         horizontalPosition = screenWidth - buttonWidth - 150;
         verticalPosition = screenHeight - buttonHeight - 25;
+
+        // Log the position of the button
+        Log.d("TriggerButton", "Button Position - Horizontal: " + horizontalPosition + ", Vertical: " + verticalPosition);
     }
 
     private Point getScreenDimensions() {
@@ -96,5 +108,21 @@ public class TriggerButton extends SurfaceView {
         screenWidth = metrics.widthPixels;
         screenHeight = metrics.heightPixels;
         return new Point(screenWidth, screenHeight);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int action = event.getAction();
+        boolean isTouchOnButton = mTriggerButtonRect.contains((int) event.getX(), (int) event.getY());
+
+        if (isTouchOnButton) {
+            // Calculate the direction for shooting the bomb based on the touch event
+            Point shootDirection = new Point((int) event.getX(), (int) event.getY());
+
+            // Call the shootBomb method from the Bomb class with the MotionEvent and flag indicating touch on the button
+            Bomb.getBomb(mContext, new Point(horizontalPosition, verticalPosition), buttonWidth).shootBomb(event, isTouchOnButton);
+        }
+
+        return true; // Return true to indicate that the touch event has been handled
     }
 }
