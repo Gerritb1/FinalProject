@@ -59,7 +59,7 @@ public class TriggerButton extends SurfaceView {
         }
         return null; // Handle the case where SnakeGame reference is not set
     }
-    
+
     public void drawButton(Canvas canvas, Paint paint) {
         // Draw the circular transparent button
         drawButton(paint);
@@ -118,5 +118,5 @@ public class TriggerButton extends SurfaceView {
         screenHeight = metrics.heightPixels;
         return new Point(screenWidth, screenHeight);
     }
-    
+
 }
