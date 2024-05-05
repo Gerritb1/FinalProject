@@ -30,10 +30,11 @@ public class TriggerButton extends SurfaceView {
 
     private static TriggerButton drawTriggerButton;;
 
-    private boolean isPressed = false;
+    private boolean isTriggerButtonPressed = false;
 
-    public void setPressed(boolean isPressed) {
-        this.isPressed = isPressed;
+    public void setPressed(boolean isTriggerButtonPressed) {
+        this.isTriggerButtonPressed = isTriggerButtonPressed;
+
     }
 
     public TriggerButton(Context context, SnakeGame snakeGame) {
@@ -42,11 +43,25 @@ public class TriggerButton extends SurfaceView {
         mSnakeGame = snakeGame;
     }
 
+
+
+
+
     public static TriggerButton getDrawTriggerButton(Context context, SnakeGame snakeGame) {
         if (drawTriggerButton == null)
             drawTriggerButton = new TriggerButton(context, snakeGame);
         return drawTriggerButton;
     }
+
+    public Rect getTriggerButtonRect() {
+        if (mSnakeGame != null) {
+            return mSnakeGame.mTriggerButtonRect;
+        }
+        return null; // Handle the case where SnakeGame reference is not set
+    }
+
+
+
 
     public void drawButton(Canvas canvas, Paint paint) {
         // Draw the circular transparent button
@@ -97,7 +112,7 @@ public class TriggerButton extends SurfaceView {
         Log.d("TriggerButton", "Button Position - Horizontal: " + horizontalPosition + ", Vertical: " + verticalPosition);
     }
 
-    private Point getScreenDimensions() {
+    Point getScreenDimensions() {
         WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         DisplayMetrics metrics = new DisplayMetrics();
@@ -106,5 +121,20 @@ public class TriggerButton extends SurfaceView {
         screenHeight = metrics.heightPixels;
         return new Point(screenWidth, screenHeight);
     }
+
+
+    @Override
+    public boolean onTouchEvent(MotionEvent motionEvent) {
+        if ((motionEvent.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
+            if (mSnakeGame != null && mSnakeGame.mTriggerButtonRect != null && mSnakeGame.mTriggerButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
+                Log.d("TriggerButton", "Trigger button touched");
+                mSnakeGame.setTriggerButtonPressed(true); // Update the SnakeGame's isTriggerButtonPressed variable
+            }
+
+            return true;
+        }else {Log.d("TriggerButton", "Trigger button not touched");}
+        return true;
+    }
+
 
 }
