@@ -118,6 +118,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
     private MotionEvent motionEvent;
     private SnakeGame snakeGame;
+    private boolean isTriggerButtonPressed = false;
 
     // This is the constructor method that gets called
     // from SnakeActivity
@@ -437,7 +438,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         if (mTriggerButton != null) {
 
             mTriggerButton.setPressed(true); // Update the press status using the actual state
-            boolean isButtonPressed = mTriggerButton.isPressed(); // Get the actual state of the trigger button
             Log.d("SnakeGame", "mTriggerButton state: " + mTriggerButton.isPressed());
 
             TriggerButton mTriggerButtonRect = TriggerButton.getDrawTriggerButton(mContext, snakeGame);
@@ -838,9 +838,10 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 mSnake.switchHeading(motionEvent);
             } else if (mTriggerButtonRect != null && mTriggerButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
                 // Trigger the bomb shooting action
+                Log.d("TriggerButton", "Trigger button press status: " + isButtonPressed);
                 // Update the trigger button press status using the correct state
                 if (mTriggerButtonRect != null) {
-                    mTriggerButton.setPressed(true); // Update the press status of the trigger button
+                    isButtonPressed = true; // Update the press status of the trigger button
                     boolean isButtonPressed = mTriggerButton.isPressed(); // Get the actual state of the trigger button
                     Log.d("TriggerButton", "Trigger button press status: " + isButtonPressed);
 
