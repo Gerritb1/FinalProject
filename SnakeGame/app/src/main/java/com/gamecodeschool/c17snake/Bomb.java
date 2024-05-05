@@ -12,14 +12,13 @@ import android.view.MotionEvent;
 
 import java.util.Random;
 
+
 public class Bomb extends GameObject implements Spawnable {
 
     private Bitmap mBitmapBomb;
     private static Bomb mBomb;
     private boolean readyToExplode = false;
     protected boolean spawned;
-    private int screenWidth;
-    private int screenHeight;
     private Point mShootDirection;
 
     public Bomb(Context context, Point location, int size) {
@@ -32,7 +31,7 @@ public class Bomb extends GameObject implements Spawnable {
         if (mBomb == null) {
             mBomb = new Bomb(context, location, size);
         }
-        return mBomb;
+            return mBomb;
     }
 
     @Override
@@ -72,7 +71,7 @@ public class Bomb extends GameObject implements Spawnable {
 
     @Override
     public void spawn() {
-        // Choose two random values and place the bomb
+            // Choose two random values and place the bomb
         Random random = new Random();
         location.x = random.nextInt(mSpawnRange.x) + 1;
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
