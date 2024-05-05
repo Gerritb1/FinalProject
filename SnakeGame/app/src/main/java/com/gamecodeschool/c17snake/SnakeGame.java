@@ -52,7 +52,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
     //Pause button rendering objects
     private Rect mPauseButtonRect;
-    private Rect mTriggerButtonRect;
+    Rect mTriggerButtonRect;
     private Paint mPauseButtonPaint;
 
     // Objects for drawing
@@ -237,16 +237,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         mPauseButtonPaint.setColor(Color.RED); // Adjust color as needed
     }
 
-    private void createTriggerButton() {
-        mTriggerButton = new TriggerButton(getContext(), this);
-
-        // Create a Rect object representing the trigger button's bounds
-        int buttonWidth = 100; // Set the width of the button
-        int buttonHeight = 100; // Set the height of the button
-        int buttonLeft = 50; // Set the left position of the button
-        int buttonTop = 50; // Set the top position of the button
-        mTriggerButtonRect = new Rect(buttonLeft, buttonTop, buttonLeft + buttonWidth, buttonTop + buttonHeight);
-    }
 
 
     //Refactored
@@ -783,7 +773,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
         // Update the trigger button press status using the correct state
         if (mTriggerButton != null) {
-            setTriggerButtonPressed(true); // Update the press status using the actual state
+            //setTriggerButtonPressed(true); // Update the press status using the actual state
             Log.e("SnakeGame", "Trigger button state: " + isTriggerButtonPressed);
 
             MotionEvent motionEvent = getMotionEvent();
@@ -801,9 +791,29 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         mBomb.draw(mCanvas, mPaint);
     }
 
-    public void setTriggerButtonPressed(boolean isPressed) {
-        isTriggerButtonPressed = isPressed;
+    private void createTriggerButton() {
+        mTriggerButton = new TriggerButton(getContext(), this);
+
+        // Get the screen dimensions
+        Point screenDimensions = mTriggerButton.getScreenDimensions();
+        int screenWidth = screenDimensions.x;
+        int screenHeight = screenDimensions.y;
+
+        // Define the size and position of the button relative to screen dimensions
+        int buttonWidth = screenWidth / 10;
+        int buttonHeight = screenHeight / 10;
+        int buttonLeft = screenWidth - buttonWidth - 150;
+        int buttonTop = screenHeight - buttonHeight - 25;
+
+        // Create a Rect object representing the trigger button's bounds
+        mTriggerButtonRect = new Rect(buttonLeft, buttonTop, buttonLeft + buttonWidth, buttonTop + buttonHeight);
     }
+
+
+    public void setTriggerButtonPressed(boolean isPressed) {
+        this.isTriggerButtonPressed = isPressed;
+    }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
@@ -821,13 +831,12 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 // If the pause button is touched, pause the game
                 mPaused = true;
                 mBackgroundMusic.pause();
+            } else if (mTriggerButton.getTriggerButtonRect().contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
+                // If the trigger button is touched, set isTriggerButtonPressed to true
+                setTriggerButtonPressed(true);
             } else if (!mPaused) {
                 // If the game is running and not paused, handle snake movement
                 mSnake.switchHeading(motionEvent);
-            } else if (mTriggerButtonRect != null && mTriggerButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
-                // Trigger the bomb shooting action
-                setTriggerButtonPressed(true);
-
             }
 
             return true;
