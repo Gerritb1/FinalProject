@@ -47,6 +47,29 @@ public class Bomb extends GameObject implements Spawnable {
         }
     }
 
+    // Add log statement to calculateBombDirection method
+    public void shootBomb(MotionEvent motionEvent, boolean isTriggerButtonPressed) {
+        if (isTriggerButtonPressed && !isReadyToExplode()) {
+            Log.d("Bomb", "Calculating bomb direction");
+
+            int touchX = (int) motionEvent.getX();
+            int touchY = (int) motionEvent.getY();
+
+            int directionX = touchX - getLocation().x;
+            int directionY = touchY - getLocation().y;
+
+            mShootDirection = new Point(directionX, directionY);
+
+            getLocation().x += mShootDirection.x;
+            getLocation().y += mShootDirection.y;
+
+            for (int i = segmentLocations.size() - 1; i > 0; i--) {
+                segmentLocations.get(i).x = segmentLocations.get(i - 1).x;
+                segmentLocations.get(i).y = segmentLocations.get(i - 1).y;
+            }
+        }
+    }
+
     @Override
     public void spawn() {
         // Choose two random values and place the bomb
@@ -54,11 +77,6 @@ public class Bomb extends GameObject implements Spawnable {
         location.x = random.nextInt(mSpawnRange.x) + 1;
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
         spawned = true;
-    }
-
-    @Override
-    public void hide() {
-        location.set(-10, -10);
     }
 
     // Check for collision with the snake
@@ -69,36 +87,9 @@ public class Bomb extends GameObject implements Spawnable {
         }
     }
 
-    // Add log statement to calculateBombDirection method
-    public Point calculateBombDirection(MotionEvent motionEvent) {
-        Log.d("Bomb", "Calculating bomb direction");
-        // Implement the logic to calculate the direction based on the touch event
-        int touchX = (int) motionEvent.getX();
-        int touchY = (int) motionEvent.getY();
-
-        // Calculate the direction vector from the touch coordinates
-        int directionX = touchX - getLocation().x;
-        int directionY = touchY - getLocation().y;
-
-        // Set the calculated direction for later use
-        mShootDirection = new Point(directionX, directionY);
-
-        return mShootDirection;
-    }
-
-    // Update the bomb's position to move in a straight line
-    public void shootBomb(boolean isTriggerButtonPressed) {
-        if (isTriggerButtonPressed && !isReadyToExplode()) {
-            // Move the bomb towards the direction it was shot
-            getLocation().x += mShootDirection.x;
-            getLocation().y += mShootDirection.y;
-
-            // Optionally, you can update the segment locations as well if needed
-            for (int i = segmentLocations.size() - 1; i > 0; i--) {
-                segmentLocations.get(i).x = segmentLocations.get(i - 1).x;
-                segmentLocations.get(i).y = segmentLocations.get(i - 1).y;
-            }
-        }
+    @Override
+    public void hide() {
+        location.set(-10, -10);
     }
     public boolean isSpawned() {
         return spawned;
