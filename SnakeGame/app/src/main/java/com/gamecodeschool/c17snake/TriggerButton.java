@@ -59,10 +59,7 @@ public class TriggerButton extends SurfaceView {
         }
         return null; // Handle the case where SnakeGame reference is not set
     }
-
-
-
-
+    
     public void drawButton(Canvas canvas, Paint paint) {
         // Draw the circular transparent button
         drawButton(paint);
@@ -121,20 +118,5 @@ public class TriggerButton extends SurfaceView {
         screenHeight = metrics.heightPixels;
         return new Point(screenWidth, screenHeight);
     }
-
-
-    @Override
-    public boolean onTouchEvent(MotionEvent motionEvent) {
-        if ((motionEvent.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
-            if (mSnakeGame != null && mSnakeGame.mTriggerButtonRect != null && mSnakeGame.mTriggerButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
-                Log.d("TriggerButton", "Trigger button touched");
-                mSnakeGame.setTriggerButtonPressed(true); // Update the SnakeGame's isTriggerButtonPressed variable
-            }
-
-            return true;
-        }else {Log.d("TriggerButton", "Trigger button not touched");}
-        return true;
-    }
-
-
+    
 }
