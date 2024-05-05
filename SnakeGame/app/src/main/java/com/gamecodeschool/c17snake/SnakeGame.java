@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -49,6 +50,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
     //Pause button rendering objects
     private Rect mPauseButtonRect;
+    private Rect mTriggerButtonRect;
     private Paint mPauseButtonPaint;
 
     // Objects for drawing
@@ -112,6 +114,8 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     private TriggerButton drawTriggerButton;
     private TriggerButton mTriggerButton;
     private boolean isButtonPressed = false;
+    private MotionEvent motionEvent;
+
 
     // This is the constructor method that gets called
     // from SnakeActivity
@@ -190,6 +194,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     public boolean isPaused() {
         return mPaused;
     }
+
 
     // Refactored
     @Override
@@ -411,22 +416,28 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
     public void updateBomb() {
         // Spawn the bomb if it hasn't been spawned yet
-        if (!mBomb.spawned) {
+        if (!mBomb.isSpawned()) {
             mBomb.spawn();
-            mBomb.spawned = true;
         }
 
         // Check for collision with the snake
         mBomb.checkSnakeCollision(mSnake);
 
-        // Move the bomb continuously only if the button is pressed
-        if (isButtonPressed) {
-            mBomb.moveBomb();
+        if (mTriggerButton.isPressed()) {
+            MotionEvent motionEvent = getMotionEvent(); // Ensure this method returns the MotionEvent correctly
+
+            // Calculate the shooting direction based on the MotionEvent and button state
+            mBomb.shootBomb(motionEvent, mTriggerButton.isPressed());
         }
 
         // Draw the bomb on the canvas
         mBomb.draw(mCanvas, mPaint);
     }
+
+    public MotionEvent getMotionEvent() {
+        return motionEvent;
+    }
+
 
     // Method to set the button pressed flag
     public void setButtonPressed(boolean isPressed) {
@@ -772,6 +783,8 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
         if ((motionEvent.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
+            Log.d("TriggerButton", "Touch Event - X: " + motionEvent.getX() + ", Y: " + motionEvent.getY());
+
             if (isFirstPause) {
                 // If the game beginning, start the game
                 mPaused = false;
@@ -786,60 +799,14 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             } else if (!mPaused) {
                 // If the game is running and not paused, handle snake movement
                 mSnake.switchHeading(motionEvent);
-            }
-
-            if (mTriggerButton.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
-                // Set the flag for trigger button press
-                isTriggerButtonPressed = true;
-                Point direction = mBomb.calculateBombDirection(motionEvent);
-                mBomb.shootBomb(direction);
-                mBomb.moveBomb();
-            } else {
-                isTriggerButtonPressed = false;
+            } else if (mTriggerButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
+                // Trigger the bomb shooting action
+                mBomb.shootBomb(motionEvent, isTriggerButtonPressed);
             }
 
             return true;
         }
         return true;
-    }
-
-    // Declare variables for bomb thread and its status
-    private boolean mBombThreadRunning = false;
-    private Thread mBombThread;
-    private MotionEvent motionEvent;
-
-    // Method to start the bomb movement thread
-    private void startBombThread() {
-        mBombThreadRunning = true;
-        mBombThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (mBombThreadRunning) {
-                    // Update bomb movement logic by shooting the bomb
-
-                    Point direction = mBomb.calculateBombDirection(motionEvent);
-                    mBomb.shootBomb(direction);
-
-                    try {
-                        // Adjust the sleep time based on the bomb movement speed
-                        Thread.sleep(0); // Adjust the sleep time accordingly
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-        mBombThread.start();
-    }
-
-    // Method to stop the bomb movement thread
-    private void stopBombThread() {
-        mBombThreadRunning = false;
-        try {
-            mBombThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     // Stop the thread
