@@ -32,7 +32,7 @@ public class Bomb extends GameObject implements Spawnable {
         mLocation = new Point(0, 0); // Initialize mLocation with default values
     }
 
-    private void setTriggerButtonPressed(){ isTriggerButtonPressed = true;}
+    private void setTriggerButtonPressed(boolean isTriggerButtonPressed){ this.isTriggerButtonPressed = isTriggerButtonPressed;}
 
     public static Bomb getBomb(Context context, Point location, int size) {
         if (mBomb == null) {
@@ -55,65 +55,67 @@ public class Bomb extends GameObject implements Spawnable {
 
     // Add log statement to calculateBombDirection method
     public void shootBomb(MotionEvent motionEvent, boolean isTriggerButtonPressed) {
-        if (motionEvent != null) {
-            Log.d("Bomb", "motionEvent is not null");
+        if (motionEvent != null && isTriggerButtonPressed) {
+            Log.d("Bomb", "motionEvent is not null and trigger button is pressed");
 
-            if (isTriggerButtonPressed) {
-                Log.d("Bomb", "Trigger button is pressed");
+            if (!isReadyToExplode()) {
+                Log.d("Bomb", "Bomb is not ready to explode");
 
-                if (!isReadyToExplode()) {
-                    Log.d("Bomb", "Bomb is not ready to explode");
+                // Calculate the direction of the bomb based on the touch event
+                int touchX = (int) motionEvent.getX();
+                int touchY = (int) motionEvent.getY();
 
-                    int touchX = (int) motionEvent.getX();
-                    int touchY = (int) motionEvent.getY();
+                // Assuming 'location' is the current position of the bomb
+                if (location != null) {
+                    Log.d("Bomb", "Location is not null");
 
-                    if (getLocation() != null) {
-                        Log.d("Bomb", "Location is not null");
+                    // Calculate the direction vector for the bomb to move
+                    int directionX = touchX - location.x;
+                    int directionY = touchY - location.y;
 
-                        int directionX = touchX - getLocation().x;
-                        int directionY = touchY - getLocation().y;
+                    // Normalize the direction vector (so the speed is constant)
+                    double magnitude = Math.sqrt(directionX * directionX + directionY * directionY);
+                    directionX = (int) (directionX / magnitude);
+                    directionY = (int) (directionY / magnitude);
 
-                        mShootDirection = new Point(directionX, directionY);
+                    // Set the shoot direction
+                    mShootDirection = new Point(directionX, directionY);
 
-                        getLocation().x += mShootDirection.x;
-                        getLocation().y += mShootDirection.y;
+                    // Update the bomb's location
+                    location.x += mShootDirection.x;
+                    location.y += mShootDirection.y;
 
-                        if (segmentLocations != null) {
-                            Log.d("Bomb", "segmentLocations is not null");
+                    Log.d("Bomb", "segmentLocations is " + (segmentLocations == null ? "null" : "not null"));
+                    Log.d("Bomb", "segmentLocations size is " + (segmentLocations == null ? "N/A" : segmentLocations.size()));
 
-                            for (int i = segmentLocations.size() - 1; i > 0; i--) {
-                                segmentLocations.get(i).x = segmentLocations.get(i - 1).x;
-                                segmentLocations.get(i).y = segmentLocations.get(i - 1).y;
-                            }
+                    // If you have segments following the bomb, update their positions as well
+                    if (segmentLocations != null && !segmentLocations.isEmpty()) {
+                        Log.d("Bomb", "segmentLocations is not null");
+
+                        // Update segment locations
+                        for (int i = segmentLocations.size() - 1; i > 0; i--) {
+                            segmentLocations.get(i).x = segmentLocations.get(i - 1).x;
+                            segmentLocations.get(i).y = segmentLocations.get(i - 1).y;
                         }
-                    } else {
-                        Log.d("Bomb", "Location is null");
+                        // The first segment should follow the bomb's location
+                        segmentLocations.get(0).x = location.x;
+                        segmentLocations.get(0).y = location.y;
                     }
                 } else {
-                    Log.d("Bomb", "Bomb is ready to explode");
+                    Log.d("Bomb", "Location is null");
                 }
             } else {
-                Log.d("Bomb", "Trigger button is not pressed");
+                Log.d("Bomb", "Bomb is ready to explode");
             }
         } else {
-            Log.d("Bomb", "motionEvent is null");
+            Log.d("Bomb", "Either motionEvent is null or trigger button is not pressed");
         }
-    }
-    public void setShootDirection(Point shootDirection) {
-        this.mShootDirection = shootDirection;
-    }
-
-    public Point getShootDirection() {
-        return mShootDirection;
     }
 
     public Point getLocation() {
         return mLocation;
     }
 
-    public ArrayList<Point> getSegmentLocations() {
-        return segmentLocations;
-    }
     @Override
     public void spawn() {
             // Choose two random values and place the bomb
@@ -125,8 +127,8 @@ public class Bomb extends GameObject implements Spawnable {
 
     // Check for collision with the snake
     public void checkSnakeCollision(Snake snake) {
-        if (snake.bigCheckDinner(location)) {
-            readyToExplode = true;
+        if (snake.checkDinner(location)) {
+            readyToExplode = false;
             location.set(-10, -10); // Move the bomb off-screen
         }
     }
