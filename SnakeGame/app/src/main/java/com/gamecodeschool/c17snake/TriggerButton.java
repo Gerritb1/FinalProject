@@ -53,9 +53,9 @@ public class TriggerButton extends SurfaceView {
 
     public void drawButton(Canvas canvas, Paint paint) {
         // Draw the circular transparent button
-        drawTransparentButton(paint);
+        drawButton(paint);
 
-        //Set paint style to fill
+        // Set the
         paint.setStyle(Paint.Style.FILL);
         canvas.drawCircle(horizontalPosition + buttonWidth / 2, verticalPosition + buttonHeight / 2, Math.min(buttonWidth, buttonHeight) / 2 - 5, paint); // Adjust the radius by subtracting 5
 
@@ -80,10 +80,10 @@ public class TriggerButton extends SurfaceView {
         }
     }
 
-
-    public void drawTransparentButton(Paint paint) {
-        // Set the same gray color as the PauseButton for the circular transparent button
-        paint.setColor(Color.argb(100, 203, 67, 53)); // Match the gray color from PauseButton
+    //Overloaded method to draw & color the button shape
+    public void drawButton(Paint paint) {
+        // Set the color
+        paint.setColor(Color.argb(100, 203, 67, 53));
 
         Point screenDimensions = getScreenDimensions();
         screenWidth = screenDimensions.x;
@@ -123,6 +123,6 @@ public class TriggerButton extends SurfaceView {
             Bomb.getBomb(mContext, new Point(horizontalPosition, verticalPosition), buttonWidth).shootBomb(event, isTouchOnButton);
         }
 
-        return true; // Return true to indicate that the touch event has been handled
+        return true; // Return true if touch event executed successfully
     }
 }
