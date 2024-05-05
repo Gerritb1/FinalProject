@@ -436,27 +436,14 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
         // Update the trigger button press status using the correct state
         if (mTriggerButton != null) {
-
             mTriggerButton.setPressed(true); // Update the press status using the actual state
-            Log.d("SnakeGame", "mTriggerButton state: " + mTriggerButton.isPressed());
 
-            TriggerButton mTriggerButtonRect = TriggerButton.getDrawTriggerButton(mContext, snakeGame);
-
-            if (mTriggerButtonRect != null) {
-                if (isButtonPressed) {
-                    Log.d("SnakeGame", "Trigger button is pressed");
-
-                    // Use the getter method to ensure motionEvent is not null
-                    MotionEvent motionEvent = getMotionEvent();
-                    if (motionEvent != null) {
-                        // Calculate the shooting direction based on the MotionEvent and button state
-                        mBomb.shootBomb(motionEvent, isButtonPressed); // Pass the actual state to shootBomb
-                    } else {
-                        Log.e("SnakeGame", "motionEvent is null. Ensure it is properly initialized.");
-                    }
-                }
+            //MotionEvent motionEvent = getMotionEvent();
+            if (motionEvent != null) {
+                // Calculate the shooting direction based on the MotionEvent and button state
+                mBomb.shootBomb(motionEvent, isButtonPressed); // Pass the actual state to shootBomb
             } else {
-                Log.e("SnakeGame", "mTriggerButtonRect is null. Ensure it is properly initialized.");
+                Log.e("SnakeGame", "Error: Unable to shoot bomb. Ensure motionEvent is not null and button is pressed.");
             }
         } else {
             Log.e("SnakeGame", "mTriggerButton is null. Make sure it is properly initialized.");
