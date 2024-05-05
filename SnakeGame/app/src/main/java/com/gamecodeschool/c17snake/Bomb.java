@@ -21,7 +21,7 @@ public class Bomb extends GameObject implements Spawnable {
     private int screenWidth;
     private int screenHeight;
     private Point mShootDirection;
-    
+
     public Bomb(Context context, Point location, int size) {
         super(context, location, size);
         mBitmapBomb = BitmapFactory.decodeResource(context.getResources(), R.drawable.bomb);
@@ -86,27 +86,9 @@ public class Bomb extends GameObject implements Spawnable {
         return mShootDirection;
     }
 
-    public void shootBomb(Point direction) {
-        Log.d("Bomb", "Shooting bomb");
-        if (direction != null) {
-            // Set the bomb's new location based on the shooting direction
-            int newX = getLocation().x + direction.x;
-            int newY = getLocation().y + direction.y;
-
-            // Check if the new position is within the bounds of the game screen
-            if (newX >= 0 && newX < screenWidth && newY >= 0 && newY < screenHeight) {
-                getLocation().x = newX;
-                getLocation().y = newY;
-
-                // Call moveBomb to update bomb's movement
-                moveBomb();
-            }
-        }
-    }
-    
     // Update the bomb's position to move in a straight line
-    public void moveBomb() {
-        if (isSpawned() && !isReadyToExplode()) {
+    public void shootBomb(boolean isTriggerButtonPressed) {
+        if (isTriggerButtonPressed && !isReadyToExplode()) {
             // Move the bomb towards the direction it was shot
             getLocation().x += mShootDirection.x;
             getLocation().y += mShootDirection.y;
@@ -118,7 +100,6 @@ public class Bomb extends GameObject implements Spawnable {
             }
         }
     }
-
     public boolean isSpawned() {
         return spawned;
     }
