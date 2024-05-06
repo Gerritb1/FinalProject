@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -29,11 +30,18 @@ public class Bomb extends GameObject implements Spawnable {
     private Map<Snake.Heading, Point> directionMap = new HashMap<>();
     private Snake.Heading heading;
 
+    private List<Point> segmentLocations;
+
+
     public Bomb(Context context, Point location, int size) {
         super(context, location, size);
         mBitmapBomb = BitmapFactory.decodeResource(context.getResources(), R.drawable.bomb);
         mBitmapBomb = Bitmap.createScaledBitmap(mBitmapBomb, size, size, false);
         mLocation = new Point(0, 0); // Initialize mLocation with default values
+        initializeSegmentLocations();
+
+
+
 
         // Initialize the direction map
         directionMap.put(Snake.Heading.UP, new Point(0, -1));
@@ -41,6 +49,14 @@ public class Bomb extends GameObject implements Spawnable {
         directionMap.put(Snake.Heading.DOWN, new Point(0, 1));
         directionMap.put(Snake.Heading.LEFT, new Point(-1, 0));
     }
+
+    private void initializeSegmentLocations() {
+        segmentLocations = new ArrayList<>();
+        // Add an initial segment location to avoid null or empty list
+        segmentLocations.add(new Point(0, 0)); // Replace with actual initial values
+    }
+
+
 
     // Getter and setter for mLocation
     public void setLocation(Point location) {
@@ -56,7 +72,7 @@ public class Bomb extends GameObject implements Spawnable {
         if (mBomb == null) {
             mBomb = new Bomb(context, location, size);
         }
-            return mBomb;
+        return mBomb;
     }
 
     @Override
@@ -65,21 +81,21 @@ public class Bomb extends GameObject implements Spawnable {
         if (spawned) {
             canvas.drawBitmap(mBitmapBomb, location.x * size, location.y * size, paint);
         }
-        if (!segmentLocations.isEmpty()) {
-            Point mouthLocation = segmentLocations.get(0);
-            canvas.drawBitmap(mBitmapBomb, mouthLocation.x * size, mouthLocation.y * size, paint);
-        }
     }
 
     public void shootBomb(MotionEvent motionEvent, boolean isTriggerButtonPressed) {
+        Log.d("Bomb", "shootBomb called");
         if (motionEvent != null && isTriggerButtonPressed) {
-
+            Log.d("Bomb", "Motion event is not null and trigger button is pressed");
             if (!isReadyToExplode()) {
-
+                Log.d("Bomb", "Bomb is not ready to explode");
                 // Check if segmentLocations is not empty before setting the bomb's initial location
                 if (!segmentLocations.isEmpty()) {
+                    Log.d("Bomb", "segmentLocations is not empty");
                     // Set the bomb's initial location to the snake's mouth location
                     setLocation(segmentLocations.get(0));
+                } else {
+                    Log.d("Bomb", "segmentLocations is empty");
                 }
                 // Get the direction based on the snake's current heading
                 Point direction = directionMap.get(heading);
@@ -90,7 +106,7 @@ public class Bomb extends GameObject implements Spawnable {
 
                 // Assuming 'location' is the current position of the bomb
                 if (location != null) {
-
+                    Log.d("Bomb", "Location is not null");
                     // Calculate the direction vector for the bomb to move
                     int directionX = touchX - location.x;
                     int directionY = touchY - location.y;
@@ -109,8 +125,7 @@ public class Bomb extends GameObject implements Spawnable {
 
                     // If you have segments following the bomb, update their positions as well
                     if (segmentLocations != null && !segmentLocations.isEmpty()) {
-                        Log.d("Bomb", "segmentLocations is not null");
-
+                        Log.d("Bomb", "Updating segment locations");
                         // Update segment locations
                         for (int i = segmentLocations.size() - 1; i > 0; i--) {
                             segmentLocations.get(i).x = segmentLocations.get(i - 1).x;
@@ -119,9 +134,17 @@ public class Bomb extends GameObject implements Spawnable {
                         // The first segment should follow the bomb's location
                         segmentLocations.get(0).x = location.x;
                         segmentLocations.get(0).y = location.y;
+                    } else {
+                        Log.d("Bomb", "No segments to update");
                     }
+                } else {
+                    Log.d("Bomb", "Location is null");
                 }
+            } else {
+                Log.d("Bomb", "Bomb is ready to explode");
             }
+        } else {
+            Log.d("Bomb", "Motion event is null or trigger button is not pressed");
         }
     }
 
@@ -131,7 +154,7 @@ public class Bomb extends GameObject implements Spawnable {
 
     @Override
     public void spawn() {
-            // Choose two random values and place the bomb
+        // Choose two random values and place the bomb
         Random random = new Random();
         location.x = random.nextInt(mSpawnRange.x) + 1;
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
