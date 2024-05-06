@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.hardware.GeomagneticField;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -28,13 +27,12 @@ public class TriggerButton extends SurfaceView {
     private Context mContext;
     private SnakeGame mSnakeGame;
 
-    private static TriggerButton drawTriggerButton;;
+    private static TriggerButton drawTriggerButton;
 
     private boolean isTriggerButtonPressed = false;
 
     public void setPressed(boolean isTriggerButtonPressed) {
         this.isTriggerButtonPressed = isTriggerButtonPressed;
-
     }
 
     public TriggerButton(Context context, SnakeGame snakeGame) {
@@ -43,13 +41,10 @@ public class TriggerButton extends SurfaceView {
         mSnakeGame = snakeGame;
     }
 
-
-
-
-
     public static TriggerButton getDrawTriggerButton(Context context, SnakeGame snakeGame) {
-        if (drawTriggerButton == null)
+        if (drawTriggerButton == null) {
             drawTriggerButton = new TriggerButton(context, snakeGame);
+        }
         return drawTriggerButton;
     }
 
@@ -64,9 +59,11 @@ public class TriggerButton extends SurfaceView {
         // Draw the circular transparent button
         drawButton(paint);
 
-        // Set the
+        // Set the paint style to fill
         paint.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(horizontalPosition + buttonWidth / 2, verticalPosition + buttonHeight / 2, Math.min(buttonWidth, buttonHeight) / 2 - 5, paint); // Adjust the radius by subtracting 5
+
+        // Draw a circle at the center of the button with a radius
+        canvas.drawCircle(horizontalPosition + buttonWidth / 2, verticalPosition + buttonHeight / 2, Math.min(buttonWidth, buttonHeight) / 2 - 5, paint);
 
         // Draw the transparent bomb.png image scaled to fit the button
         Bitmap bombImage = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.bomb);
@@ -76,7 +73,7 @@ public class TriggerButton extends SurfaceView {
             float imageHeight = imageWidth * ((float) bombImage.getHeight() / bombImage.getWidth());
 
             // Calculate the position to center the image within the button
-            float imageLeft = horizontalPosition + (buttonWidth - imageWidth) / 2f + 10; // Adjusted to shift the image slightly to the right
+            float imageLeft = horizontalPosition + (buttonWidth - imageWidth) / 2f + 10;
             float imageTop = verticalPosition + (buttonHeight - imageHeight) / 2f;
 
             // Create a new paint object for drawing the transparent image
@@ -89,7 +86,6 @@ public class TriggerButton extends SurfaceView {
         }
     }
 
-    //Overloaded method to draw & color the button shape
     public void drawButton(Paint paint) {
         // Set the color
         paint.setColor(Color.argb(100, 203, 67, 53));
@@ -98,10 +94,11 @@ public class TriggerButton extends SurfaceView {
         screenWidth = screenDimensions.x;
         screenHeight = screenDimensions.y;
 
-        // Define the size and position of the button relative to screen dimensions
+        // Define the size relative to screen dimensions
         buttonWidth = screenWidth / 10;
         buttonHeight = screenHeight / 10;
 
+        // Set the position of the button
         horizontalPosition = screenWidth - buttonWidth - 150;
         verticalPosition = screenHeight - buttonHeight - 25;
 
@@ -110,12 +107,23 @@ public class TriggerButton extends SurfaceView {
     }
 
     Point getScreenDimensions() {
+        // Access the WindowManager service using the application context
         WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+
+        // Get the default display of the WindowManager
         Display display = wm.getDefaultDisplay();
+
+        // Initialize a DisplayMetrics object to store display metrics
         DisplayMetrics metrics = new DisplayMetrics();
+
+        // Retrieve the display metrics of the default display
         display.getMetrics(metrics);
+
+        // Extract the screen width and height from the metrics and assign them to screenWidth and screenHeight
         screenWidth = metrics.widthPixels;
         screenHeight = metrics.heightPixels;
+
+        // Return a new Point object containing the screen width and height
         return new Point(screenWidth, screenHeight);
     }
 
