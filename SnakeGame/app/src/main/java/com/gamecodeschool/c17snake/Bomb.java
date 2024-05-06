@@ -101,14 +101,8 @@ public class Bomb extends GameObject implements Spawnable {
                         segmentLocations.get(0).x = location.x;
                         segmentLocations.get(0).y = location.y;
                     }
-                } else {
-                    Log.d("Bomb", "Location is null");
                 }
-            } else {
-                Log.d("Bomb", "Bomb is ready to explode");
             }
-        } else {
-            Log.d("Bomb", "Either motionEvent is null or trigger button is not pressed");
         }
     }
 
