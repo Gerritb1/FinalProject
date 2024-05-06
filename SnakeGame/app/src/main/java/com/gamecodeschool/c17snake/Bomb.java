@@ -40,14 +40,6 @@ public class Bomb extends GameObject implements Spawnable {
         mLocation = new Point(0, 0); // Initialize mLocation with default values
         initializeSegmentLocations();
 
-
-
-
-        // Initialize the direction map
-        directionMap.put(Snake.Heading.UP, new Point(0, -1));
-        directionMap.put(Snake.Heading.RIGHT, new Point(1, 0));
-        directionMap.put(Snake.Heading.DOWN, new Point(0, 1));
-        directionMap.put(Snake.Heading.LEFT, new Point(-1, 0));
     }
 
     private void initializeSegmentLocations() {
@@ -62,12 +54,7 @@ public class Bomb extends GameObject implements Spawnable {
     public void setLocation(Point location) {
         this.mLocation = location;
     }
-
-    // Getter and setter for mShootDirection
-    public Point getShootDirection() {
-        return mShootDirection;
-    }
-
+    
     public static Bomb getBomb(Context context, Point location, int size) {
         if (mBomb == null) {
             mBomb = new Bomb(context, location, size);
