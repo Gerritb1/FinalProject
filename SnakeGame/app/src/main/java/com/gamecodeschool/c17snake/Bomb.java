@@ -26,10 +26,6 @@ public class Bomb extends GameObject implements Spawnable {
     private Point mLocation;
     private int bombCount;
 
-    // Map to associate each heading with a direction
-    private Map<Snake.Heading, Point> directionMap = new HashMap<>();
-    private Snake.Heading heading;
-
     private List<Point> segmentLocations;
 
 
@@ -92,21 +88,6 @@ public class Bomb extends GameObject implements Spawnable {
                 // Assuming 'location' is the current position of the bomb
                 if (location != null) {
                     Log.d("Bomb", "Location is not null");
-                    // Calculate the direction vector for the bomb to move
-                    int directionX = touchX - location.x;
-                    int directionY = touchY - location.y;
-
-                    // Normalize the direction vector (so the speed is constant)
-                    double magnitude = Math.sqrt(directionX * directionX + directionY * directionY);
-                    directionX = (int) (directionX / magnitude);
-                    directionY = (int) (directionY / magnitude);
-
-                    // Set the shoot direction
-                    mShootDirection = new Point(directionX, directionY);
-
-                    // Update the bomb's location
-                    location.x += mShootDirection.x;
-                    location.y += mShootDirection.y;
 
                     // If you have segments following the bomb, update their positions as well
                     if (segmentLocations != null && !segmentLocations.isEmpty()) {
