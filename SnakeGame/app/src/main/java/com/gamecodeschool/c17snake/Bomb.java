@@ -69,25 +69,8 @@ public class Bomb extends GameObject implements Spawnable {
     public void shootBomb(MotionEvent motionEvent, boolean isTriggerButtonPressed) {
         Log.d("Bomb", "shootBomb called");
         if (motionEvent != null && isTriggerButtonPressed) {
-            Log.d("Bomb", "Motion event is not null and trigger button is pressed");
+            
             if (!isReadyToExplode()) {
-                Log.d("Bomb", "Bomb is not ready to explode");
-                // Check if segmentLocations is not empty before setting the bomb's initial location
-                if (!segmentLocations.isEmpty()) {
-                    Log.d("Bomb", "segmentLocations is not empty");
-                    // Set the bomb's initial location to the snake's mouth location
-                    setLocation(segmentLocations.get(0));
-                } else {
-                    Log.d("Bomb", "segmentLocations is empty");
-                }
-
-                // Calculate the direction of the bomb based on the touch event
-                int touchX = (int) motionEvent.getX();
-                int touchY = (int) motionEvent.getY();
-
-                // Assuming 'location' is the current position of the bomb
-                if (location != null) {
-                    Log.d("Bomb", "Location is not null");
 
                     // If you have segments following the bomb, update their positions as well
                     if (segmentLocations != null && !segmentLocations.isEmpty()) {
@@ -103,16 +86,10 @@ public class Bomb extends GameObject implements Spawnable {
                     } else {
                         Log.d("Bomb", "No segments to update");
                     }
-                } else {
-                    Log.d("Bomb", "Location is null");
                 }
-            } else {
-                Log.d("Bomb", "Bomb is ready to explode");
-            }
-        } else {
-            Log.d("Bomb", "Motion event is null or trigger button is not pressed");
+            } 
         }
-    }
+
 
     public Point getLocation() {
         return mLocation;
