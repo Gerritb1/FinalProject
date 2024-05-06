@@ -11,9 +11,7 @@ import android.view.MotionEvent;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public class Bomb extends GameObject implements Spawnable {
@@ -24,17 +22,20 @@ public class Bomb extends GameObject implements Spawnable {
     protected boolean spawned;
     private Point mShootDirection;
     private Point mLocation;
-    private int bombCount;
-
+    private int bombCount = 0;
     private List<Point> segmentLocations;
     private boolean spawnedFiredBomb = false;
+    private int screenWidth;
+    private int screenHeight;
 
 
     public Bomb(Context context, Point location, int size) {
         super(context, location, size);
         mBitmapBomb = BitmapFactory.decodeResource(context.getResources(), R.drawable.bomb);
         mBitmapBomb = Bitmap.createScaledBitmap(mBitmapBomb, size, size, false);
-        mLocation = new Point(0, 0); // Initialize mLocation with default values
+        
+        //Bomb spawns in corner of screen when shot  
+        mLocation = new Point(0, 0); // This needs to be fixed
         initializeSegmentLocations();
 
     }
@@ -44,9 +45,7 @@ public class Bomb extends GameObject implements Spawnable {
         // Add an initial segment location to avoid null or empty list
         segmentLocations.add(new Point(0, 0)); // Replace with actual initial values
     }
-
-
-
+    
     // Getter and setter for mLocation
     public void setLocation(Point location) {
         this.mLocation = location;
@@ -72,21 +71,24 @@ public class Bomb extends GameObject implements Spawnable {
         if (motionEvent != null && isTriggerButtonPressed && !isReadyToExplode()) {
             // Set the bomb's initial location to the snake's mouth location
             if (!segmentLocations.isEmpty()) {
-
                 setLocation(segmentLocations.get(0));
+                Log.d("Bomb", "Initial bomb location set to: " + mLocation);
 
                 // Calculate the direction of the bomb based on the touch event
                 int touchX = (int) motionEvent.getX();
                 int touchY = (int) motionEvent.getY();
+                Log.d("Bomb", "Touch coordinates: (" + touchX + ", " + touchY + ")");
 
                 // Calculate the direction vector for the bomb to move
                 int directionX = touchX - mLocation.x;
                 int directionY = touchY - mLocation.y;
+                Log.d("Bomb", "Direction vector before normalization: (" + directionX + ", " + directionY + ")");
 
                 // Normalize the direction vector (so the speed is constant)
                 double magnitude = Math.sqrt(directionX * directionX + directionY * directionY);
                 directionX = (int) (directionX / magnitude);
                 directionY = (int) (directionY / magnitude);
+                Log.d("Bomb", "Normalized direction vector: (" + directionX + ", " + directionY + ")");
 
                 // Set the shoot direction
                 mShootDirection = new Point(directionX, directionY);
@@ -97,11 +99,25 @@ public class Bomb extends GameObject implements Spawnable {
         }
     }
 
+    public void update() {
+        if (spawnedFiredBomb) {
+            // Move the bomb in the direction it was fired
+            mLocation.x += mShootDirection.x;
+            mLocation.y += mShootDirection.y;
+            Log.d("Bomb", "Bomb position updated to: " + mLocation);
+
+            // Check if the bomb has gone off-screen
+            if (mLocation.x < 0 || mLocation.x > screenWidth || mLocation.y < 0 || mLocation.y > screenHeight) {
+                hide(); // Hide the bomb if it's off-screen
+                Log.d("Bomb", "Bomb went off-screen and is now hidden.");
+                spawnedFiredBomb = false; // Stop updating the bomb's position
+            }
+        }
+    }
+
     public Point getLocation() {
         return mLocation;
     }
-
-
 
     @Override
     public void spawn() {
@@ -111,10 +127,8 @@ public class Bomb extends GameObject implements Spawnable {
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
         spawned = true;
     }
-
-
-
-    //Method Overloading
+    
+    //Spawn fired bomb
     public void spawnFiredBomb(Point shootDirection) {
         if (shootDirection != null) {
             location.set(mLocation.x, mLocation.y);
