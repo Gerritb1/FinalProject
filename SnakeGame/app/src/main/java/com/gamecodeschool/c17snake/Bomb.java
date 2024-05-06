@@ -54,7 +54,7 @@ public class Bomb extends GameObject implements Spawnable {
     public void setLocation(Point location) {
         this.mLocation = location;
     }
-    
+
     public static Bomb getBomb(Context context, Point location, int size) {
         if (mBomb == null) {
             mBomb = new Bomb(context, location, size);
@@ -84,8 +84,6 @@ public class Bomb extends GameObject implements Spawnable {
                 } else {
                     Log.d("Bomb", "segmentLocations is empty");
                 }
-                // Get the direction based on the snake's current heading
-                Point direction = directionMap.get(heading);
 
                 // Calculate the direction of the bomb based on the touch event
                 int touchX = (int) motionEvent.getX();
