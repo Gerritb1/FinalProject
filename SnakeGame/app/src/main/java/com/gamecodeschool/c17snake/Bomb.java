@@ -22,8 +22,7 @@ public class Bomb extends GameObject implements Spawnable {
     protected boolean spawned;
     private Point mShootDirection;
     private Point mLocation;
-
-    private boolean isTriggerButtonPressed = false;
+    private int bombCount;
 
     public Bomb(Context context, Point location, int size) {
         super(context, location, size);
@@ -32,7 +31,15 @@ public class Bomb extends GameObject implements Spawnable {
         mLocation = new Point(0, 0); // Initialize mLocation with default values
     }
 
-    private void setTriggerButtonPressed(boolean isTriggerButtonPressed){ this.isTriggerButtonPressed = isTriggerButtonPressed;}
+    // Getter and setter for mLocation
+    public void setLocation(Point location) {
+        this.mLocation = location;
+    }
+
+    // Getter and setter for mShootDirection
+    public Point getShootDirection() {
+        return mShootDirection;
+    }
 
     public static Bomb getBomb(Context context, Point location, int size) {
         if (mBomb == null) {
@@ -53,14 +60,10 @@ public class Bomb extends GameObject implements Spawnable {
         }
     }
 
-    // Add log statement to calculateBombDirection method
     public void shootBomb(MotionEvent motionEvent, boolean isTriggerButtonPressed) {
         if (motionEvent != null && isTriggerButtonPressed) {
-            Log.d("Bomb", "motionEvent is not null and trigger button is pressed");
 
             if (!isReadyToExplode()) {
-                Log.d("Bomb", "Bomb is not ready to explode");
-
                 // Calculate the direction of the bomb based on the touch event
                 int touchX = (int) motionEvent.getX();
                 int touchY = (int) motionEvent.getY();
@@ -84,9 +87,6 @@ public class Bomb extends GameObject implements Spawnable {
                     // Update the bomb's location
                     location.x += mShootDirection.x;
                     location.y += mShootDirection.y;
-
-                    Log.d("Bomb", "segmentLocations is " + (segmentLocations == null ? "null" : "not null"));
-                    Log.d("Bomb", "segmentLocations size is " + (segmentLocations == null ? "N/A" : segmentLocations.size()));
 
                     // If you have segments following the bomb, update their positions as well
                     if (segmentLocations != null && !segmentLocations.isEmpty()) {
@@ -129,7 +129,8 @@ public class Bomb extends GameObject implements Spawnable {
     public void checkSnakeCollision(Snake snake) {
         if (snake.checkDinner(location)) {
             readyToExplode = false;
-            location.set(-10, -10); // Move the bomb off-screen
+            bombCount++;
+            hide();
         }
     }
 
