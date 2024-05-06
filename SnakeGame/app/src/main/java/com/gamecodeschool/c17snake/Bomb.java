@@ -27,6 +27,7 @@ public class Bomb extends GameObject implements Spawnable {
     private int bombCount;
 
     private List<Point> segmentLocations;
+    private boolean spawnedFiredBomb = false;
 
 
     public Bomb(Context context, Point location, int size) {
@@ -73,8 +74,6 @@ public class Bomb extends GameObject implements Spawnable {
             if (!segmentLocations.isEmpty()) {
 
                 setLocation(segmentLocations.get(0));
-                spawned = true; // The bomb is now 'spawned' and should be drawn
-                spawn();
 
                 // Calculate the direction of the bomb based on the touch event
                 int touchX = (int) motionEvent.getX();
@@ -91,6 +90,7 @@ public class Bomb extends GameObject implements Spawnable {
 
                 // Set the shoot direction
                 mShootDirection = new Point(directionX, directionY);
+                spawnFiredBomb(mShootDirection); //Spawn Moving bomb after fired
             } else {
                 Log.d("Bomb", "segmentLocations is empty, cannot shoot bomb.");
             }
@@ -101,6 +101,8 @@ public class Bomb extends GameObject implements Spawnable {
         return mLocation;
     }
 
+
+
     @Override
     public void spawn() {
         // Choose two random values and place the bomb
@@ -108,6 +110,17 @@ public class Bomb extends GameObject implements Spawnable {
         location.x = random.nextInt(mSpawnRange.x) + 1;
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
         spawned = true;
+    }
+
+
+
+    //Method Overloading
+    public void spawnFiredBomb(Point shootDirection) {
+        if (shootDirection != null) {
+            location.set(mLocation.x, mLocation.y);
+            mShootDirection = shootDirection;
+            spawnedFiredBomb = true;
+        }
     }
 
     // Check for collision with the snake
