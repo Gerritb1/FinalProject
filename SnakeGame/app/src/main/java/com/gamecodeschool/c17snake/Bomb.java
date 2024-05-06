@@ -68,28 +68,34 @@ public class Bomb extends GameObject implements Spawnable {
 
     public void shootBomb(MotionEvent motionEvent, boolean isTriggerButtonPressed) {
         Log.d("Bomb", "shootBomb called");
-        if (motionEvent != null && isTriggerButtonPressed) {
-            
-            if (!isReadyToExplode()) {
+        if (motionEvent != null && isTriggerButtonPressed && !isReadyToExplode()) {
+            // Set the bomb's initial location to the snake's mouth location
+            if (!segmentLocations.isEmpty()) {
 
-                    // If you have segments following the bomb, update their positions as well
-                    if (segmentLocations != null && !segmentLocations.isEmpty()) {
-                        Log.d("Bomb", "Updating segment locations");
-                        // Update segment locations
-                        for (int i = segmentLocations.size() - 1; i > 0; i--) {
-                            segmentLocations.get(i).x = segmentLocations.get(i - 1).x;
-                            segmentLocations.get(i).y = segmentLocations.get(i - 1).y;
-                        }
-                        // The first segment should follow the bomb's location
-                        segmentLocations.get(0).x = location.x;
-                        segmentLocations.get(0).y = location.y;
-                    } else {
-                        Log.d("Bomb", "No segments to update");
-                    }
-                }
-            } 
+                setLocation(segmentLocations.get(0));
+                spawned = true; // The bomb is now 'spawned' and should be drawn
+                spawn();
+
+                // Calculate the direction of the bomb based on the touch event
+                int touchX = (int) motionEvent.getX();
+                int touchY = (int) motionEvent.getY();
+
+                // Calculate the direction vector for the bomb to move
+                int directionX = touchX - mLocation.x;
+                int directionY = touchY - mLocation.y;
+
+                // Normalize the direction vector (so the speed is constant)
+                double magnitude = Math.sqrt(directionX * directionX + directionY * directionY);
+                directionX = (int) (directionX / magnitude);
+                directionY = (int) (directionY / magnitude);
+
+                // Set the shoot direction
+                mShootDirection = new Point(directionX, directionY);
+            } else {
+                Log.d("Bomb", "segmentLocations is empty, cannot shoot bomb.");
+            }
         }
-
+    }
 
     public Point getLocation() {
         return mLocation;
