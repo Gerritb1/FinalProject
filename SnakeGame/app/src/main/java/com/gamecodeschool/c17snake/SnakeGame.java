@@ -117,7 +117,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     private TriggerButton mTriggerButton;
 
     private MotionEvent motionEvent;
-    private SnakeGame snakeGame;
     private boolean isTriggerButtonPressed = false;
 
     // This is the constructor method that gets called
@@ -762,6 +761,10 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         }
     }
 
+    // Add a bomb count variable at the class level
+    private int bombCount = 0;
+
+
     public void updateBomb() {
         // Spawn the bomb if it hasn't been spawned yet
         if (!mBomb.isSpawned()) {
@@ -773,13 +776,11 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
         // Update the trigger button press status using the correct state
         if (mTriggerButton != null) {
-            //setTriggerButtonPressed(true); // Update the press status using the actual state
-            Log.e("SnakeGame", "Trigger button state: " + isTriggerButtonPressed);
-
             MotionEvent motionEvent = getMotionEvent();
             if (motionEvent != null) {
-                // Calculate the shooting direction based on the MotionEvent and button state
-                mBomb.shootBomb(motionEvent, isTriggerButtonPressed); // Pass the actual state to shootBomb
+                // Pass the actual state to shootBomb
+                mBomb.shootBomb(motionEvent, isTriggerButtonPressed);
+                mBomb.update();
             } else {
                 Log.e("SnakeGame", "Error: Unable to shoot bomb. Ensure motionEvent is not null and button is pressed.");
             }
