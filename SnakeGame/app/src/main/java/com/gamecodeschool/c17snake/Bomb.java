@@ -11,8 +11,9 @@ import android.view.MotionEvent;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
-
 
 public class Bomb extends GameObject implements Spawnable {
 
@@ -24,11 +25,21 @@ public class Bomb extends GameObject implements Spawnable {
     private Point mLocation;
     private int bombCount;
 
+    // Map to associate each heading with a direction
+    private Map<Snake.Heading, Point> directionMap = new HashMap<>();
+    private Snake.Heading heading;
+
     public Bomb(Context context, Point location, int size) {
         super(context, location, size);
         mBitmapBomb = BitmapFactory.decodeResource(context.getResources(), R.drawable.bomb);
         mBitmapBomb = Bitmap.createScaledBitmap(mBitmapBomb, size, size, false);
         mLocation = new Point(0, 0); // Initialize mLocation with default values
+
+        // Initialize the direction map
+        directionMap.put(Snake.Heading.UP, new Point(0, -1));
+        directionMap.put(Snake.Heading.RIGHT, new Point(1, 0));
+        directionMap.put(Snake.Heading.DOWN, new Point(0, 1));
+        directionMap.put(Snake.Heading.LEFT, new Point(-1, 0));
     }
 
     // Getter and setter for mLocation
@@ -54,7 +65,7 @@ public class Bomb extends GameObject implements Spawnable {
         if (spawned) {
             canvas.drawBitmap(mBitmapBomb, location.x * size, location.y * size, paint);
         }
-        if (segmentLocations.size() > 0) {
+        if (!segmentLocations.isEmpty()) {
             Point mouthLocation = segmentLocations.get(0);
             canvas.drawBitmap(mBitmapBomb, mouthLocation.x * size, mouthLocation.y * size, paint);
         }
@@ -64,13 +75,21 @@ public class Bomb extends GameObject implements Spawnable {
         if (motionEvent != null && isTriggerButtonPressed) {
 
             if (!isReadyToExplode()) {
+
+                // Check if segmentLocations is not empty before setting the bomb's initial location
+                if (!segmentLocations.isEmpty()) {
+                    // Set the bomb's initial location to the snake's mouth location
+                    setLocation(segmentLocations.get(0));
+                }
+                // Get the direction based on the snake's current heading
+                Point direction = directionMap.get(heading);
+
                 // Calculate the direction of the bomb based on the touch event
                 int touchX = (int) motionEvent.getX();
                 int touchY = (int) motionEvent.getY();
 
                 // Assuming 'location' is the current position of the bomb
                 if (location != null) {
-                    Log.d("Bomb", "Location is not null");
 
                     // Calculate the direction vector for the bomb to move
                     int directionX = touchX - location.x;
