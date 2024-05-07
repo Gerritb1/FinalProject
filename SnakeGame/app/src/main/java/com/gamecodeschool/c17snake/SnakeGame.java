@@ -374,6 +374,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         if (!mPaused && isFirstPause) {
             mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
             mApple.spawn();
+            mBomb.spawn();
             if(mScore > 3) {
                 yApple.spawn();
                 mBomb.spawn();
@@ -483,6 +484,30 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             randomNumber = random.nextInt(4);
         }
     }
+    public void updateBomb() {
+        
+        mBomb.checkSnakeCollision(mSnake);
+
+        // Update the trigger button press status using the correct state
+        if (mTriggerButton != null) {
+            MotionEvent motionEvent = getMotionEvent();
+            if (motionEvent != null) {
+                // Pass the actual state to shootBomb
+                mBomb.shootBomb(motionEvent, isTriggerButtonPressed);
+                mBomb.update();
+
+            } else {
+                Log.e("SnakeGame", "Error: Unable to shoot bomb. Ensure motionEvent is not null and button is pressed.");
+            }
+        } else {
+            Log.e("SnakeGame", "mTriggerButton is null. Make sure it is properly initialized.");
+        }
+
+        // Draw the bomb on the canvas
+        mBomb.draw(mCanvas, mPaint);
+    }
+
+
 
     // Refactored, this is for the yellow apple
     public void updateYApple() {
@@ -761,36 +786,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         }
     }
 
-    // Add a bomb count variable at the class level
-    private int bombCount = 0;
 
-
-    public void updateBomb() {
-        // Spawn the bomb if it hasn't been spawned yet
-        if (!mBomb.isSpawned()) {
-            mBomb.spawn();
-        }
-
-        // Check for collision with the snake
-        mBomb.checkSnakeCollision(mSnake);
-
-        // Update the trigger button press status using the correct state
-        if (mTriggerButton != null) {
-            MotionEvent motionEvent = getMotionEvent();
-            if (motionEvent != null) {
-                // Pass the actual state to shootBomb
-                mBomb.shootBomb(motionEvent, isTriggerButtonPressed);
-                mBomb.update();
-            } else {
-                Log.e("SnakeGame", "Error: Unable to shoot bomb. Ensure motionEvent is not null and button is pressed.");
-            }
-        } else {
-            Log.e("SnakeGame", "mTriggerButton is null. Make sure it is properly initialized.");
-        }
-
-        // Draw the bomb on the canvas
-        mBomb.draw(mCanvas, mPaint);
-    }
 
     private void createTriggerButton() {
         mTriggerButton = new TriggerButton(getContext(), this);
