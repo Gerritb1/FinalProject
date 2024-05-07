@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
+
+import java.util.List;
 import java.util.Random;
 
 class Rock extends GameObject implements Spawnable{
@@ -57,11 +59,13 @@ class Rock extends GameObject implements Spawnable{
 
     // This is called every time an rock is eaten
     @Override
-    public void spawn() {
+    public Point spawn(List<Point> locations) {
         // Choose two random values and place the rock
         Random random = new Random();
         location.x = random.nextInt(mSpawnRange.x) + 1;
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+
+        return new Point (location.x, location.y);
     }
 
 

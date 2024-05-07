@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
+
+import java.util.List;
 import java.util.Random;
 
 public class Trash extends Rock implements Spawnable{
@@ -30,11 +32,18 @@ public class Trash extends Rock implements Spawnable{
 
     // This is called when the chance spawn works
     @Override
-    public void spawn() {
+    public Point spawn(List<Point> rockLocations) {
         // Choose two random values and place the trash
         Random random = new Random();
         location.x = random.nextInt(mSpawnRange.x) + 1;
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+        for (int x=0; x<4; x++){
+            if(location.x==rockLocations.get(x).x || location.y==rockLocations.get(x).y){
+                location.x = random.nextInt(mSpawnRange.x) + 1;
+                location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+            }
+        }
+        return new Point (-10, -10);
     }
 
 
@@ -51,10 +60,10 @@ public class Trash extends Rock implements Spawnable{
         location.set(-10, -10); // Set the location outside the visible screen
     }
 
-    public void chanceToSpawn(int score, int chance){
+    public void chanceToSpawn(int score, int chance, List<Point> rockLocations){
         Random rand = new Random();
         if (rand.nextInt(score) > chance) {
-            this.spawn();
+            this.spawn(rockLocations);
         }
     }
 
