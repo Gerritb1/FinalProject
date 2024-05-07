@@ -22,8 +22,8 @@ public class Bomb extends GameObject implements Spawnable {
     protected boolean spawned;
     private Point mShootDirection;
     private Point mLocation;
-    private int bombCount = 0;
     private List<Point> segmentLocations;
+    private Context mContext;
     private boolean spawnedFiredBomb = false;
     private int screenWidth;
     private int screenHeight;
@@ -74,32 +74,27 @@ public class Bomb extends GameObject implements Spawnable {
     }
 
 
-    public void shootBomb(MotionEvent motionEvent, boolean isTriggerButtonPressed) {
+    public void shootBomb(boolean isTriggerButtonPressed) {
         Log.d("Bomb", "shootBomb called");
-        if (motionEvent != null && isTriggerButtonPressed && !isReadyToExplode()) {
+        if (isTriggerButtonPressed && !isReadyToExplode()) {
             // Set the bomb's initial location to the snake's mouth location
             if (!segmentLocations.isEmpty()) {
                 setLocation(segmentLocations.get(0));
                 Log.d("Bomb", "Initial bomb location set to: " + mLocation);
 
-                // Calculate the direction of the bomb based on the touch event
-                int touchX = (int) motionEvent.getX();
-                int touchY = (int) motionEvent.getY();
-                Log.d("Bomb", "Touch coordinates: (" + touchX + ", " + touchY + ")");
+                // Get the snake's heading
+                Point directionVector = Snake.getSnake(mContext, mLocation, size).updatePosition();
 
-                // Calculate the direction vector for the bomb to move
-                int directionX = touchX - mLocation.x;
-                int directionY = touchY - mLocation.y;
-                Log.d("Bomb", "Direction vector before normalization: (" + directionX + ", " + directionY + ")");
+                // Check if directionVector is null
+                if (directionVector != null) {
+                    Log.d("Bomb", "Direction vector: (" + directionVector.x + ", " + directionVector.y + ")");
 
-                // Normalize the direction vector (so the speed is constant)
-                double magnitude = Math.sqrt(directionX * directionX + directionY * directionY);
-                Point directionVector = new Point((int) Math.round(directionX / magnitude), (int) Math.round(directionY / magnitude));
-                Log.d("Bomb", "Normalized direction vector: (" + directionVector.x + ", " + directionVector.y + ")");
-
-                // Set the shoot direction
-                mShootDirection = directionVector;
-                spawnFiredBomb(mShootDirection); //Spawn Moving bomb after fired
+                    // Set the shoot direction
+                    mShootDirection = directionVector;
+                    spawnFiredBomb(mShootDirection); //Spawn Moving bomb after fired
+                } else {
+                    Log.d("Bomb", "directionVector is null, cannot shoot bomb.");
+                }
             } else {
                 Log.d("Bomb", "segmentLocations is empty, cannot shoot bomb.");
             }
@@ -121,6 +116,7 @@ public class Bomb extends GameObject implements Spawnable {
             }
         }
     }
+
     public Point getLocation() {
         return mLocation;
     }
@@ -148,7 +144,6 @@ public class Bomb extends GameObject implements Spawnable {
     public void checkSnakeCollision(Snake snake) {
         if (snake.checkDinner(location)) {
             readyToExplode = false;
-            bombCount++;
             hide();
         }
     }
