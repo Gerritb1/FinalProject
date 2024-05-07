@@ -27,25 +27,32 @@ public class Bomb extends GameObject implements Spawnable {
     private boolean spawnedFiredBomb = false;
     private int screenWidth;
     private int screenHeight;
+    private Snake mSnake;
 
 
-    public Bomb(Context context, Point location, int size) {
-        super(context, location, size);
+    public Bomb(Context context, Point snakeLocation, int size) {
+        super(context, snakeLocation, size);
         mBitmapBomb = BitmapFactory.decodeResource(context.getResources(), R.drawable.bomb);
         mBitmapBomb = Bitmap.createScaledBitmap(mBitmapBomb, size, size, false);
-        
-        //Bomb spawns in corner of screen when shot  
-        mLocation = new Point(0, 0); // This needs to be fixed
-        initializeSegmentLocations();
 
+        //Bomb spawns at the snake's location when shot
+        mLocation = new Point(snakeLocation.x, snakeLocation.y); // Fixed
+        initializeSegmentLocations();
     }
+
 
     private void initializeSegmentLocations() {
         segmentLocations = new ArrayList<>();
         // Add an initial segment location to avoid null or empty list
-        segmentLocations.add(new Point(0, 0)); // Replace with actual initial values
+        segmentLocations.add(new Point(mLocation.x, mLocation.y)); // Replace with actual initial values
     }
-    
+
+
+    public void setSnake(Snake snake) {
+        this.mSnake = snake;
+    }
+
+
     // Getter and setter for mLocation
     public void setLocation(Point location) {
         this.mLocation = location;
@@ -65,6 +72,7 @@ public class Bomb extends GameObject implements Spawnable {
             canvas.drawBitmap(mBitmapBomb, location.x * size, location.y * size, paint);
         }
     }
+
 
     public void shootBomb(MotionEvent motionEvent, boolean isTriggerButtonPressed) {
         Log.d("Bomb", "shootBomb called");
@@ -86,12 +94,11 @@ public class Bomb extends GameObject implements Spawnable {
 
                 // Normalize the direction vector (so the speed is constant)
                 double magnitude = Math.sqrt(directionX * directionX + directionY * directionY);
-                directionX = (int) (directionX / magnitude);
-                directionY = (int) (directionY / magnitude);
-                Log.d("Bomb", "Normalized direction vector: (" + directionX + ", " + directionY + ")");
+                Point directionVector = new Point((int) Math.round(directionX / magnitude), (int) Math.round(directionY / magnitude));
+                Log.d("Bomb", "Normalized direction vector: (" + directionVector.x + ", " + directionVector.y + ")");
 
                 // Set the shoot direction
-                mShootDirection = new Point(directionX, directionY);
+                mShootDirection = directionVector;
                 spawnFiredBomb(mShootDirection); //Spawn Moving bomb after fired
             } else {
                 Log.d("Bomb", "segmentLocations is empty, cannot shoot bomb.");
@@ -114,7 +121,6 @@ public class Bomb extends GameObject implements Spawnable {
             }
         }
     }
-
     public Point getLocation() {
         return mLocation;
     }
@@ -127,11 +133,12 @@ public class Bomb extends GameObject implements Spawnable {
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
         spawned = true;
     }
-    
+
     //Spawn fired bomb
+// Update the bomb's location to where the snake is shooting the bomb from
     public void spawnFiredBomb(Point shootDirection) {
         if (shootDirection != null) {
-            location.set(mLocation.x, mLocation.y);
+            mLocation.set(segmentLocations.get(0).x, segmentLocations.get(0).y); // Update bomb location to snake's mouth
             mShootDirection = shootDirection;
             spawnedFiredBomb = true;
         }
