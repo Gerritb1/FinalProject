@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
+
+import java.util.List;
 import java.util.Random;
 
 class YellowApple extends Apple implements Spawnable{
@@ -39,12 +41,19 @@ class YellowApple extends Apple implements Spawnable{
 
     // This is called every time an apple is eaten
     @Override
-    public void spawn() {
+    public Point spawn(List<Point> rockLocations) {
         // Choose two random values and place the apple
         Random random = new Random();
         location.x = random.nextInt(mSpawnRange.x) + 1;
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+        for (int x=0; x<4; x++){
+            if(location.x==rockLocations.get(x).x || location.y==rockLocations.get(x).y){
+                location.x = random.nextInt(mSpawnRange.x) + 1;
+                location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+            }
+        }
         spawned = true;
+        return new Point (-10, -10);
     }
 
     public boolean isSpawned() {
