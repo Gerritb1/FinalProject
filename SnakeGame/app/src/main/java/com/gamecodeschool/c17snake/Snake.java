@@ -38,7 +38,7 @@ class Snake extends GameObject implements Movable, Collidable {
     // Maintain a single global reference to the snake
     private static Snake snake;
 
-    Map <Heading, HeadRotate> headMap
+    Map<Heading, HeadRotate> headMap
             = new HashMap<Heading, HeadRotate>();
     Map<Heading, HeadRotate> moveMap
             = new HashMap<Heading, HeadRotate>();
@@ -79,7 +79,7 @@ class Snake extends GameObject implements Movable, Collidable {
         isVulnerable = vulnerable;
     }
 
-    public void populateElseMap(){
+    public void populateElseMap() {
         elseMap.put(Heading.UP, new HeadRotate() {
             @Override
             public void rotate(Canvas canvas, Paint paint) {
@@ -107,7 +107,8 @@ class Snake extends GameObject implements Movable, Collidable {
         });
 
     }
-    public void populateIfMap(){
+
+    public void populateIfMap() {
         ifMap.put(Heading.UP, new HeadRotate() {
             @Override
             public void rotate(Canvas canvas, Paint paint) {
@@ -136,7 +137,8 @@ class Snake extends GameObject implements Movable, Collidable {
             }
         });
     }
-    public void populateMoveMap(Point p){
+
+    public void populateMoveMap(Point p) {
         moveMap.put(Heading.UP, new HeadRotate() {
             @Override
             public void rotate(Canvas canvas, Paint paint) {
@@ -165,8 +167,9 @@ class Snake extends GameObject implements Movable, Collidable {
             }
         });
     }
+
     //Populates the headMap
-    public void populateHeadMap(){
+    public void populateHeadMap() {
         headMap.put(Heading.UP, new HeadRotate() {
             @Override
             public void rotate(Canvas canvas, Paint paint) {
@@ -216,7 +219,7 @@ class Snake extends GameObject implements Movable, Collidable {
 
     // Provide access to the snake, creating it if necessary
     public static Snake getSnake(Context context, Point mr, int ss) {
-        if(snake == null)
+        if (snake == null)
             snake = new Snake(context, mr, ss);
         return snake;
     }
@@ -306,7 +309,7 @@ class Snake extends GameObject implements Movable, Collidable {
     public void move() {
         //Refactored
         movingLoop();
-        Canvas c =new Canvas();
+        Canvas c = new Canvas();
         Paint paint = new Paint();
 
         // Move the head in the appropriate heading
@@ -406,7 +409,6 @@ class Snake extends GameObject implements Movable, Collidable {
     }
 
 
-
     // Method to grow the snake body as many segment as you want
     public void grow(int segments) {
         // Get the last segment of the snake's body
@@ -425,6 +427,26 @@ class Snake extends GameObject implements Movable, Collidable {
             segmentLocations.remove(lastSegment);
         }
     }
+
+    public boolean isBombInSnakeBody(Point bombLocation) {
+        for (Point segment : segmentLocations) {
+            if (segment.equals(bombLocation)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean bombInSnakeBody = false;
+
+    public void setBombInSnakeBody(boolean bombInSnakeBody) {
+        this.bombInSnakeBody = bombInSnakeBody;
+    }
+
+    public boolean getBombInSnakeBody() {
+        return this.bombInSnakeBody;
+    }
+
 
     public boolean hitRock(Point l) {
 
@@ -508,14 +530,9 @@ class Snake extends GameObject implements Movable, Collidable {
         }
     }
 
-    private Point mHeading; // Add this field to keep track of the snake's heading
-    
-    public void setHeading(Point newHeading) {
-        this.mHeading = newHeading;
-    }
-    
-    // This method stores the position of the snake head (for the bomb feature)
-    public Point updatePosition() {
+   private Point mHeading; // Add this field to keep track of the snake's heading
+
+    public Point updatePosition() { //Needs to be fixed
         // Get the current position of the snake's head
         Point oldPosition = new Point(segmentLocations.get(0).x, segmentLocations.get(0).y);
 
@@ -539,4 +556,14 @@ class Snake extends GameObject implements Movable, Collidable {
         return oldPosition;
     }
 
+
+    public void setHeading(Point newHeading) {
+        this.mHeading = newHeading;
+    }
+
+    public Point getHeading() {
+        return this.mHeading;
+    }
+    
 }
+
