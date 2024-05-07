@@ -530,42 +530,13 @@ class Snake extends GameObject implements Movable, Collidable {
         }
     }
 
-   private Point mHeading; // Add this field to keep track of the snake's heading
-
-    public Point updatePosition() {
-        // Get the current position of the snake's head
-        Point oldHeadPosition = new Point(segmentLocations.get(0).x, segmentLocations.get(0).y);
-
-        // Update the snake's position based on the current heading
-        if (heading == Heading.UP) {
-            oldHeadPosition.y -= 1;
-        } else if (heading == Heading.DOWN) {
-            oldHeadPosition.y += 1;
-        } else if (heading == Heading.LEFT) {
-            oldHeadPosition.x -= 1;
-        } else if (heading == Heading.RIGHT) {
-            oldHeadPosition.x += 1;
+    // Method to get the current position of the snake's head
+    public Point getHeadPosition() {
+        if (!segmentLocations.isEmpty()) {
+            return segmentLocations.get(0);
+        } else {
+            return null;  // Return null if the snake has no segments
         }
-
-        // Move each segment to the position of the segment that was ahead of it
-        for (int i = segmentLocations.size() - 1; i > 0; i--) {
-            segmentLocations.set(i, segmentLocations.get(i - 1));
-        }
-
-        // Update the location of the head in segmentLocations
-        segmentLocations.set(0, oldHeadPosition);
-        return oldHeadPosition;
     }
-
-
-
-
-    public void setHeading(Point newHeading) {
-        this.mHeading = newHeading;
-    }
-
-    public Point getHeading() {
-        return this.mHeading;
-    }
-
+    
 }
