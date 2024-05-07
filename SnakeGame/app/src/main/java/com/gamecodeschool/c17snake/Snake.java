@@ -19,7 +19,7 @@ class Snake extends GameObject implements Movable, Collidable {
     private int halfWayPoint;
 
     // For tracking movement Heading
-    private enum Heading {
+    enum Heading {
         UP, RIGHT, DOWN, LEFT
     }
 
@@ -405,6 +405,8 @@ class Snake extends GameObject implements Movable, Collidable {
         return false; // No collision
     }
 
+
+
     // Method to grow the snake body as many segment as you want
     public void grow(int segments) {
         // Get the last segment of the snake's body
@@ -504,6 +506,37 @@ class Snake extends GameObject implements Movable, Collidable {
             // Rotate left
             elseMap.get(heading).rotate(c, p);
         }
+    }
+
+    private Point mHeading; // Add this field to keep track of the snake's heading
+    
+    public void setHeading(Point newHeading) {
+        this.mHeading = newHeading;
+    }
+    
+    // This method stores the position of the snake head (for the bomb feature)
+    public Point updatePosition() {
+        // Get the current position of the snake's head
+        Point oldPosition = new Point(segmentLocations.get(0).x, segmentLocations.get(0).y);
+
+        // Update the snake's position based on the current heading
+        if (heading == Heading.UP) {
+            oldPosition.y -= 1;
+        } else if (heading == Heading.DOWN) {
+            oldPosition.y += 1;
+        } else if (heading == Heading.LEFT) {
+            oldPosition.x -= 1;
+        } else if (heading == Heading.RIGHT) {
+            oldPosition.x += 1;
+        }
+
+        // After updating the position, update the heading
+        Point newHeading = new Point(oldPosition.x - segmentLocations.get(0).x, oldPosition.y - segmentLocations.get(0).y);
+        setHeading(newHeading);
+
+        // Update the location of the head in segmentLocations
+        segmentLocations.set(0, oldPosition);
+        return oldPosition;
     }
 
 }
