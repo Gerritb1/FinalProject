@@ -101,7 +101,11 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     private int trashPiece = 0;
     private int trashChance = 2;
     private List<Point> rockLocations = new ArrayList<>();
-    private List<Point> locations = new ArrayList<>();
+    private List<Point> trashLocations = new ArrayList<>();
+    private Point mAppleLocations = null;
+    private Point yAppleLocations = null;
+    private Point pAppleLocations = null;
+
 
 
     // For vulnerability of the snake
@@ -370,14 +374,14 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         if (!mPaused && isFirstPause) {
             mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
             for(Rock rock: rocks) {
-                rockLocations.add(rock.spawn(locations));
+                rock.spawn();
             }
-            locations.add(mApple.spawn(rockLocations));
+            mApple.spawn();
             if(mScore > 3) {
-                locations.add(yApple.spawn(rockLocations));
+                yApple.spawn();
             }
             for(Trash trash: trashStuff) {
-                locations.add(trash.spawn(rockLocations));
+                trash.spawn();
                 trash.hide();
             }
         }
@@ -442,7 +446,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     // Refactored, this is for the red apple
     public void updateMApple() {
         if (mSnake.checkDinner(mApple.getLocation())) {
-            locations.add(mApple.spawn(rockLocations));
+            mApple.spawn();
             if (yApple.isSpawned()) {
                 yApple.hide();
             }
@@ -452,7 +456,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             mScore++;
 
             for(int i = 0; i < 4; i++ ) {
-                trashStuff.get(trashPiece).chanceToSpawn(mScore, trashChance, rockLocations);
+                trashStuff.get(trashPiece).chanceToSpawn(mScore, trashChance);
                 trashPiece = (trashPiece+1)%3;
                 trashChance+= 2;
             }
@@ -467,18 +471,18 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     public void updateYApple() {
         // Check if the score is a dividable by 4 and spawn the yellow apple
         if ((mScore > 0) && (mScore % 4 == 0) && !yApple.isSpawned()) {
-            yApple.spawn(rockLocations);
+            yApple.spawn();
         }
         if (mSnake.bigCheckDinner(yApple.getLocation())) {
             yApple.hide();
-            locations.add(mApple.spawn(rockLocations));
+            mApple.spawn();
             if(pApple.isSpawned()){
                 pApple.hide();
             }
             mScore+=3;
 
             for(int i = 0; i < 4; i++ ) {
-                trashStuff.get(trashPiece).chanceToSpawn(mScore, trashChance, rockLocations);
+                trashStuff.get(trashPiece).chanceToSpawn(mScore, trashChance);
                 trashPiece = (trashPiece+1)%3;
                 trashChance+= 2;
             }
@@ -536,7 +540,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 resetGame();
             } else {
                 pApple.hide();
-                locations.add(mApple.spawn(rockLocations));
+                mApple.spawn();
                 if (yApple.isSpawned()) {
                     yApple.hide();
                 }
@@ -548,7 +552,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             }
         }
         if ((mScore > 0) && (randomNumber == 1) && !pApple.isSpawned()) {
-            locations.add(pApple.spawn(rockLocations));
+            pApple.spawn();
         }
     }
 
@@ -561,12 +565,15 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 mBackgroundMusic.seekTo(0); // Rewind the background music to the beginning
             }
 
-            rockLocations = new ArrayList<>();
-            locations = new ArrayList<>();
+            Rock.remove_Locations();
+            Trash.remove_Locations();
+            Apple.remove_Locations();
+            YellowApple.remove_Locations();
+            PoisonApple.remove_Locations();
             // Refactored
             spawnHide();
 
-            locations.add(mApple.spawn(rockLocations));
+            mApple.spawn();
             mApple.hide(); // Hide the apple upon resetting the game
             mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
             mSnake.hide(); // Hide the snake upon resetting the game
@@ -587,12 +594,12 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     // Refactored
     public void spawnHide() {
         for(Rock rock: rocks) {
-            rockLocations.add(rock.spawn(locations));
+            rock.spawn();
             rock.hide();
         }
 
         for(Trash trash: trashStuff) {
-            locations.add(trash.spawn(rockLocations));
+            trash.spawn();
             trash.hide();
         }
 
