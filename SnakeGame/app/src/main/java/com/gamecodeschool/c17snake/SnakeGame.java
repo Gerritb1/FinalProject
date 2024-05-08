@@ -100,6 +100,13 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     // This tracks which piece of trash we're on
     private int trashPiece = 0;
     private int trashChance = 2;
+    private List<Point> rockLocations = new ArrayList<>();
+    private List<Point> trashLocations = new ArrayList<>();
+    private Point mAppleLocations = null;
+    private Point yAppleLocations = null;
+    private Point pAppleLocations = null;
+
+
 
     // For vulnerability of the snake
     private boolean isVulnerable = false;
@@ -366,14 +373,13 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         // Reset the snake and spawn the apple if it's not paused and it's the first pause
         if (!mPaused && isFirstPause) {
             mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
+            for(Rock rock: rocks) {
+                rock.spawn();
+            }
             mApple.spawn();
             if(mScore > 3) {
                 yApple.spawn();
             }
-            for(Rock rock: rocks) {
-                rock.spawn();
-            }
-
             for(Trash trash: trashStuff) {
                 trash.spawn();
                 trash.hide();
@@ -457,7 +463,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             trashChance = 2;
 
             mSP.play(mEat_ID, 1, 1, 0, 0, 1);
-            randomNumber = random.nextInt(4);
+            randomNumber = random.nextInt(3);
         }
     }
 
@@ -486,6 +492,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             randomNumber = random.nextInt(3);
 
             // to grow the snake body segment by 3, since 2+1=3
+            mSnake.grow(1);
             mSnake.grow(2);
 
             // Set the snake as vulnerable
@@ -541,10 +548,10 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 mSP.play(pEat_ID, 1, 1, 0, 0, 1);
 
                 mSnake.shrink(3);
-                randomNumber = random.nextInt(5);
+                randomNumber = random.nextInt(4);
             }
         }
-        if ((mScore > 0) && (randomNumber == 2) && !pApple.isSpawned()) {
+        if ((mScore > 0) && (randomNumber == 1) && !pApple.isSpawned()) {
             pApple.spawn();
         }
     }
@@ -558,6 +565,11 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 mBackgroundMusic.seekTo(0); // Rewind the background music to the beginning
             }
 
+            Rock.remove_Locations();
+            Trash.remove_Locations();
+            Apple.remove_Locations();
+            YellowApple.remove_Locations();
+            PoisonApple.remove_Locations();
             // Refactored
             spawnHide();
 

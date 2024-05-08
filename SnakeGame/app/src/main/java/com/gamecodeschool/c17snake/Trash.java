@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -16,6 +17,11 @@ public class Trash extends Rock implements Spawnable{
     private static Trash trash2;
     private static Trash trash3;
     private static Trash trash4;
+    private static List<Point> locations = new ArrayList<>();
+    private List<Point> rockLocations = new ArrayList<>();
+    private Point mAppleLocations = null;
+    private Point yAppleLocations = null;
+    private Point pAppleLocations = null;
 
 
     /// Set up the rock in the constructor
@@ -32,20 +38,41 @@ public class Trash extends Rock implements Spawnable{
 
     // This is called when the chance spawn works
     @Override
-    public Point spawn(List<Point> rockLocations) {
+    public void spawn() {
+        rockLocations = Rock.get_Locations();
+        yAppleLocations = YellowApple.get_Location();
+        mAppleLocations = Apple.get_Location();
+        pAppleLocations = PoisonApple.get_Location();
         // Choose two random values and place the trash
         Random random = new Random();
         location.x = random.nextInt(mSpawnRange.x) + 1;
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
         for (int x=0; x<4; x++){
-            if(location.x==rockLocations.get(x).x || location.y==rockLocations.get(x).y){
+            if((location.x==rockLocations.get(x).x || location.x==(rockLocations.get(x).x)+1 || location.x==(rockLocations.get(x).x)+2 || location.x==(rockLocations.get(x).x)-1 || location.x==(rockLocations.get(x).x)-2) && (location.y==rockLocations.get(x).y || location.y==(rockLocations.get(x).y+1) || location.y==(rockLocations.get(x).y+2) || location.y==(rockLocations.get(x).y-1) || location.y==(rockLocations.get(x).y-2))){
                 location.x = random.nextInt(mSpawnRange.x) + 1;
                 location.y = random.nextInt(mSpawnRange.y - 1) + 1;
             }
+            if(locations.size() > x) {
+                if ((location.x == locations.get(x).x || location.x == (locations.get(x).x) + 1 || location.x == (locations.get(x).x) - 1) && (location.y == locations.get(x).y || location.y == (locations.get(x).y + 1) || location.y == (locations.get(x).y - 1))) {
+                    location.x = random.nextInt(mSpawnRange.x) + 1;
+                    location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+                }
+            }
+            if(yAppleLocations != null){
+                if((location.x==yAppleLocations.x || location.x==yAppleLocations.x+1 || location.x==yAppleLocations.x-1) && (location.y==yAppleLocations.y || location.y==yAppleLocations.y+1 || location.y==yAppleLocations.y-1)){
+                    location.x = random.nextInt(mSpawnRange.x) + 1;
+                    location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+                }
+            }
+            if(pAppleLocations != null){
+                if((location.x==pAppleLocations.x || location.x==pAppleLocations.x+1 || location.x==pAppleLocations.x-1) && (location.y==pAppleLocations.y || location.y==pAppleLocations.y+1 || location.y==pAppleLocations.y-1)){
+                    location.x = random.nextInt(mSpawnRange.x) + 1;
+                    location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+                }
+            }
         }
-        return new Point (-10, -10);
+        locations.add(new Point(location.x, location.y));
     }
-
 
     // Draw the trash
     @Override
@@ -60,10 +87,10 @@ public class Trash extends Rock implements Spawnable{
         location.set(-10, -10); // Set the location outside the visible screen
     }
 
-    public void chanceToSpawn(int score, int chance, List<Point> rockLocations){
+    public void chanceToSpawn(int score, int chance){
         Random rand = new Random();
         if (rand.nextInt(score) > chance) {
-            this.spawn(rockLocations);
+            this.spawn();
         }
     }
 
@@ -89,6 +116,12 @@ public class Trash extends Rock implements Spawnable{
         if(trash4 == null)
             trash4 = new Trash(context, sr, s);
         return trash4;
+    }
+    public static List<Point> get_Locations(){
+        return locations;
+    }
+    public static void remove_Locations(){
+        locations = new ArrayList<>();
     }
 
 }

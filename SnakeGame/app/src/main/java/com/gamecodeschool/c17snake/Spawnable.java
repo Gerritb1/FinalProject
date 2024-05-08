@@ -5,5 +5,5 @@ import android.graphics.Point;
 import java.util.List;
 
 public interface Spawnable {
-    Point spawn(List<Point> rockLocations);
+    void spawn();
 }
