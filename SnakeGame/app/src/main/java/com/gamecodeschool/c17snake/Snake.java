@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import java.util.HashMap;
@@ -224,20 +225,6 @@ class Snake extends GameObject implements Movable, Collidable {
         return snake;
     }
 
-    // Method to hide the snake
-    @Override
-    public void hide() {
-        // Set the snake's head position outside the visible screen
-        segmentLocations.get(0).set(-1, -1);
-
-        // Set each segment's position outside the visible screen
-        for (int i = 1; i < segmentLocations.size(); i++) {
-            segmentLocations.get(i).x = -1;
-            segmentLocations.get(i).y = -1;
-        }
-    }
-
-
     // Refactored
     @Override
     public void headMovement(Context context, int ss) {
@@ -428,14 +415,6 @@ class Snake extends GameObject implements Movable, Collidable {
         }
     }
 
-    public boolean isBombInSnakeBody(Point bombLocation) {
-        for (Point segment : segmentLocations) {
-            if (segment.equals(bombLocation)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     private boolean bombInSnakeBody = false;
 
@@ -533,10 +512,27 @@ class Snake extends GameObject implements Movable, Collidable {
     // Method to get the current position of the snake's head
     public Point getHeadPosition() {
         if (!segmentLocations.isEmpty()) {
-            return segmentLocations.get(0);
+            Point headPosition = segmentLocations.get(0);
+            Log.d("Snake", "Head position: (" + headPosition.x + ", " + headPosition.y + ")");
+            return headPosition;
         } else {
+            Log.d("Snake", "Snake has no segments, returning null for head position.");
             return null;  // Return null if the snake has no segments
         }
     }
-    
+
+    // Method to hide the snake
+    @Override
+    public void hide() {
+        // Set the snake's head position outside the visible screen
+        segmentLocations.get(0).set(-1, -1);
+
+        // Set each segment's position outside the visible screen
+        for (int i = 1; i < segmentLocations.size(); i++) {
+            segmentLocations.get(i).x = -1;
+            segmentLocations.get(i).y = -1;
+        }
+    }
+
+
 }
