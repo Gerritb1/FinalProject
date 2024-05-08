@@ -662,6 +662,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         if(mBomb.isSpawned()) {
             mBomb.hide();
             mBomb.spawned = false;
+            mBomb.setShot(false); // Ensure the bomb's shot state is reset
         }
     }
 
