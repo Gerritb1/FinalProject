@@ -469,39 +469,54 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             randomNumber = random.nextInt(4);
         }
     }
+
+
     public void updateBomb() {
         // Update the trigger state based on the button press
+
+        // Increase the size of the snake when it eats a bomb
+
         if (isTriggerButtonPressed) {
+            Log.d("updateBomb", "Trigger button is pressed");
             // Shoot the bomb only if the button is pressed and bomb is ready to be shot
             mBomb.shootBomb(isTriggerButtonPressed);
             isTriggerButtonPressed = false; // Reset the trigger state after shooting
+            Log.d("updateBomb", "Bomb shot and trigger state reset");
         }
 
         // Update the bomb's position and draw it on the canvas
         mBomb.update();
+        Log.d("updateBomb", "Bomb position updated to: " + mBomb.getLocation());
         mBomb.draw(mCanvas, mPaint);
+        Log.d("updateBomb", "Bomb drawn on canvas");
 
-        // Increase the size of the snake when it eats a bomb
-        if (mSnake.bigCheckDinner(mBomb.getLocation())) {
+        if (mSnake.checkDinner(mBomb.getLocation())) {
+            Log.d("updateBomb", "Snake ate the bomb");
             mSnake.setBombInSnakeBody(true);
             mScore++; // Increment the score
             bombCount++;
             mBomb.hide(); // Hide the bomb
+            Log.d("updateBomb", "Incremented score and bomb count, hid the bomb");
+        } else {
+            Log.d("updateBomb", "Snake did not eat the bomb");
+            Log.d("updateBomb", "Snake location: " + mSnake.getLocation() + ", Bomb location: " + mBomb.getLocation());
         }
+
+
 
         // Check if the bomb is shot and if it is present in the snake
         if (mBomb.isShot() && bombCount>0 && mSnake.getBombInSnakeBody()) {
+            Log.d("updateBomb", "Bomb is shot and is present in the snake");
             mSnake.setBombInSnakeBody(false);
             mScore--; // Decrement the score
             bombCount--; // Decrement the bomb
             mSnake.shrink(1); // Shrink the snake
             mBomb.setShot(false); // Reset the bomb shot state
+            Log.d("updateBomb", "Reset bomb and snake states, decremented score and bomb count, shrank the snake");
+        } else {
+            Log.d("updateBomb", "Bomb is not shot or is not present in the snake");
         }
-
     }
-
-
-    // Refactored, this is for the yellow apple
     public void updateYApple() {
         // Check if the score is a dividable by 4 and spawn the yellow apple
         if ((mScore > 0) && (mScore % 4 == 0) && !yApple.isSpawned()) {
@@ -825,7 +840,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             } else if (!mPaused) {
                 // If the game is running and not paused, handle snake movement
                 mSnake.switchHeading(motionEvent);
-                mSnake.updatePosition();
+                mSnake.getHeadPosition();
             }
 
             return true;
