@@ -20,7 +20,7 @@ class Rock extends GameObject implements Spawnable{
     private static Rock rock4;
 
     /// Set up the rock in the constructor
-    private Rock(Context context, Point sr, int s) {
+    Rock(Context context, Point sr, int s) {
 
         super(context, sr, s);
 

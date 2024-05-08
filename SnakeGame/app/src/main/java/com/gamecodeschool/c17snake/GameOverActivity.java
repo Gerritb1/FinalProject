@@ -9,7 +9,7 @@ import android.view.Display;
 public class GameOverActivity extends Activity {
 
     private GameOverScreen gameOverScreen;
-    private SnakeGame snakeGame;
+    static int Highscore=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,6 +19,7 @@ public class GameOverActivity extends Activity {
 
         // Initialize the result into a Point object
         Point size = new Point();
+        display.getSize(size);
         int score = 0;
 
         Bundle extras = getIntent().getExtras();
@@ -32,4 +33,18 @@ public class GameOverActivity extends Activity {
         setContentView(gameOverScreen);
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        gameOverScreen.resume();
+    }
+
+    // Stop the thread in snakeEngine
+    @Override
+    protected void onPause() {
+        super.onPause();
+        gameOverScreen.pause();
+    }
+
 }

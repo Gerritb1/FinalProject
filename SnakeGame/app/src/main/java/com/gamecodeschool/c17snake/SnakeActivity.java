@@ -14,7 +14,6 @@ public class SnakeActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         // Get the pixel dimensions of the screen
         Display display = getWindowManager().getDefaultDisplay();
 
