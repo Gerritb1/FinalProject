@@ -18,6 +18,7 @@ public class Bomb extends GameObject implements Spawnable {
 
     private Bitmap mBitmapBomb;
 
+    private final float mSpeedFactor = 0.1f;// Adjust this value to make the bomb move slower or faster
     private boolean shot = false;
 
     private static Bomb mBomb;
@@ -31,6 +32,9 @@ public class Bomb extends GameObject implements Spawnable {
     private int screenWidth;
     private int screenHeight;
     private Snake mSnake;
+    private Canvas mCanvas;
+
+    private Paint mPaint;
 
 
     public Bomb(Context context, Point snakeLocation, int size) {
@@ -39,7 +43,7 @@ public class Bomb extends GameObject implements Spawnable {
         mBitmapBomb = Bitmap.createScaledBitmap(mBitmapBomb, size, size, false);
 
         //Bomb spawns at the snake's location when shot
-        mLocation = new Point(snakeLocation.x, snakeLocation.y); // Fixed
+        mLocation = new Point(snakeLocation.x, snakeLocation.y);
         initializeSegmentLocations();
     }
 
@@ -73,6 +77,8 @@ public class Bomb extends GameObject implements Spawnable {
         // Draw the bomb image at the location of the snake's mouth
         if (spawned) {
             canvas.drawBitmap(mBitmapBomb, location.x * size, location.y * size, paint);
+        } else if (spawnedFiredBomb){
+            canvas.drawBitmap(mBitmapBomb, mLocation.x * size, mLocation.y * size, paint);
         }
     }
 
@@ -111,17 +117,19 @@ public class Bomb extends GameObject implements Spawnable {
     public void update() {
         if (spawnedFiredBomb) {
             // Move the bomb in the direction it was fired
-            mLocation.x += mShootDirection.x;
-            mLocation.y += mShootDirection.y;
+            mLocation.x += (int) (mShootDirection.x*mSpeedFactor);
+            mLocation.y += (int) (mShootDirection.y*mSpeedFactor);
             Log.d("Bomb", "Bomb position updated to: " + mLocation);
 
             // Check if the bomb has gone off-screen
             if (mLocation.x < 0 || mLocation.x > screenWidth || mLocation.y < 0 || mLocation.y > screenHeight) {
-                hideFiredBomb(); // Hide the bomb if it's off-screen
                 Log.d("Bomb", "Bomb went off-screen and is now hidden.");
+            } else {
+                draw(mCanvas, mPaint); // Draw the bomb at its new location
             }
         }
     }
+
 
 
     @Override
@@ -137,18 +145,43 @@ public class Bomb extends GameObject implements Spawnable {
 // Update the bomb's location to where the snake is shooting the bomb from
     public void spawnFiredBomb(Point shootDirection) {
         if (shootDirection != null) {
+            // Reset the bomb's location to the snake's mouth
             mLocation.set(segmentLocations.get(0).x, segmentLocations.get(0).y); // Update bomb location to snake's mouth
-            mShootDirection = shootDirection;
+            Log.d("Bomb", "Bomb respawned at: " + mLocation); // Log the bomb's new location
+
+            // Set spawnedFiredBomb to true
             spawnedFiredBomb = true;
         }
     }
 
+
     public void hideFiredBomb() {
         // Move the bomb off-screen
-        mLocation.set(-1, -1);
+        mLocation.set(-10,10);
 
         // Set spawnedFiredBomb to false
         spawnedFiredBomb = false;
+    }
+
+    @Override
+    public void hide() {
+        mLocation.set(-10, -10);
+        spawned = false;
+    }
+
+    public void updateSnakeLocation(Point newSnakeLocation) {
+        mLocation.set(newSnakeLocation.x, newSnakeLocation.y);
+        segmentLocations.set(0, new Point(mLocation.x, mLocation.y));
+    }
+
+    public Point getShootDirection() { return mShootDirection; }
+
+    public boolean isSpawned() {
+        return spawned;
+    }
+
+    public boolean isReadyToExplode() {
+        return readyToExplode;
     }
 
     public boolean isShot() {
@@ -157,20 +190,6 @@ public class Bomb extends GameObject implements Spawnable {
 
     public void setShot(boolean shot) {
         this.shot = shot;
-    }
-
-
-    @Override
-    public void hide() {
-        location.set(-10, -10);
-        spawned = false;
-    }
-    public boolean isSpawned() {
-        return spawned;
-    }
-
-    public boolean isReadyToExplode() {
-        return readyToExplode;
     }
 
 }
