@@ -17,6 +17,9 @@ import java.util.Random;
 public class Bomb extends GameObject implements Spawnable {
 
     private Bitmap mBitmapBomb;
+
+    private boolean shot = false;
+
     private static Bomb mBomb;
     private boolean readyToExplode = false;
     protected boolean spawned;
@@ -83,7 +86,7 @@ public class Bomb extends GameObject implements Spawnable {
                 Log.d("Bomb", "Initial bomb location set to: " + mLocation);
 
                 // Get the snake's heading
-                Point directionVector = Snake.getSnake(mContext, mLocation, size).updatePosition();
+                Point directionVector = Snake.getSnake(mContext, mLocation, size).getHeadPosition();
 
                 // Check if directionVector is null
                 if (directionVector != null) {
@@ -92,6 +95,9 @@ public class Bomb extends GameObject implements Spawnable {
                     // Set the shoot direction
                     mShootDirection = directionVector;
                     spawnFiredBomb(mShootDirection); //Spawn Moving bomb after fired
+                    //  shot = false; //Reset shot to false
+                    setShot(true);
+
                 } else {
                     Log.d("Bomb", "directionVector is null, cannot shoot bomb.");
                 }
@@ -100,6 +106,7 @@ public class Bomb extends GameObject implements Spawnable {
             }
         }
     }
+
 
     public void update() {
         if (spawnedFiredBomb) {
@@ -110,16 +117,12 @@ public class Bomb extends GameObject implements Spawnable {
 
             // Check if the bomb has gone off-screen
             if (mLocation.x < 0 || mLocation.x > screenWidth || mLocation.y < 0 || mLocation.y > screenHeight) {
-                hide(); // Hide the bomb if it's off-screen
+                hideFiredBomb(); // Hide the bomb if it's off-screen
                 Log.d("Bomb", "Bomb went off-screen and is now hidden.");
-                spawnedFiredBomb = false; // Stop updating the bomb's position
             }
         }
     }
 
-    public Point getLocation() {
-        return mLocation;
-    }
 
     @Override
     public void spawn() {
@@ -140,17 +143,27 @@ public class Bomb extends GameObject implements Spawnable {
         }
     }
 
-    // Check for collision with the snake
-    public void checkSnakeCollision(Snake snake) {
-        if (snake.checkDinner(location)) {
-            readyToExplode = false;
-            hide();
-        }
+    public void hideFiredBomb() {
+        // Move the bomb off-screen
+        mLocation.set(-1, -1);
+
+        // Set spawnedFiredBomb to false
+        spawnedFiredBomb = false;
     }
+
+    public boolean isShot() {
+        return this.shot;
+    }
+
+    public void setShot(boolean shot) {
+        this.shot = shot;
+    }
+
 
     @Override
     public void hide() {
         location.set(-10, -10);
+        spawned = false;
     }
     public boolean isSpawned() {
         return spawned;
@@ -159,4 +172,5 @@ public class Bomb extends GameObject implements Spawnable {
     public boolean isReadyToExplode() {
         return readyToExplode;
     }
+
 }
