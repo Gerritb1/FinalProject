@@ -99,7 +99,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
     // This tracks which piece of trash we're on
     private int trashPiece = 0;
-    private int trashChance = 2;
+    private int trashChance = 3;
     private List<Point> rockLocations = new ArrayList<>();
     private List<Point> trashLocations = new ArrayList<>();
     private Point mAppleLocations = null;
@@ -461,7 +461,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 trashPiece = (trashPiece+1)%3;
                 trashChance+= 3;
             }
-            trashChance = 2;
+            trashChance = 4;
 
             mSP.play(mEat_ID, 1, 1, 0, 0, 1);
             randomNumber = random.nextInt(3);
@@ -485,9 +485,9 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             for(int i = 0; i < 4; i++ ) {
                 trashStuff.get(trashPiece).chanceToSpawn(mScore, trashChance);
                 trashPiece = (trashPiece+1)%3;
-                trashChance+= 3;
+                trashChance+= 4;
             }
-            trashChance = 2;
+            trashChance = 3;
 
             mSP.play(yEat_ID, 1, 1, 0, 0, 1);
             randomNumber = random.nextInt(3);
