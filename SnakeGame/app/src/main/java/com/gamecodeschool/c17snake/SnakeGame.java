@@ -370,6 +370,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
     @Override
     public void newGame() {
+
         // Reset the snake and spawn the apple if it's not paused and it's the first pause
         if (!mPaused && isFirstPause) {
             mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
@@ -585,6 +586,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             
             // Cancel the vulnerability timer
             cancelVulnerabilityTimer();
+            Rock.remove_Locations();
 
             // Reset the vulnerability state
 
