@@ -80,7 +80,6 @@ class Apple extends GameObject implements Spawnable{
             }
         }
         locations = new Point(location.x, location.y);
-        System.out.println("Apple: "+locations);
 
     }
 
