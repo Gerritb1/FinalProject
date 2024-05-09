@@ -56,7 +56,7 @@ class Apple extends GameObject implements Spawnable{
         location.x = random.nextInt(mSpawnRange.x) + 1;
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
         for (int x=0; x<4; x++){
-            if((location.x==rockLocations.get(x).x || location.x==(rockLocations.get(x).x)+1 || location.x==(rockLocations.get(x).x)+2 || location.x==(rockLocations.get(x).x)-1 || location.x==(rockLocations.get(x).x)-2) && (location.y==rockLocations.get(x).y || location.y==(rockLocations.get(x).y+1) || location.y==(rockLocations.get(x).y+2) || location.y==(rockLocations.get(x).y-1) || location.y==(rockLocations.get(x).y-2))){
+            if((location.x==rockLocations.get(x).x || location.x==(rockLocations.get(x).x)+1 || location.x==(rockLocations.get(x).x)+2 || location.x==(rockLocations.get(x).x)-1 || location.x==(rockLocations.get(x).x)-2) && (location.y==rockLocations.get(x).y || location.y==(rockLocations.get(x).y)+1 || location.y==(rockLocations.get(x).y)+2 || location.y==(rockLocations.get(x).y)-1 || location.y==(rockLocations.get(x).y)-2)){
                 location.x = random.nextInt(mSpawnRange.x) + 1;
                 location.y = random.nextInt(mSpawnRange.y - 1) + 1;
             }
@@ -80,6 +80,7 @@ class Apple extends GameObject implements Spawnable{
             }
         }
         locations = new Point(location.x, location.y);
+        System.out.println("Apple: "+locations);
 
     }
 
