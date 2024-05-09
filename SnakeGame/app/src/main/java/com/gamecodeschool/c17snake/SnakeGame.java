@@ -784,31 +784,26 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         // Draw the bomb
         mBomb.draw(mCanvas, mPaint);
 
+        updateBombEating();
+        updateBombShot();
+        updateBombShooting();
+    }
+
+    private void updateBombEating() {
         if (mSnake.checkDinner(mBomb.getLocation())) {
             mSnake.setBombInSnakeBody(true);
             mScore++;
             bombCount++;
             mBomb.hide();
-
         }
-        if (isTriggerButtonPressed) {
-            // Get the current direction of the snake
-            // Update the shoot direction
-            mShootDirection = mSnake.getHeadPosition();
-            // Pass the current direction when shooting the bomb
-            mBomb.shootBomb(isTriggerButtonPressed, mBomb.getLocation());
-            isTriggerButtonPressed = false; // Reset the trigger state after shooting
-            if (mBomb.isShot()) { // Only spawn the bomb if it has been shot
-                mBomb.spawnFiredBomb(mShootDirection);
-            }
-        }
+    }
 
+    private void updateBombShot() {
         // Check if the bomb is shot and if it is present in the snake
         if (mBomb.isShot() && bombCount>0 && mSnake.getBombInSnakeBody()) {
             mSnake.setBombInSnakeBody(false);
             mScore--; // Decrement the score
             bombCount--; // Decrement the bomb
-            mSnake.shrink(1); // Shrink the snake
             mBomb.setShot(false); // Reset the bomb shot state
             // Only hide the fired bomb if it is not currently being drawn
             mBomb.hideFiredBomb(); // Hide the fired bomb
@@ -823,6 +818,20 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         }
     }
 
+    private void updateBombShooting() {
+        if (isTriggerButtonPressed) {
+            // Get the current direction of the snake
+            // Update the shoot direction
+            mShootDirection = mSnake.getHeadPosition();
+            // Pass the current direction when shooting the bomb
+            mBomb.shootBomb(isTriggerButtonPressed, mBomb.getLocation());
+            if (mBomb.isShot()) { // Only spawn the bomb if it has been shot
+                mBomb.spawnFiredBomb(mShootDirection);
+                isTriggerButtonPressed = false; // Reset the trigger state after shooting
+                mSnake.shrink(1); // Shrink the snake
+            }
+        }
+    }
 
 
     @Override
