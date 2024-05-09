@@ -575,6 +575,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             mApple.spawn();
             mApple.hide(); // Hide the apple upon resetting the game
             mBomb.hide();
+            mBomb.hideFiredBomb();
 
 
             mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
