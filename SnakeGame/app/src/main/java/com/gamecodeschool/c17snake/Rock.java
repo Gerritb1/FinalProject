@@ -74,7 +74,6 @@ class Rock extends GameObject implements Spawnable{
         }
 
         locations.add(new Point (location.x, location.y));
-        System.out.println(locations);
     }
 
 
@@ -99,7 +98,6 @@ class Rock extends GameObject implements Spawnable{
     }
     public static void remove_Locations(){
         locations = new ArrayList<>();
-        System.out.println("After Remove:" + locations);
     }
 
 }
