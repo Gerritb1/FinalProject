@@ -472,52 +472,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     }
 
 
-    public void updateBomb() {
-        // Update the trigger state based on the button press
-
-        // Update the bomb's position and draw it on the canvas
-        mBomb.update();
-        mBomb.updateSnakeLocation(mSnake.getHeadPosition());
-
-        Log.d("BombUpdate", "Bomb updated at: " + mBomb.getLocation()); // Log the bomb's location after update
-        mBomb.draw(mCanvas, mPaint);
-
-        if (mSnake.checkDinner(mBomb.getLocation())) {
-            mSnake.setBombInSnakeBody(true);
-            mScore++; // Increment the score
-            bombCount++;
-            if(!mBomb.isShot() && mSnake.getBombInSnakeBody()) {
-                mBomb.hide(); // Hide the bomb
-                Log.d("BombUpdate", "Bomb hidden after being eaten by snake");
-            }
-        }
-
-        if (isTriggerButtonPressed) {
-            // Shoot the bomb only if the button is pressed and bomb is ready to be shot
-            mBomb.shootBomb(isTriggerButtonPressed);
-            isTriggerButtonPressed = false; // Reset the trigger state after shooting
-            mBomb.spawnFiredBomb(mShootDirection);
-            Log.d("BombUpdate", "Bomb spawned after being shot");
-        }
-
-        // Check if the bomb is shot and if it is present in the snake
-        if (mBomb.isShot() && bombCount>0 && mSnake.getBombInSnakeBody()) {
-            mSnake.setBombInSnakeBody(false);
-            mScore--; // Decrement the score
-            bombCount--; // Decrement the bomb
-            mSnake.shrink(1); // Shrink the snake
-            mBomb.setShot(false); // Reset the bomb shot state
-            Log.d("BombUpdate", "Bomb shot and snake shrunk");
-        }
-
-        // Check if the bomb is not in the snake's body
-        if (!mSnake.getBombInSnakeBody()) {
-            // Call the method here
-            mBomb.spawnFiredBomb(mBomb.getShootDirection());
-            Log.d("BombUpdate", "Bomb spawned because it's not in snake's body");
-        }
-    }
-
     public void updateYApple() {
         // Check if the score is a dividable by 4 and spawn the yellow apple
         if ((mScore > 0) && (mScore % 4 == 0) && !yApple.isSpawned()) {
@@ -622,6 +576,8 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
             mApple.spawn();
             mApple.hide(); // Hide the apple upon resetting the game
+            mBomb.spawn();
+            mBomb.hide();
             mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
             mSnake.hide(); // Hide the snake upon resetting the game
             isFirstPause = true; // Set isFirstPause to true upon resetting the game
@@ -819,6 +775,55 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     public void setTriggerButtonPressed(boolean isPressed) {
         this.isTriggerButtonPressed = isPressed;
     }
+
+    public void updateBomb() {
+        // Update the bomb & snake position
+        mBomb.update();
+        mBomb.updateSnakeLocation(mSnake.getHeadPosition());
+
+        // Draw the bomb
+        mBomb.draw(mCanvas, mPaint);
+
+        if (mSnake.checkDinner(mBomb.getLocation())) {
+            mSnake.setBombInSnakeBody(true);
+            mScore++;
+            bombCount++;
+            mBomb.hide();
+
+        }
+        if (isTriggerButtonPressed) {
+            // Get the current direction of the snake
+            // Update the shoot direction
+            mShootDirection = mSnake.getHeadPosition();
+            // Pass the current direction when shooting the bomb
+            mBomb.shootBomb(isTriggerButtonPressed, mBomb.getLocation());
+            isTriggerButtonPressed = false; // Reset the trigger state after shooting
+            if (mBomb.isShot()) { // Only spawn the bomb if it has been shot
+                mBomb.spawnFiredBomb(mShootDirection);
+            }
+        }
+
+        // Check if the bomb is shot and if it is present in the snake
+        if (mBomb.isShot() && bombCount>0 && mSnake.getBombInSnakeBody()) {
+            mSnake.setBombInSnakeBody(false);
+            mScore--; // Decrement the score
+            bombCount--; // Decrement the bomb
+            mSnake.shrink(1); // Shrink the snake
+            mBomb.setShot(false); // Reset the bomb shot state
+            // Only hide the fired bomb if it is not currently being drawn
+            mBomb.hideFiredBomb(); // Hide the fired bomb
+            mBomb.hide(); // Hide the bomb off the screen
+        }
+
+        // Check if the bomb is not in the snake's body
+        if (!mSnake.getBombInSnakeBody() && mBomb.isShot()) { // Only spawn the bomb if it is not in the snake's body and it has been shot
+            // Call the method here
+            mBomb.spawnFiredBomb(mBomb.getShootDirection());
+            mBomb.setShot(false);
+        }
+    }
+
+
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
