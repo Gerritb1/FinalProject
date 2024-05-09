@@ -73,10 +73,15 @@ public class Bomb extends GameObject implements Spawnable {
         // Draw the bomb image at the location of the snake's mouth
         if (spawned) {
             canvas.drawBitmap(mBitmapBomb, location.x * size, location.y * size, paint);
+            Log.d("Bomb", "Bomb is spawned. Spawned flag status: " + spawned);
         } else if (spawnedFiredBomb) {
             canvas.drawBitmap(mBitmapBomb, mLocation.x * size, mLocation.y * size, paint);
+            Log.d("Bomb", "Bomb is fired. SpawnedFiredBomb flag status: " + spawnedFiredBomb);
+        } else {
+            Log.d("Bomb", "Bomb is not spawned or fired. Spawned flag status: " + spawned + ", SpawnedFiredBomb flag status: " + spawnedFiredBomb);
         }
     }
+
 
 
     public void shootBomb(boolean isTriggerButtonPressed, Point mLocation) {
@@ -122,13 +127,14 @@ public class Bomb extends GameObject implements Spawnable {
             mLocation.y += (int) (mShootDirection.y*mSpeedFactor);
             Log.d("Bomb", "Bomb position updated to: " + mLocation);
 
-            // Check if the bomb has gone off-screen
-            if (mLocation.x < 0 || mLocation.x > screenWidth || mLocation.y < 0 || mLocation.y > screenHeight) {
+            // Check if the bomb has completely gone off-screen
+            if (mLocation.x < -size || mLocation.x > screenWidth + size || mLocation.y < -size || mLocation.y > screenHeight + size) {
                 Log.d("Bomb", "Bomb went off-screen and is now hidden.");
                 hideFiredBomb();
             }
         }
     }
+
 
 
 
