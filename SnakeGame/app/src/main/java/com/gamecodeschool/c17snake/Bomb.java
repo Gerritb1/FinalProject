@@ -34,6 +34,7 @@ public class Bomb extends GameObject implements Spawnable {
     private Canvas mCanvas;
 
     private Paint mPaint;
+    private SnakeGame mSnakeGame;
 
 
     public Bomb(Context context, Point snakeLocation, int size) {
@@ -54,10 +55,6 @@ public class Bomb extends GameObject implements Spawnable {
     }
 
 
-    public void setSnake(Snake snake) {
-        this.mSnake = snake;
-    }
-
 
     // Getter and setter for mLocation
     public void setLocation(Point location) {
@@ -76,7 +73,7 @@ public class Bomb extends GameObject implements Spawnable {
         // Draw the bomb image at the location of the snake's mouth
         if (spawned) {
             canvas.drawBitmap(mBitmapBomb, location.x * size, location.y * size, paint);
-        } else if (spawnedFiredBomb){
+        } else if (spawnedFiredBomb) {
             canvas.drawBitmap(mBitmapBomb, mLocation.x * size, mLocation.y * size, paint);
         }
     }
@@ -84,16 +81,19 @@ public class Bomb extends GameObject implements Spawnable {
 
     public void shootBomb(boolean isTriggerButtonPressed, Point mLocation) {
         Log.d("Bomb", "shootBomb called");
-        if (isTriggerButtonPressed && !isReadyToExplode()) {
-            // Set the bomb's initial location to the snake's mouth location
-            if (!segmentLocations.isEmpty()) {
+        if (!(!isTriggerButtonPressed && isReadyToExplode())) {
+            Log.d("Bomb", "Trigger button is pressed and bomb is not ready to explode");
+            // Check if segmentLocations is not null and not empty
+            if (segmentLocations != null && !segmentLocations.isEmpty()) {
+                Log.d("Bomb", "segmentLocations is not null and not empty");
+                // Set the bomb's initial location to the snake's mouth location
                 setLocation(segmentLocations.get(0));
                 Log.d("Bomb", "Initial bomb location set to: " + mLocation);
 
                 // Get the snake's heading
                 Point directionVector = Snake.getSnake(mContext, mLocation, size).getHeadPosition();
 
-                // Check if directionVector is null
+                // Check if directionVector is not null
                 if (directionVector != null) {
                     Log.d("Bomb", "Direction vector: (" + directionVector.x + ", " + directionVector.y + ")");
 
@@ -107,14 +107,16 @@ public class Bomb extends GameObject implements Spawnable {
                     Log.d("Bomb", "directionVector is null, cannot shoot bomb.");
                 }
             } else {
-                Log.d("Bomb", "segmentLocations is empty, cannot shoot bomb.");
+                Log.d("Bomb", "segmentLocations is null or empty, cannot shoot bomb.");
             }
         }
     }
 
 
     public void update() {
+        Log.d("Bomb", "update called");
         if (spawnedFiredBomb) {
+            Log.d("Bomb", "Bomb is spawned and fired");
             // Move the bomb in the direction it was fired
             mLocation.x += (int) (mShootDirection.x*mSpeedFactor);
             mLocation.y += (int) (mShootDirection.y*mSpeedFactor);
@@ -124,8 +126,6 @@ public class Bomb extends GameObject implements Spawnable {
             if (mLocation.x < 0 || mLocation.x > screenWidth || mLocation.y < 0 || mLocation.y > screenHeight) {
                 Log.d("Bomb", "Bomb went off-screen and is now hidden.");
                 hideFiredBomb();
-            } else {
-                draw(mCanvas, mPaint); // Draw the bomb at its new location
             }
         }
     }
@@ -154,7 +154,6 @@ public class Bomb extends GameObject implements Spawnable {
         }
     }
 
-
     public void hideFiredBomb() {
         // Move the bomb off-screen
         mLocation.set(-10,10);
@@ -162,9 +161,10 @@ public class Bomb extends GameObject implements Spawnable {
         // Set spawnedFiredBomb to false
         spawnedFiredBomb = false;
 
-        // Reset the isShot flag
-        setShot(false);
+
     }
+
+
 
 
     public void updateSnakeLocation(Point newSnakeLocation) {
@@ -198,6 +198,10 @@ public class Bomb extends GameObject implements Spawnable {
 
     public void setShot(boolean shot) {
         this.shot = shot;
+    }
+
+    public void setSpawnedFiredBomb(boolean spawnedFiredBomb) {
+        this.spawnedFiredBomb = spawnedFiredBomb;
     }
 
 }
