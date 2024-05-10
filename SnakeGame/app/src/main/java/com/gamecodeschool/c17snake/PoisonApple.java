@@ -62,13 +62,4 @@ class PoisonApple extends GameObject implements Spawnable{
         }
     }
 
-    // Method to hide the apple
-    @Override
-    public void hide() {
-        // Set the apple's location outside the visible screen
-        location.set(-1, -1); // Set the location outside the visible screen
-        spawned = false;
-    }
-
-
 }

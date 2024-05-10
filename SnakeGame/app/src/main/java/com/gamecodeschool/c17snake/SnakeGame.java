@@ -90,7 +90,7 @@ class SnakeGame extends SurfaceView implements Runnable {
     private TextDrawer textDrawer;
 
     private Random random;
-    private boolean isSnakeDead = true;
+
 
     private int randomNumber = 0;
     public static Boolean activityFlag = false;
@@ -312,7 +312,7 @@ class SnakeGame extends SurfaceView implements Runnable {
     public void run() {
         while (mPlaying) {
             if (!mPaused) {
-                if (updateSystem.updateRequired() && !isSnakeDead) {
+                if (updateSystem.updateRequired()) {
                     update();
                 }
             }
@@ -340,7 +340,6 @@ class SnakeGame extends SurfaceView implements Runnable {
         }
 
         isFirstPause = mPaused;
-        isSnakeDead = false;
     }
 
     // Update the newGame() method to set isFirstPause to true
@@ -364,9 +363,7 @@ class SnakeGame extends SurfaceView implements Runnable {
                     mContext.startActivity(gameOver);
                     if (mContext instanceof Activity) {
                         ((Activity) mContext).overridePendingTransition(0, 0);
-                    }
-                    if (activityFlag) {
-                        resetGame();
+                        ((Activity) mContext).finishAffinity();
                     }
                 }
             }
@@ -378,9 +375,7 @@ class SnakeGame extends SurfaceView implements Runnable {
                     mContext.startActivity(gameOver);
                     if (mContext instanceof Activity) {
                         ((Activity) mContext).overridePendingTransition(0, 0);
-                    }
-                    if (activityFlag) {
-                        resetGame();
+                        ((Activity) mContext).finishAffinity();
                     }
                 }
             }
@@ -392,10 +387,10 @@ class SnakeGame extends SurfaceView implements Runnable {
                 mContext.startActivity(gameOver);
                 if (mContext instanceof Activity) {
                     ((Activity) mContext).overridePendingTransition(0, 0);
+                    ((Activity) mContext).finishAffinity();
                 }
-                if (activityFlag) {
-                    resetGame();
-                }
+
+
             }
         }
     }
@@ -405,10 +400,10 @@ class SnakeGame extends SurfaceView implements Runnable {
         if (mSnake.checkDinner(mApple.getLocation())) {
             mApple.spawn();
             if (yApple.isSpawned()) {
-                yApple.hide();
+
             }
             if (pApple.isSpawned()) {
-                pApple.hide();
+
             }
             mScore++;
             mSP.play(mEat_ID, 1, 1, 0, 0, 1);
@@ -424,10 +419,9 @@ class SnakeGame extends SurfaceView implements Runnable {
         }
 
         if (mSnake.bigCheckDinner(yApple.getLocation())) {
-            yApple.hide();
             mApple.spawn();
             if (pApple.isSpawned()) {
-                pApple.hide();
+
             }
             mScore += 3;
             mSP.play(mEat_ID, 1, 1, 0, 0, 1);
@@ -444,12 +438,12 @@ class SnakeGame extends SurfaceView implements Runnable {
         if (mSnake.bigCheckDinner(pApple.getLocation())) {
             mScore -= 2;
             if (mScore < 0) {
-                resetGame();
+
             } else {
-                pApple.hide();
+
                 mApple.spawn();
                 if (yApple.isSpawned()) {
-                    yApple.hide();
+
                 }
                 mSP.play(mEat_ID, 1, 1, 0, 0, 1);
 
@@ -462,42 +456,7 @@ class SnakeGame extends SurfaceView implements Runnable {
             pApple.spawn();
         }
     }
-
-    private void resetGame() {
-        if (!mPaused) {
-            mScore = 0;
-
-            // Refactored
-            spawnHide();
-
-            mApple.spawn();
-            mApple.hide(); // Hide the apple upon resetting the game
-            mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
-            mSnake.hide(); // Hide the snake upon resetting the game
-            isFirstPause = true;// Set isFirstPause to true upon resetting the game
-            isSnakeDead = true;
-            mPaused = true; // Set mPaused to true upon resetting the game
-        }
-    }
-
     // Refactored
-    public void spawnHide() {
-        for (Rock rock : rocks) {
-            rock.spawn();
-            rock.hide();
-        }
-
-        if (yApple.isSpawned()) {
-            yApple.hide();
-            yApple.spawned = false;
-        }
-
-        if (pApple.isSpawned()) {
-            pApple.hide();
-            pApple.spawned = false;
-        }
-    }
-
     public void draw() {
         // Get a lock on the canvas
         if (mSurfaceHolder.getSurface().isValid()) {
@@ -625,7 +584,7 @@ class SnakeGame extends SurfaceView implements Runnable {
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
         if ((motionEvent.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
-            if (isFirstPause && isSnakeDead) {
+            if (isFirstPause) {
                 // If the game beginning, start the game
                 mPaused = false;
                 newGame();

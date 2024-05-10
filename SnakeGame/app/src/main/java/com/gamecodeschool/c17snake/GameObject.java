@@ -36,7 +36,6 @@ public abstract class GameObject {
 
     public abstract void draw(Canvas canvas, Paint paint);
 
-    public abstract void hide();
 
 
 }

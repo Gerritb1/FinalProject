@@ -44,13 +44,6 @@ public class Trash extends Rock implements Spawnable{
         canvas.drawBitmap(mBitmapTrash,
                 location.x * size, location.y * size, paint);
     }
-
-    @Override
-    public void hide() {
-        // Set the trash's location outside the visible screen
-        location.set(-10, -10); // Set the location outside the visible screen
-    }
-
     public void chanceToSpawn(int score, int chance){
         Random rand = new Random();
         if (rand.nextInt(score) > chance) {
