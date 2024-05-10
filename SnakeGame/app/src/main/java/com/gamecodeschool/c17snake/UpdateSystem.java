@@ -6,7 +6,7 @@ public class UpdateSystem {
     private int TARGET_FPS = 10; // Changed from final to non-final
 
     public UpdateSystem() {
-        // Initialize mNextFrameTime to ensure the first update occurs as intended
+        // Initialize mNextFrameTime to ensure the first update occurs
         mNextFrameTime = System.currentTimeMillis();
     }
 
