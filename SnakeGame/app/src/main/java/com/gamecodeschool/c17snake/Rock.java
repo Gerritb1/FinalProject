@@ -6,6 +6,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 class Rock extends GameObject implements Spawnable{
@@ -18,6 +21,7 @@ class Rock extends GameObject implements Spawnable{
     private static Rock rock2;
     private static Rock rock3;
     private static Rock rock4;
+    private static List<Point> locations = new ArrayList<>();
 
     /// Set up the rock in the constructor
     protected Rock(Context context, Point sr, int s) {
@@ -62,6 +66,14 @@ class Rock extends GameObject implements Spawnable{
         Random random = new Random();
         location.x = random.nextInt(mSpawnRange.x) + 1;
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+        for (int x=0; x<locations.size(); x++){
+            if((location.x==locations.get(x).x || location.x==(locations.get(x).x)+1 || location.x==(locations.get(x).x)-1) && (location.y==locations.get(x).y || location.y==(locations.get(x).y+1) || location.y==(locations.get(x).y-1))){
+                location.x = random.nextInt(mSpawnRange.x) + 1;
+                location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+            }
+        }
+
+        locations.add(new Point (location.x, location.y));
     }
 
 
@@ -79,6 +91,13 @@ class Rock extends GameObject implements Spawnable{
     public void hide() {
         // Set the rock's location outside the visible screen
         location.set(-10, -10); // Set the location outside the visible screen
+    }
+
+    public static List<Point> get_Locations(){
+        return locations;
+    }
+    public static void remove_Locations(){
+        locations = new ArrayList<>();
     }
 
 }
