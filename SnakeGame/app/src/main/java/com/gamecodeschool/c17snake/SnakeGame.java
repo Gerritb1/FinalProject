@@ -9,7 +9,6 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -23,17 +22,45 @@ import android.os.Handler;
 
 class SnakeGame extends SurfaceView implements Runnable, Game {
 
-    // Objects for the game loop/thread
-    private Thread mThread = null;
-
-    private boolean isFirstPause = true;
-
-    // Is the game currently playing and or paused?
+    //Flags
     private volatile boolean mPlaying = false;
     private volatile boolean mPaused = true;
-    //private boolean isButtonPressed = false;
+    private boolean isFirstPause = true;
+    private boolean isVulnerable = false;
 
-    // for playing sound effects
+    // How many points does the player have
+    private int mScore;
+
+    // A snake ssss
+    private Snake mSnake;
+
+    //Apple objects
+    private Apple mApple;
+    private YellowApple yApple;
+    private PoisonApple pApple;
+
+    //Rock objects
+    private Rock rock1;
+    private Rock rock2;
+    private Rock rock3;
+    private Rock rock4;
+    private ArrayList<Rock> rocks;
+
+    //Trash objects
+    private Trash trash1;
+    private Trash trash2;
+    private Trash trash3;
+    private Trash trash4;
+    private ArrayList<Trash> trashStuff;
+
+    //Energy drink object
+    private EnergyDrink eDrink;
+
+    // Game loop/thread objects
+    private Thread mThread = null;
+    private UpdateSystem updateSystem;
+
+    // Sound effects
     private SoundPool mSP;
     private int mEat_ID = -1;
     private int yEat_ID = -1;
@@ -42,81 +69,51 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     private int mCrashIDTrash = -1;
     private int mCrashIDRock = -1;
 
-    // The size in segments of the playable area
-    private final int NUM_BLOCKS_WIDE = 40;
-    private int mNumBlocksHigh;
+    // Background music
+    private MediaPlayer mBackgroundMusic;
 
-    // How many points does the player have
-    private int mScore;
-
-    //Pause button rendering objects
-    private Rect mPauseButtonRect;
-    Rect mTriggerButtonRect;
-
-    // Objects for drawing
+    // Drawing objects
     private Canvas mCanvas;
     private final SurfaceHolder mSurfaceHolder;
     private final Paint mPaint;
-
-    // Typeface object to hold the custom font
-    private Typeface mCustomFont;
-
-    // A snake ssss
-    private Snake mSnake;
-    // And an apple
-    private Apple mApple;
-    private boolean bombInSnake = false;
-
-    //And an Yellow Apple
-    private YellowApple yApple;
-
-    // And a Poisoned Apple
-    private PoisonApple pApple;
-
-    // And four rock objects
-    private Rock rock1;
-    private Rock rock2;
-    private Rock rock3;
-    private Rock rock4;
-    private ArrayList<Rock> rocks;
-
-    private Trash trash1;
-    private Trash trash2;
-    private Trash trash3;
-    private Trash trash4;
-    private ArrayList<Trash> trashStuff;
-
     private Bitmap mBackgroundBitmap;
     private DrawPauseButton drawPauseButton;
-    private UpdateSystem updateSystem;
-    private Context mContext;
     private TextDrawer textDrawer;
 
-    private Random random;
+    // Typeface for custom font
+    private Typeface mCustomFont;
 
-    private int randomNumber = 0;
+    // Game area size
+    private final int NUM_BLOCKS_WIDE = 40;
+    private int mNumBlocksHigh;
 
-    // MediaPlayer for background music
-    private MediaPlayer mBackgroundMusic;
+    // Pause button rendering objects
+    private Rect mPauseButtonRect;
+    private Paint mPauseButtonPaint;
 
-    // This tracks which piece of trash we're on
-    private int trashPiece = 0;
-    private int trashChance = 2;
-
-    // For vulnerability of the snake
-    private boolean isVulnerable = false;
-
+    // Timer objects
     private Handler handler;
+    private Runnable speedResetTimer;
     private Runnable vulnerabilityTimer;
 
-    private Bomb mBomb;
+    //Application context object
+    private Context mContext;
 
-    private TriggerButton drawTriggerButton;
-    private TriggerButton mTriggerButton;
+    //Randomization
+    private Random random;
+    private int randomNumber = 0;
 
-    private boolean isTriggerButtonPressed = false;
-    private int bombCount = 0;
-    private Point mShootDirection;
+    // Tracking game object locations (Prevents overlapping of objects)
+    private List<Point> rockLocations = new ArrayList<>();
+    private List<Point> trashLocations = new ArrayList<>();
+    private Point mAppleLocations = null;
+    private Point yAppleLocations = null;
+    private Point pAppleLocations = null;
+
+    // Trash index & trash probability
+    private int trashPiece = 0;
+    private int trashChance = 3;
+
 
     // This is the constructor method that gets called
     // from SnakeActivity
@@ -145,21 +142,14 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         // Create the pause button
         createPauseButton();
 
-        //Create the trigger button
-        createTriggerButton();
-
         // Refactored
         initialize(context);
     }
 
     // Refactored
     public void initialize(Context context) {
-
-        //Initialize the buttons
+        //Initialize the drawButtonPause
         drawPauseButton = DrawPauseButton.getDrawPauseButton(context, this);
-        drawTriggerButton = TriggerButton.getDrawTriggerButton(context, this);
-
-        //Initialize the update system
         updateSystem = new UpdateSystem();
 
         //Refactored
@@ -192,10 +182,10 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         trashStuff.add(trash4);
     }
 
+
     public boolean isPaused() {
         return mPaused;
     }
-
 
     // Refactored
     @Override
@@ -230,11 +220,9 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         mPauseButtonRect = new Rect(buttonLeft, buttonTop, buttonLeft + buttonWidth, buttonTop + buttonHeight);
 
         // Define the appearance of the pause button (e.g., color)
-        Paint mPauseButtonPaint = new Paint();
+        mPauseButtonPaint = new Paint();
         mPauseButtonPaint.setColor(Color.RED); // Adjust color as needed
     }
-
-
 
     //Refactored
     @Override
@@ -295,8 +283,11 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 new Point(NUM_BLOCKS_WIDE,
                         mNumBlocksHigh),
                 blockSize);
-        // Call the constructor for the Bomb class in the callConstructors method
-        mBomb = Bomb.getBomb(context, new Point(NUM_BLOCKS_WIDE, mNumBlocksHigh), blockSize);
+
+        eDrink = EnergyDrink.getEnergyDrink(context,
+                new Point(NUM_BLOCKS_WIDE,
+                        mNumBlocksHigh),
+                blockSize);
 
         //Refactored
         rockInitialization(context, size);
@@ -368,19 +359,18 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
     @Override
     public void newGame() {
+
         // Reset the snake and spawn the apple if it's not paused and it's the first pause
         if (!mPaused && isFirstPause) {
             mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
-            mApple.spawn();
-            mBomb.spawn();
-            if(mScore > 3) {
-                yApple.spawn();
-                mBomb.spawn();
-            }
             for(Rock rock: rocks) {
                 rock.spawn();
             }
-
+            mApple.spawn();
+            if(mScore > 3) {
+                yApple.spawn();
+                eDrink.spawn();
+            }
             for(Trash trash: trashStuff) {
                 trash.spawn();
                 trash.hide();
@@ -404,11 +394,10 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
             // Refactored, this is for the poison apple
             updatePApple();
+            updateEnergyDrink();
 
             // Refactored
             updateDeath();
-
-            updateBomb();
         }
     }
 
@@ -446,7 +435,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         }
     }
 
-
     // Refactored, this is for the red apple
     public void updateMApple() {
         if (mSnake.checkDinner(mApple.getLocation())) {
@@ -462,16 +450,16 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             for(int i = 0; i < 4; i++ ) {
                 trashStuff.get(trashPiece).chanceToSpawn(mScore, trashChance);
                 trashPiece = (trashPiece+1)%3;
-                trashChance+= 2;
+                trashChance+= 3;
             }
-            trashChance = 2;
+            trashChance = 4;
 
             mSP.play(mEat_ID, 1, 1, 0, 0, 1);
-            randomNumber = random.nextInt(4);
+            randomNumber = random.nextInt(3);
         }
     }
 
-
+    // Refactored, this is for the yellow apple
     public void updateYApple() {
         // Check if the score is a dividable by 4 and spawn the yellow apple
         if ((mScore > 0) && (mScore % 4 == 0) && !yApple.isSpawned()) {
@@ -488,14 +476,15 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             for(int i = 0; i < 4; i++ ) {
                 trashStuff.get(trashPiece).chanceToSpawn(mScore, trashChance);
                 trashPiece = (trashPiece+1)%3;
-                trashChance+= 2;
+                trashChance+= 4;
             }
-            trashChance = 2;
+            trashChance = 3;
 
             mSP.play(yEat_ID, 1, 1, 0, 0, 1);
             randomNumber = random.nextInt(3);
 
             // to grow the snake body segment by 3, since 2+1=3
+            mSnake.grow(1);
             mSnake.grow(2);
 
             // Set the snake as vulnerable
@@ -508,6 +497,48 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             startVulnerabilityTimer();
         }
     }
+
+    public void updateEnergyDrink() { //Refactored
+        // Spawn energy drink if score is a multiple of 4
+        if ((mScore > 0) && (mScore % 4 == 0) && !eDrink.isSpawned()) {
+            eDrink.spawn();
+        }
+
+        // If snake eats the energy drink
+        if (mSnake.checkDinner(eDrink.getLocation())) {
+            eDrink.hide();
+            mApple.spawn();
+            if (pApple.isSpawned()) {
+                pApple.hide();
+            }
+            mScore++;
+            randomNumber = random.nextInt(3);
+
+            // Increase snake speed
+            snakeSpeed();
+        }
+    }
+
+    public void snakeSpeed() { //Extracted from updateEnergyDrink
+        // Increase game speed
+        updateSystem.setTargetFPS(20);
+
+        // Cancel any existing timer
+        if (speedResetTimer != null) {
+            handler.removeCallbacks(speedResetTimer);
+        }
+
+        // Start a new timer to reset the speed after 5 seconds
+        speedResetTimer = new Runnable() {
+            @Override
+            public void run() {
+                // Reset game speed
+                updateSystem.setTargetFPS(10);
+            }
+        };
+        handler.postDelayed(speedResetTimer, 5000);
+    }
+
 
     private void startVulnerabilityTimer() {
         // Cancel any existing timer first
@@ -551,46 +582,63 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 mSP.play(pEat_ID, 1, 1, 0, 0, 1);
 
                 mSnake.shrink(3);
-                randomNumber = random.nextInt(5);
+                randomNumber = random.nextInt(4);
             }
         }
-        if ((mScore > 0) && (randomNumber == 2) && !pApple.isSpawned()) {
+        if ((mScore > 0) && (randomNumber == 1) && !pApple.isSpawned()) {
             pApple.spawn();
         }
     }
 
-
-
-    private void resetGame() {
+    private void resetGame() { //Refactored
         if (!mPaused) {
             mScore = 0;
-            bombCount = 0;
 
+            //Reset music
             if (mBackgroundMusic.isPlaying()) {
                 mBackgroundMusic.pause();
-                mBackgroundMusic.seekTo(0); // Rewind the background music to the beginning
+                mBackgroundMusic.seekTo(0);
             }
+
+            //Reset obstacles
+            Rock.remove_Locations();
+            Trash.remove_Locations();
+            Apple.remove_Locations();
+            YellowApple.remove_Locations();
+            PoisonApple.remove_Locations();
+            Rock.remove_Locations();
 
             // Refactored
             spawnHide();
-
-            mApple.spawn();
-            mApple.hide(); // Hide the apple upon resetting the game
-            mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
-            mSnake.hide(); // Hide the snake upon resetting the game
-            isFirstPause = true; // Set isFirstPause to true upon resetting the game
-            mPaused = true; // Set mPaused to true upon resetting the game
-
-            mSnake.setVulnerable(false);
-            isVulnerable = false;
-
-            // Cancel the vulnerability timer
-            cancelVulnerabilityTimer();
-
-            // Reset the vulnerability state
+            resetGameState();
 
         }
     }
+
+    public void resetGameState(){ //Extracted from resetGame
+        //Reset game objects
+        mApple.spawn();
+        mApple.hide();
+        mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
+        mSnake.hide();
+        eDrink.hide();
+
+        //Reset flags
+        isFirstPause = true;
+        mPaused = true;
+        mSnake.setVulnerable(false);
+        isVulnerable = false;
+        eDrink.setDrink(false);
+
+        // Cancel the vulnerability timer
+        cancelVulnerabilityTimer();
+
+        //Reset game loop speed if snake dies
+        updateSystem.setTargetFPS(10);
+
+    }
+
+
 
     // Refactored
     public void spawnHide() {
@@ -613,10 +661,9 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             pApple.hide();
             pApple.spawned = false;
         }
-        if(mBomb.isSpawned()) {
-            mBomb.hide();
-            mBomb.spawned = false;
-            mBomb.setShot(false); // Ensure the bomb's shot state is reset
+        if (eDrink.isSpawned()){
+            eDrink.hide();
+            //eDrink.setDrink(false);
         }
     }
 
@@ -645,11 +692,9 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         // Check and draw conditions based on game state (paused, tap to play, etc.)
         checkDrawConditions();
 
-
         // Draw the pause button in any case except for the initial "Tap to play" state
         if (!isFirstPause || !mPaused) {
             drawPauseButton.drawButton(mCanvas, mPaint);
-            drawTriggerButton.drawButton(mCanvas, mPaint);
         }
 
         // Draw game elements if not paused
@@ -694,7 +739,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         mSnake.draw(mCanvas, mPaint);
         yApple.draw(mCanvas, mPaint);
         pApple.draw(mCanvas, mPaint);
-        mBomb.draw(mCanvas, mPaint);
+        eDrink.draw(mCanvas, mPaint);
 
         // Draw the Rocks
         for(Rock rock: rocks) {
@@ -727,7 +772,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
         pApple.draw(mCanvas, mPaint);
 
-        mBomb.draw(mCanvas, mPaint);
+        eDrink.draw(mCanvas, mPaint);
     }
 
     // Refactored
@@ -752,102 +797,24 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         }
     }
 
-    private void createTriggerButton() {
-        mTriggerButton = new TriggerButton(getContext(), this);
-
-        // Get the screen dimensions
-        Point screenDimensions = mTriggerButton.getScreenDimensions();
-        int screenWidth = screenDimensions.x;
-        int screenHeight = screenDimensions.y;
-
-        // Define the size and position of the button relative to screen dimensions
-        int buttonWidth = screenWidth / 10;
-        int buttonHeight = screenHeight / 10;
-        int buttonLeft = screenWidth - buttonWidth - 150;
-        int buttonTop = screenHeight - buttonHeight - 25;
-
-        // Create a Rect object representing the trigger button's bounds
-        mTriggerButtonRect = new Rect(buttonLeft, buttonTop, buttonLeft + buttonWidth, buttonTop + buttonHeight);
-    }
-
-    public void setTriggerButtonPressed(boolean isPressed) {
-        this.isTriggerButtonPressed = isPressed;
-    }
-
-    public void updateBomb() {
-
-        // Update the bomb & snake position
-        mBomb.update();
-        mBomb.updateSnakeLocation(mSnake.getHeadPosition());
-
-        Log.d("BombUpdate", "Bomb updated at: " + mBomb.getLocation()); // Log the bomb's location after update
-        mBomb.draw(mCanvas, mPaint);
-
-        if (mSnake.checkDinner(mBomb.getLocation())) {
-            mSnake.setBombInSnakeBody(true);
-            mScore++;
-            bombCount++;
-            if(!mBomb.isShot() && mSnake.getBombInSnakeBody()) {
-                mBomb.hide(); // Hide the bomb
-                Log.d("BombUpdate", "Bomb hidden after being eaten by snake");
-            }
-        }
-        if (isTriggerButtonPressed) {
-            // Get the current direction of the snake
-            // Update the shoot direction
-            mShootDirection = mSnake.getHeadPosition();
-            // Pass the current direction when shooting the bomb
-            mBomb.shootBomb(isTriggerButtonPressed, mBomb.getLocation());
-            isTriggerButtonPressed = false; // Reset the trigger state after shooting
-            mBomb.spawnFiredBomb(mShootDirection);
-            Log.d("BombUpdate", "Bomb spawned after being shot");
-        }
-
-        // Check if the bomb is shot and if it is present in the snake
-        if (mBomb.isShot() && bombCount>0 && mSnake.getBombInSnakeBody()) {
-            mSnake.setBombInSnakeBody(false);
-            mScore--; // Decrement the score
-            bombCount--; // Decrement the bomb
-            mSnake.shrink(1); // Shrink the snake
-            mBomb.setShot(false); // Reset the bomb shot state
-            mBomb.hideFiredBomb(); // Hide the fired bomb
-            Log.d("BombUpdate", "Bomb shot and snake shrunk");
-        }
-
-        // Check if the bomb is not in the snake's body
-        if (!mSnake.getBombInSnakeBody()) {
-            // Call the method here
-            mBomb.spawnFiredBomb(mBomb.getShootDirection());
-            mBomb.setShot(false);
-            Log.d("BombUpdate", "Bomb spawned because it's not in snake's body");
-        }
-    }
-
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
         if ((motionEvent.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
-            Log.d("TriggerButton", "Touch Event - X: " + motionEvent.getX() + ", Y: " + motionEvent.getY());
-
             if (isFirstPause) {
                 // If the game beginning, start the game
                 mPaused = false;
                 newGame();
-            } else if (mPaused && mPauseButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
-                // If the game is paused, resume the game
+            }else if(mPaused && mPauseButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())){
+                //If the game is paused, resume the game
                 mPaused = false;
-            } else if (mPauseButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
+            }else if (mPauseButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
                 // If the pause button is touched, pause the game
                 mPaused = true;
                 mBackgroundMusic.pause();
-            } else if (mTriggerButton.getTriggerButtonRect().contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
-                // If the trigger button is touched, set isTriggerButtonPressed to true
-                setTriggerButtonPressed(true);
             } else if (!mPaused) {
                 // If the game is running and not paused, handle snake movement
                 mSnake.switchHeading(motionEvent);
-                mSnake.getHeadPosition();
             }
-
             return true;
         }
         return true;
