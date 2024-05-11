@@ -3,6 +3,8 @@ package com.gamecodeschool.c17snake;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -10,18 +12,15 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.media.AudioAttributes;
+import android.media.MediaPlayer;
 import android.media.SoundPool;
+import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.media.MediaPlayer;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import androidx.core.content.res.ResourcesCompat;
 import java.util.*;
 import java.util.Random;
-import android.os.Handler;
-
 
 class SnakeGame extends SurfaceView implements Runnable, Game {
 
@@ -403,6 +402,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
             // Refactored, this is for the poison apple
             updatePApple();
+            
             updateEnergyDrink();
 
             // Refactored
@@ -553,7 +553,8 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 pApple.hide();
             } else if (yApple.isSpawned()) {
                 yApple.hide();
-            } else if (mApple.isSpawned()) {
+            }
+            if(mApple.isSpawned()) {
                 mApple.hide();
             }
             mScore++;
@@ -581,7 +582,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 updateSystem.setTargetFPS(10);
             }
         };
-        handler.postDelayed(speedResetTimer, 5000);
+        handler.postDelayed(speedResetTimer, 5000); // 5000ms = 5s
     }
 
 
@@ -617,19 +618,23 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             mScore -= 2;
             if (mScore < 0) {
                 resetGame();
-            } else {
+            }
+            if(pApple.isSpawned()) {
                 pApple.hide();
                 mApple.spawn();
-                if (yApple.isSpawned()) {
-                    yApple.hide();
-                }
-
-                mSP.play(pEat_ID, 1, 1, 0, 0, 1);
-
-                mSnake.shrink(3);
-                randomNumber = random.nextInt(4);
             }
+            if (yApple.isSpawned()) {
+                yApple.hide();
+            }
+            if (eDrink.isSpawned()) {
+                eDrink.hide();
+            }
+            
+            mSP.play(pEat_ID, 1, 1, 0, 0, 1);
+            mSnake.shrink(3);
+            randomNumber = random.nextInt(4);
         }
+        
         if ((mScore > 0) && (randomNumber == 1) && !pApple.isSpawned()) {
             pApple.spawn();
         }
