@@ -528,14 +528,14 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         }
     }
 
-    public void updateEnergyDrink() { //Refactored
+ public void updateEnergyDrink() { //Refactored
         // Spawn energy drink if score is a multiple of 4
         if ((mScore > 0) && (mScore % 4 == 0) && !eDrink.isSpawned()) {
             eDrink.spawn();
         }
 
         // If snake eats the energy drink
-        if (mSnake.checkDinner(eDrink.getLocation())) {
+        if (mSnake.checkDrink(eDrink.getLocation())) {
             eDrink.hide();
             mApple.spawn();
             if (pApple.isSpawned()) {
