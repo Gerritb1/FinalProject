@@ -19,9 +19,10 @@ public class Trash extends Rock implements Spawnable{
     private static Trash trash4;
     private static List<Point> locations = new ArrayList<>();
     private List<Point> rockLocations = new ArrayList<>();
-    private Point mAppleLocations = null;
-    private Point yAppleLocations = null;
-    private Point pAppleLocations = null;
+    private Point mAppleLocation = null;
+    private Point yAppleLocation = null;
+    private Point pAppleLocation = null;
+    private Point eDrinkLocation = null;
 
 
     /// Set up the rock in the constructor
@@ -40,88 +41,97 @@ public class Trash extends Rock implements Spawnable{
     @Override
     public void spawn() {
         rockLocations = Rock.get_Locations();
-        yAppleLocations = YellowApple.get_Location();
-        mAppleLocations = Apple.get_Location();
-        pAppleLocations = PoisonApple.get_Location();
-        // Choose two random values and place the trash
+        mAppleLocation = Apple.get_Location();
+        yAppleLocation = YellowApple.get_Location();
+        pAppleLocation = PoisonApple.get_Location();
+        eDrinkLocation = EnergyDrink.get_Location();
+
         Random random = new Random();
         location.x = random.nextInt(mSpawnRange.x) + 1;
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
-        for (int x=0; x<4; x++){
-            if((location.x==rockLocations.get(x).x || location.x==(rockLocations.get(x).x)+1 || location.x==(rockLocations.get(x).x)+2 || location.x==(rockLocations.get(x).x)-1 || location.x==(rockLocations.get(x).x)-2) && (location.y==rockLocations.get(x).y || location.y==(rockLocations.get(x).y+1) || location.y==(rockLocations.get(x).y+2) || location.y==(rockLocations.get(x).y-1) || location.y==(rockLocations.get(x).y-2))){
-                location.x = random.nextInt(mSpawnRange.x) + 1;
-                location.y = random.nextInt(mSpawnRange.y - 1) + 1;
-            }
-            if(locations.size() > x) {
-                if ((location.x == locations.get(x).x || location.x == (locations.get(x).x) + 1 || location.x == (locations.get(x).x) - 1) && (location.y == locations.get(x).y || location.y == (locations.get(x).y + 1) || location.y == (locations.get(x).y - 1))) {
-                    location.x = random.nextInt(mSpawnRange.x) + 1;
-                    location.y = random.nextInt(mSpawnRange.y - 1) + 1;
-                }
-            }
-            if(yAppleLocations != null){
-                if((location.x==yAppleLocations.x || location.x==yAppleLocations.x+1 || location.x==yAppleLocations.x-1) && (location.y==yAppleLocations.y || location.y==yAppleLocations.y+1 || location.y==yAppleLocations.y-1)){
-                    location.x = random.nextInt(mSpawnRange.x) + 1;
-                    location.y = random.nextInt(mSpawnRange.y - 1) + 1;
-                }
-            }
-            if(pAppleLocations != null){
-                if((location.x==pAppleLocations.x || location.x==pAppleLocations.x+1 || location.x==pAppleLocations.x-1) && (location.y==pAppleLocations.y || location.y==pAppleLocations.y+1 || location.y==pAppleLocations.y-1)){
-                    location.x = random.nextInt(mSpawnRange.x) + 1;
-                    location.y = random.nextInt(mSpawnRange.y - 1) + 1;
-                }
-            }
+
+        while (isLocationInvalid(location, rockLocations) ||
+                isLocationInvalid(location, mAppleLocation) ||
+                isLocationInvalid(location, yAppleLocation) ||
+                isLocationInvalid(location, pAppleLocation) ||
+                isLocationInvalid(location, eDrinkLocation)) {
+            location.x = random.nextInt(mSpawnRange.x) + 1;
+            location.y = random.nextInt(mSpawnRange.y - 1) + 1;
         }
+
         locations.add(new Point(location.x, location.y));
     }
 
-    // Draw the trash
-    @Override
-    public void draw(Canvas canvas, Paint paint) {
-        canvas.drawBitmap(mBitmapTrash,
-                location.x * size, location.y * size, paint);
-    }
-
-    @Override
-    public void hide() {
-        // Set the trash's location outside the visible screen
-        location.set(-10, -10); // Set the location outside the visible screen
-    }
-
-    public void chanceToSpawn(int score, int chance){
-        Random rand = new Random();
-        if (rand.nextInt(score) > chance) {
-            this.spawn();
+    private boolean isLocationInvalid(Point location, List<Point> otherLocations) {
+        for (Point otherLocation : otherLocations) {
+            if (otherLocation == null) continue;
+            int xDiff = Math.abs(location.x - otherLocation.x);
+            int yDiff = Math.abs(location.y - otherLocation.y);
+            if (xDiff <= 2 && yDiff <= 2) {
+                return true;
+            }
         }
+        return false;
     }
 
-    // Provide access to the trash, creating it if necessary
-    public static Trash getTrash1(Context context, Point sr, int s) {
-        if(trash1 == null)
-            trash1 = new Trash(context, sr, s);
-        return trash1;
-    }
-    public static Trash getTrash2(Context context, Point sr, int s) {
-        if(trash2 == null)
-            trash2 = new Trash(context, sr, s);
-        return trash2;
+    //Overloaded method
+    private boolean isLocationInvalid(Point location, Point otherLocation) {
+        if (otherLocation == null) return false;
+        int xDiff = Math.abs(location.x - otherLocation.x);
+        int yDiff = Math.abs(location.y - otherLocation.y);
+        return xDiff <= 2 && yDiff <= 2;
     }
 
-    public static Trash getTrash3(Context context, Point sr, int s) {
-        if(trash3 == null)
-            trash3 = new Trash(context, sr, s);
-        return trash3;
-    }
 
-    public static Trash getTrash4(Context context, Point sr, int s) {
-        if(trash4 == null)
-            trash4 = new Trash(context, sr, s);
-        return trash4;
+
+    // Draw the trash
+@Override
+public void draw(Canvas canvas, Paint paint) {
+    canvas.drawBitmap(mBitmapTrash,
+            location.x * size, location.y * size, paint);
+}
+
+@Override
+public void hide() {
+    // Set the trash's location outside the visible screen
+    location.set(-10, -10); // Set the location outside the visible screen
+}
+
+public void chanceToSpawn(int score, int chance){
+    Random rand = new Random();
+    if (rand.nextInt(score) > chance) {
+        this.spawn();
     }
-    public static List<Point> get_Locations(){
-        return locations;
-    }
-    public static void remove_Locations(){
-        locations = new ArrayList<>();
-    }
+}
+
+// Provide access to the trash, creating it if necessary
+public static Trash getTrash1(Context context, Point sr, int s) {
+    if(trash1 == null)
+        trash1 = new Trash(context, sr, s);
+    return trash1;
+}
+public static Trash getTrash2(Context context, Point sr, int s) {
+    if(trash2 == null)
+        trash2 = new Trash(context, sr, s);
+    return trash2;
+}
+
+public static Trash getTrash3(Context context, Point sr, int s) {
+    if(trash3 == null)
+        trash3 = new Trash(context, sr, s);
+    return trash3;
+}
+
+public static Trash getTrash4(Context context, Point sr, int s) {
+    if(trash4 == null)
+        trash4 = new Trash(context, sr, s);
+    return trash4;
+}
+public static List<Point> get_Locations(){
+    return locations;
+}
+public static void remove_Locations(){
+    locations = new ArrayList<>();
+}
 
 }
