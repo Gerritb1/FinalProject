@@ -12,7 +12,7 @@ import java.util.Random;
 public class EnergyDrink extends GameObject implements Spawnable{
 
     private static EnergyDrink energyDrink;
-    private Bitmap mBitmapPowerUP;
+    private Bitmap mBitmapEnergyDrink;
     //private static Point mLocation;
     private static Point locations = null;
 
@@ -21,10 +21,13 @@ public class EnergyDrink extends GameObject implements Spawnable{
     protected EnergyDrink(Context context, Point sr, int size){
         super(context, sr, size);
 
-        mBitmapPowerUP = BitmapFactory.decodeResource(context.getResources(), R.drawable.energydrink);
+        mBitmapEnergyDrink = BitmapFactory.decodeResource(context.getResources(), R.drawable.energydrink);
+
+        // Increase the size value
 
         // Resize the bitmap
-        mBitmapPowerUP = Bitmap.createScaledBitmap(mBitmapPowerUP, size, size, false);
+        mBitmapEnergyDrink = Bitmap.createScaledBitmap(mBitmapEnergyDrink, size*2, size*2, false);
+
     }
 
     // Provide access to the apple, creating it if necessary
@@ -85,13 +88,16 @@ public class EnergyDrink extends GameObject implements Spawnable{
     @Override
     public void draw(Canvas canvas, Paint paint) {
 
-        canvas.drawBitmap(mBitmapPowerUP,
+        canvas.drawBitmap(mBitmapEnergyDrink,
                 location.x * size, location.y * size, paint);
     }
 
     // Method to hide the apple
     @Override
-    public void hide() { location.set(-1, -1); }
+    public void hide() {
+        location.set(-10, -10);
+        spawned = false;
+    }
 
     public boolean isSpawned() {
         return spawned;
