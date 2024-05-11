@@ -25,61 +25,71 @@ class YellowApple extends Apple implements Spawnable{
     private List<Point> trashLocations = new ArrayList<>();
     private Point mAppleLocations = null;
     private Point pAppleLocations = null;
-
+    private Point eDrinkLocations = null;
     /// Set up the apple in the constructor
-    private YellowApple(Context context, Point sr, int s) {
 
-        super(context, sr, s);
+        /// Set up the apple in the constructor
+        private YellowApple(Context context, Point sr, int s) {
 
-        // Load the image to the bitmap
-        mBitmapApple = BitmapFactory.decodeResource(context.getResources(), R.drawable.yellowapple);
+            super(context, sr, s);
 
-        // Resize the bitmap
-        mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, s * 2, s * 2, false);
-    }
+            // Load the image to the bitmap
+            mBitmapApple = BitmapFactory.decodeResource(context.getResources(), R.drawable.yellowapple);
 
-    // Provide access to the apple, creating it if necessary
-    public static YellowApple getYellowApple(Context context, Point sr, int s) {
-        if(yellowApple == null)
-            yellowApple = new YellowApple(context, sr, s);
-        return yellowApple;
-    }
+            // Resize the bitmap
+            mBitmapApple = Bitmap.createScaledBitmap(mBitmapApple, s * 2, s * 2, false);
+        }
 
-    // This is called every time an apple is eaten
-    @Override
-    public void spawn() {
-        // Choose two random values and place the apple
-        rockLocations = Rock.get_Locations();
-        trashLocations = Trash.get_Locations();
-        mAppleLocations = Apple.get_Location();
-        pAppleLocations = PoisonApple.get_Location();
-        Random random = new Random();
-        location.x = random.nextInt(mSpawnRange.x) + 1;
-        location.y = random.nextInt(mSpawnRange.y - 1) + 1;
-        for (int x=0; x<4; x++){
-            if((location.x==rockLocations.get(x).x || location.x==(rockLocations.get(x).x)+1 || location.x==(rockLocations.get(x).x)+2 || location.x==(rockLocations.get(x).x)-1 || location.x==(rockLocations.get(x).x)-2) && (location.y==rockLocations.get(x).y || location.y==(rockLocations.get(x).y+1) || location.y==(rockLocations.get(x).y+2) || location.y==(rockLocations.get(x).y-1) || location.y==(rockLocations.get(x).y-2))){
+        // Provide access to the apple, creating it if necessary
+        public static YellowApple getYellowApple(Context context, Point sr, int s) {
+            if(yellowApple == null)
+                yellowApple = new YellowApple(context, sr, s);
+            return yellowApple;
+        }
+
+        // This is called every time an apple is eaten
+        @Override
+        public void spawn() {
+            List<Point> rockLocations = Rock.get_Locations();
+            Point mAppleLocation = Apple.get_Location();
+            Point pAppleLocation = PoisonApple.get_Location();
+            List<Point> trashLocations = Trash.get_Locations();
+            Point eDrinkLocation = EnergyDrink.get_Location();
+
+            Random random = new Random();
+            location.x = random.nextInt(mSpawnRange.x) + 1;
+            location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+
+            while (isLocationInvalid(location, rockLocations) ||
+                    (isLocationInvalid(location, mAppleLocation)) ||
+                    (isLocationInvalid(location, pAppleLocation)) ||
+                    (eDrinkLocation != null && isLocationInvalid(location, eDrinkLocation)) ||
+                    isLocationInvalid(location, trashLocations)) {
                 location.x = random.nextInt(mSpawnRange.x) + 1;
                 location.y = random.nextInt(mSpawnRange.y - 1) + 1;
             }
-            if((location.x==mAppleLocations.x || location.x==mAppleLocations.x+1 || location.x==mAppleLocations.x-1) && (location.y==mAppleLocations.y || location.y==mAppleLocations.y+1 || location.y==mAppleLocations.y-1)){
-                location.x = random.nextInt(mSpawnRange.x) + 1;
-                location.y = random.nextInt(mSpawnRange.y - 1) + 1;
-            }
-            if(pAppleLocations != null){
-                if((location.x==pAppleLocations.x || location.x==pAppleLocations.x+1 || location.x==pAppleLocations.x-1) && (location.y==pAppleLocations.y || location.y==pAppleLocations.y+1 || location.y==pAppleLocations.y-1)){
-                    location.x = random.nextInt(mSpawnRange.x) + 1;
-                    location.y = random.nextInt(mSpawnRange.y - 1) + 1;
-                }
-            }
-            if(!trashLocations.isEmpty()){
-                if((location.x==trashLocations.get(x).x || location.x==(trashLocations.get(x).x)+1 || location.x==(trashLocations.get(x).x)-1) && (location.y==trashLocations.get(x).y || location.y==(trashLocations.get(x).y+1) || location.y==(trashLocations.get(x).y-1))){
-                    location.x = random.nextInt(mSpawnRange.x) + 1;
-                    location.y = random.nextInt(mSpawnRange.y - 1) + 1;
-                }
+
+            locations = new Point(location.x, location.y);
+            spawned = true;
+        }
+
+    private boolean isLocationInvalid(Point location, List<Point> otherLocations) {
+        for (Point otherLocation : otherLocations) {
+            if (otherLocation == null) continue;  //Needed to prevent crashing
+            int xDiff = Math.abs(location.x - otherLocation.x);
+            int yDiff = Math.abs(location.y - otherLocation.y);
+            if (xDiff <= 2 && yDiff <= 2) {
+                return true;
             }
         }
-        locations = new Point(location.x, location.y);
-        spawned = true;
+        return false;
+    }
+
+    private boolean isLocationInvalid(Point location, Point otherLocation) {
+        if (otherLocation == null) return false;  //Needed to prevent crashing
+        int xDiff = Math.abs(location.x - otherLocation.x);
+        int yDiff = Math.abs(location.y - otherLocation.y);
+        return xDiff <= 2 && yDiff <= 2;
     }
 
     public boolean isSpawned() {
@@ -110,7 +120,5 @@ class YellowApple extends Apple implements Spawnable{
     public static void remove_Locations(){
         locations = null;
     }
-
-
 
 }
