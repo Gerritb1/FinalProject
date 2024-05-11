@@ -9,10 +9,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SnakeGame">
-        <activity android:name=".SnakeActivity"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+        <activity
+            android:name=".GameOverActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SnakeActivity"
+            android:exported="true"
             android:screenOrientation="landscape"
-            android:exported="true">
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
