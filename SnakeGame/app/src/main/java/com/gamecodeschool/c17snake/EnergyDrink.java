@@ -15,22 +15,20 @@ public class EnergyDrink extends GameObject implements Spawnable{
     private Bitmap mBitmapEnergyDrink;
     //private static Point mLocation;
     private static Point locations = null;
-
     boolean spawned;
+    private int scaledSize;
 
     protected EnergyDrink(Context context, Point sr, int size){
         super(context, sr, size);
 
         mBitmapEnergyDrink = BitmapFactory.decodeResource(context.getResources(), R.drawable.energydrink);
 
-        // Increase the size value
-
         // Resize the bitmap
         mBitmapEnergyDrink = Bitmap.createScaledBitmap(mBitmapEnergyDrink, size*2, size*2, false);
-
     }
 
-    // Provide access to the apple, creating it if necessary
+
+
     public static EnergyDrink getEnergyDrink(Context context, Point sr, int size) {
         if(energyDrink == null)
             energyDrink = new EnergyDrink(context, sr, size);
@@ -82,15 +80,13 @@ public class EnergyDrink extends GameObject implements Spawnable{
         return xDiff <= 2 && yDiff <= 2;
     }
 
-
-
     // Draw the apple
     @Override
     public void draw(Canvas canvas, Paint paint) {
-
         canvas.drawBitmap(mBitmapEnergyDrink,
-                location.x * size, location.y * size, paint);
+                (location.x * size) - (scaledSize / 2), (location.y * size) - (scaledSize / 2), paint);
     }
+
 
     // Method to hide the apple
     @Override
@@ -103,9 +99,9 @@ public class EnergyDrink extends GameObject implements Spawnable{
         return spawned;
     }
 
-
     public static Point get_Location(){
         return locations;
     }
 
 }
+
