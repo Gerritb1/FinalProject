@@ -7,5 +7,7 @@
     <string name="name4">Farhad Lakzaei</string>
     <string name="name5">Angel Calderon</string>
     <string name="resume">Resume</string>
+    <string name="GameOver">GAME OVER</string>
+    <integer name="Highscore">0</integer>
 
 </resources>
