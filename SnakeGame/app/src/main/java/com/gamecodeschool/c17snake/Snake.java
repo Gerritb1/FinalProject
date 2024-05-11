@@ -405,6 +405,30 @@ class Snake extends GameObject implements Movable, Collidable {
         return false; // No collision
     }
 
+        public boolean checkDrink(Point l) {
+        // Calculate the boundaries of the energy drink
+        int drinkSize = mSegmentSize * 2; // Size of the energy drink
+
+        // Calculate the boundaries of the energy drink
+        int drinkLeft = l.x * mSegmentSize;
+        int drinkRight = drinkLeft + drinkSize;
+        int drinkTop = l.y * mSegmentSize;
+        int drinkBottom = drinkTop + drinkSize;
+
+        // Calculate the boundaries of the snake's head
+        int headLeft = segmentLocations.get(0).x * mSegmentSize;
+        int headRight = headLeft + mSegmentSize;
+        int headTop = segmentLocations.get(0).y * mSegmentSize;
+        int headBottom = headTop + mSegmentSize;
+
+        // Check if the head of the snake intersects with the energy drink
+        if (headLeft < drinkRight && headRight > drinkLeft && headTop < drinkBottom && headBottom > drinkTop) {
+            return true; // Collision detected
+        }
+
+        return false; // No collision
+    }
+
     // Method to grow the snake body as many segment as you want
     public void grow(int segments) {
         // Get the last segment of the snake's body
