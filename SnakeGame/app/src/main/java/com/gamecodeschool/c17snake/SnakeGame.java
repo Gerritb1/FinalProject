@@ -3,8 +3,6 @@ package com.gamecodeschool.c17snake;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -12,15 +10,18 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.media.AudioAttributes;
-import android.media.MediaPlayer;
 import android.media.SoundPool;
-import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.media.MediaPlayer;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import androidx.core.content.res.ResourcesCompat;
 import java.util.*;
 import java.util.Random;
+import android.os.Handler;
+
 
 class SnakeGame extends SurfaceView implements Runnable, Game {
 
@@ -402,7 +403,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
             // Refactored, this is for the poison apple
             updatePApple();
-            
             updateEnergyDrink();
 
             // Refactored
@@ -412,61 +412,50 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
     // Refactored
     public void updateDeath() {
-        boolean snakeHitRock = false;
-        boolean snakeHitTrash = false;
+        boolean snakeHitRock = checkSnakeHitRock();
+        boolean snakeHitTrash = checkSnakeHitTrash();
+
+        if (mSnake.detectDeath() && !snakeHitTrash && !snakeHitRock) {
+            mSP.play(mCrashID, 1, 1, 0, 0, 1);
+        }
+        if (snakeHitRock || snakeHitTrash || mSnake.detectDeath()) {
+            startGameOverActivity();
+        }
+    }
+
+    private boolean checkSnakeHitRock() {
         for(Rock rock: rocks) {
             if (mSnake.hitRock(rock.getLocation())) {
                 if(!isVulnerable) {
                     mSP.play(mCrashIDRock, 1, 1, 0, 0, 1);
-                }
-                snakeHitRock = true;
-                if(!isVulnerable) {
-                    resetGame();
-                }
-
-                if (mSnake.hitRock(rock.getLocation())) {
-                    Intent gameOver = new Intent(mContext, GameOverActivity.class);
-                    gameOver.putExtra("key", mScore);
-                    mContext.startActivity(gameOver);
-                    if (mContext instanceof Activity) {
-                        ((Activity) mContext).overridePendingTransition(0, 0);
-                    }
-                    if (activityFlag) {
-                        resetGame();
-                    }
+                    return true;
                 }
             }
         }
+        return false;
+    }
+
+    private boolean checkSnakeHitTrash() {
         for(Trash trash: trashStuff) {
-            if (mSnake.hitRock(trash.getLocation())) {//hitRock has same functionality as a "hitSnake" would ******
+            if (mSnake.hitRock(trash.getLocation())) {
                 if(!isVulnerable) {
                     mSP.play(mCrashIDTrash, 1, 1, 0, 0, 1);
-                }
-                snakeHitTrash = true;
-                Intent gameOver = new Intent(mContext, GameOverActivity.class);
-                gameOver.putExtra("key", mScore);
-                mContext.startActivity(gameOver);
-                if (mContext instanceof Activity) {
-                    ((Activity) mContext).overridePendingTransition(0, 0);
-                }
-                if (activityFlag && !isVulnerable) {
-                    resetGame();
+                    return true;
                 }
             }
-
         }
-        if (mSnake.detectDeath() && !snakeHitTrash && !snakeHitRock) {
-            mSP.play(mCrashID, 1, 1, 0, 0, 1);
-            // Reset the score and the game if snake dies
-            Intent gameOver = new Intent(mContext, GameOverActivity.class);
-            gameOver.putExtra("key", mScore);
-            mContext.startActivity(gameOver);
-            if (mContext instanceof Activity) {
-                ((Activity) mContext).overridePendingTransition(0, 0);
-            }
-            if (activityFlag) {
-                resetGame();
-            }
+        return false;
+    }
+
+    private void startGameOverActivity() {
+        Intent gameOver = new Intent(mContext, GameOverActivity.class);
+        gameOver.putExtra("key", mScore);
+        mContext.startActivity(gameOver);
+        if (mContext instanceof Activity) {
+            ((Activity) mContext).overridePendingTransition(0, 0);
+        }
+        if (activityFlag && !isVulnerable) {
+            resetGame();
         }
     }
 
@@ -551,7 +540,8 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             mApple.spawn();
             if (pApple.isSpawned()) {
                 pApple.hide();
-            } else if (yApple.isSpawned()) {
+            }
+            if (yApple.isSpawned()) {
                 yApple.hide();
             }
             if(mApple.isSpawned()) {
@@ -582,7 +572,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 updateSystem.setTargetFPS(10);
             }
         };
-        handler.postDelayed(speedResetTimer, 5000); // 5000ms = 5s
+        handler.postDelayed(speedResetTimer, 5000);
     }
 
 
@@ -629,12 +619,12 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             if (eDrink.isSpawned()) {
                 eDrink.hide();
             }
-            
+
             mSP.play(pEat_ID, 1, 1, 0, 0, 1);
             mSnake.shrink(3);
             randomNumber = random.nextInt(4);
         }
-        
+
         if ((mScore > 0) && (randomNumber == 1) && !pApple.isSpawned()) {
             pApple.spawn();
         }
@@ -859,7 +849,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             } else if (mPauseButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
                 // If the pause button is touched, pause the game
                 mPaused = true;
-                mBackgroundMusic.pause();
             } else if (!mPaused) {
                 // If the game is running and not paused, handle snake movement
                 mSnake.switchHeading(motionEvent);
