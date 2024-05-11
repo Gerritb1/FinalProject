@@ -25,6 +25,9 @@ class Apple extends GameObject implements Spawnable{
     private Point yAppleLocations = null;
     private Point pAppleLocations = null;
 
+    private Point eDrinkLocations = null;
+    private boolean spawned;
+
     /// Set up the apple in the constructor
     protected Apple(Context context, Point sr, int s) {
 
@@ -47,40 +50,46 @@ class Apple extends GameObject implements Spawnable{
     // This is called every time an apple is eaten
     @Override
     public void spawn() {
-        // Choose two random values and place the apple
-        rockLocations = Rock.get_Locations();
-        trashLocations = Trash.get_Locations();
-        yAppleLocations = YellowApple.get_Location();
-        pAppleLocations = PoisonApple.get_Location();
+        List<Point> rockLocations = Rock.get_Locations();
+        Point yAppleLocation = YellowApple.get_Location();
+        Point pAppleLocation = PoisonApple.get_Location();
+        Point eDrinkLocation = EnergyDrink.get_Location();
+        List<Point> trashLocations = Trash.get_Locations();
+
         Random random = new Random();
         location.x = random.nextInt(mSpawnRange.x) + 1;
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
-        for (int x=0; x<4; x++){
-            if((location.x==rockLocations.get(x).x || location.x==(rockLocations.get(x).x)+1 || location.x==(rockLocations.get(x).x)+2 || location.x==(rockLocations.get(x).x)-1 || location.x==(rockLocations.get(x).x)-2) && (location.y==rockLocations.get(x).y || location.y==(rockLocations.get(x).y)+1 || location.y==(rockLocations.get(x).y)+2 || location.y==(rockLocations.get(x).y)-1 || location.y==(rockLocations.get(x).y)-2)){
-                location.x = random.nextInt(mSpawnRange.x) + 1;
-                location.y = random.nextInt(mSpawnRange.y - 1) + 1;
-            }
-            if(!trashLocations.isEmpty()){
-                if((location.x==trashLocations.get(x).x || location.x==(trashLocations.get(x).x)+1 || location.x==(trashLocations.get(x).x)-1) && (location.y==trashLocations.get(x).y || location.y==(trashLocations.get(x).y+1) || location.y==(trashLocations.get(x).y-1))){
-                    location.x = random.nextInt(mSpawnRange.x) + 1;
-                    location.y = random.nextInt(mSpawnRange.y - 1) + 1;
-                }
-            }
-            if(yAppleLocations != null){
-                if((location.x==yAppleLocations.x || location.x==yAppleLocations.x+1 || location.x==yAppleLocations.x-1) && (location.y==yAppleLocations.y || location.y==yAppleLocations.y+1 || location.y==yAppleLocations.y-1)){
-                    location.x = random.nextInt(mSpawnRange.x) + 1;
-                    location.y = random.nextInt(mSpawnRange.y - 1) + 1;
-                }
-            }
-            if(pAppleLocations != null){
-                if((location.x==pAppleLocations.x || location.x==pAppleLocations.x+1 || location.x==pAppleLocations.x-1) && (location.y==pAppleLocations.y || location.y==pAppleLocations.y+1 || location.y==pAppleLocations.y-1)){
-                    location.x = random.nextInt(mSpawnRange.x) + 1;
-                    location.y = random.nextInt(mSpawnRange.y - 1) + 1;
-                }
+
+        while (isLocationInvalid(location, rockLocations) ||
+                (isLocationInvalid(location, yAppleLocation)) ||
+                (isLocationInvalid(location, pAppleLocation)) ||
+                (isLocationInvalid(location, eDrinkLocation)) ||
+                isLocationInvalid(location, trashLocations)) {
+            location.x = random.nextInt(mSpawnRange.x) + 1;
+            location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+        }
+
+        locations = new Point(location.x, location.y);
+    }
+
+    private boolean isLocationInvalid(Point location, List<Point> otherLocations) {
+        for (Point otherLocation : otherLocations) {
+            if (otherLocation == null) continue;  //Needed to prevent crashing
+            int xDiff = Math.abs(location.x - otherLocation.x);
+            int yDiff = Math.abs(location.y - otherLocation.y);
+            if (xDiff <= 2 && yDiff <= 2) {
+                return true;
             }
         }
-        locations = new Point(location.x, location.y);
+        return false;
+    }
 
+    //Overloaded method
+    private boolean isLocationInvalid(Point location, Point otherLocation) {
+        if (otherLocation == null) return false;  //Needed to prevent crashing
+        int xDiff = Math.abs(location.x - otherLocation.x);
+        int yDiff = Math.abs(location.y - otherLocation.y);
+        return xDiff <= 2 && yDiff <= 2;
     }
 
 
@@ -104,6 +113,9 @@ class Apple extends GameObject implements Spawnable{
     }
     public static void remove_Locations(){
         locations = null;
+    }
+    public boolean isSpawned() {
+        return spawned;
     }
 
 }
