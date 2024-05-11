@@ -59,23 +59,29 @@ class Rock extends GameObject implements Spawnable{
         return rock4;
     }
 
-    // This is called every time an rock is eaten
     @Override
     public void spawn() {
         // Choose two random values and place the rock
         Random random = new Random();
         location.x = random.nextInt(mSpawnRange.x) + 1;
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
-        for (int x=0; x<locations.size(); x++){
-            if((location.x==locations.get(x).x || location.x==(locations.get(x).x)+1 || location.x==(locations.get(x).x)-1) && (location.y==locations.get(x).y || location.y==(locations.get(x).y+1) || location.y==(locations.get(x).y-1))){
-                location.x = random.nextInt(mSpawnRange.x) + 1;
-                location.y = random.nextInt(mSpawnRange.y - 1) + 1;
-            }
+
+        while (isNearExistingLocation(location)) {
+            location.x = random.nextInt(mSpawnRange.x) + 1;
+            location.y = random.nextInt(mSpawnRange.y - 1) + 1;
         }
 
-        locations.add(new Point (location.x, location.y));
+        locations.add(new Point(location.x, location.y));
     }
 
+    private boolean isNearExistingLocation(Point location) {
+        for (Point existingLocation : locations) {
+            if (Math.abs(location.x - existingLocation.x) <= 2 && Math.abs(location.y - existingLocation.y) <= 2) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     // Draw the rock
     @Override
