@@ -21,12 +21,7 @@ class YellowApple extends Apple implements Spawnable{
     // Maintain a single global reference to the apple
     private static YellowApple yellowApple;
     private static Point locations = null;
-    private List<Point> rockLocations = new ArrayList<>();
-    private List<Point> trashLocations = new ArrayList<>();
-    private Point mAppleLocations = null;
-    private Point pAppleLocations = null;
-    private Point eDrinkLocations = null;
-    /// Set up the apple in the constructor
+
 
         /// Set up the apple in the constructor
         private YellowApple(Context context, Point sr, int s) {
@@ -63,7 +58,7 @@ class YellowApple extends Apple implements Spawnable{
             while (isLocationInvalid(location, rockLocations) ||
                     (isLocationInvalid(location, mAppleLocation)) ||
                     (isLocationInvalid(location, pAppleLocation)) ||
-                    (eDrinkLocation != null && isLocationInvalid(location, eDrinkLocation)) ||
+                    (isLocationInvalid(location, eDrinkLocation)) ||
                     isLocationInvalid(location, trashLocations)) {
                 location.x = random.nextInt(mSpawnRange.x) + 1;
                 location.y = random.nextInt(mSpawnRange.y - 1) + 1;
@@ -74,19 +69,25 @@ class YellowApple extends Apple implements Spawnable{
         }
 
     private boolean isLocationInvalid(Point location, List<Point> otherLocations) {
+
+        // Check if the new location is too close to any of the existing locations
         for (Point otherLocation : otherLocations) {
-            if (otherLocation == null) continue;  //Needed to prevent crashing
+            if (otherLocation == null) continue;
+            // 2-D Absolute Difference |x_2 - x_1| & |y_2 - y_1| <= 2
             int xDiff = Math.abs(location.x - otherLocation.x);
             int yDiff = Math.abs(location.y - otherLocation.y);
             if (xDiff <= 2 && yDiff <= 2) {
-                return true;
+                return true; //Do not spawn here
             }
         }
-        return false;
+        return false; //Spawn here
     }
 
+    //Overloaded method
     private boolean isLocationInvalid(Point location, Point otherLocation) {
-        if (otherLocation == null) return false;  //Needed to prevent crashing
+        // Check if the new location is too close to the other location
+        if (otherLocation == null) return false;
+        // 2-D Absolute Difference |x_2 - x_1| & |y_2 - y_1| <= 2
         int xDiff = Math.abs(location.x - otherLocation.x);
         int yDiff = Math.abs(location.y - otherLocation.y);
         return xDiff <= 2 && yDiff <= 2;
