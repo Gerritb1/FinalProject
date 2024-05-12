@@ -33,7 +33,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     public static Boolean activityFlag = false;
     private boolean isSnakeDead = true;
 
-
     // How many points does the player have
     private int mScore;
 
@@ -414,6 +413,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 if(!isVulnerable) {
                     mSP.play(mCrashIDRock, 1, 1, 0, 0, 1);
                     snakeHitRock = true;
+                    mBackgroundMusic.pause();
                     break;
                 }
             }
@@ -424,6 +424,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                 if(!isVulnerable) {
                     mSP.play(mCrashIDTrash, 1, 1, 0, 0, 1);
                     snakeHitTrash = true;
+                    mBackgroundMusic.pause();
                     break;
                 }
             }
@@ -431,6 +432,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
         if (mSnake.detectDeath() && !snakeHitTrash && !snakeHitRock) {
             mSP.play(mCrashID, 1, 1, 0, 0, 1);
+            mBackgroundMusic.pause();
         }
         if (snakeHitRock || snakeHitTrash || mSnake.detectDeath()) {
             startGameOverActivity();
@@ -838,6 +840,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             } else if (mPauseButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {
                 // If the pause button is touched, pause the game
                 mPaused = true;
+                mBackgroundMusic.pause();
             } else if (!mPaused) {
                 // If the game is running and not paused, handle snake movement
                 mSnake.switchHeading(motionEvent);
