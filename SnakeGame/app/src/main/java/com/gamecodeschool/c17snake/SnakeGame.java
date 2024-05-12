@@ -109,13 +109,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     private Random random;
     private int randomNumber = 0;
 
-    // Tracking game object locations (Prevents overlapping of objects)
-    private List<Point> rockLocations = new ArrayList<>();
-    private List<Point> trashLocations = new ArrayList<>();
-    private Point mAppleLocations = null;
-    private Point yAppleLocations = null;
-    private Point pAppleLocations = null;
-
     // Trash index & trash probability
     private int trashPiece = 0;
     private int trashChance = 3;
@@ -156,6 +149,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     public void initialize(Context context) {
         //Initialize the drawButtonPause
         drawPauseButton = DrawPauseButton.getDrawPauseButton(context, this);
+
         updateSystem = new UpdateSystem();
 
         //Refactored
@@ -443,6 +437,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         }
     }
 
+
     private void startGameOverActivity() {
         Intent gameOver = new Intent(mContext, GameOverActivity.class);
         gameOver.putExtra("key", mScore);
@@ -524,53 +519,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         }
     }
 
- public void updateEnergyDrink() { //Refactored
-        // Spawn energy drink if score is a multiple of 4
-        if ((mScore > 0) && (mScore % 4 == 0) && !eDrink.isSpawned()) {
-            eDrink.spawn();
-        }
-
-        // If snake eats the energy drink
-        if (mSnake.checkDrink(eDrink.getLocation())) {
-            eDrink.hide();
-            mApple.spawn();
-            if (pApple.isSpawned()) {
-                pApple.hide();
-            }
-            if (yApple.isSpawned()) {
-                yApple.hide();
-            }
-            if(mApple.isSpawned()) {
-                mApple.hide();
-            }
-            mScore++;
-            randomNumber = random.nextInt(3);
-
-            // Increase snake speed
-            snakeSpeed();
-        }
-    }
-
-    public void snakeSpeed() { //Extracted from updateEnergyDrink
-        // Increase game speed
-        updateSystem.setTargetFPS(20);
-
-        // Cancel any existing timer
-        if (speedResetTimer != null) {
-            handler.removeCallbacks(speedResetTimer);
-        }
-
-        // Start a new timer to reset the speed after 5 seconds
-        speedResetTimer = new Runnable() {
-            @Override
-            public void run() {
-                // Reset game speed
-                updateSystem.setTargetFPS(10);
-            }
-        };
-        handler.postDelayed(speedResetTimer, 5000);
-    }
-
 
     private void startVulnerabilityTimer() {
         // Cancel any existing timer first
@@ -596,6 +544,52 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         if (vulnerabilityTimer != null) {
             handler.removeCallbacks(vulnerabilityTimer);
         }
+    }
+
+    public void updateEnergyDrink() { //Refactored
+        // Spawn energy drink if score is a multiple of 5
+        if ((mScore > 0) && (mScore % 5 == 0) && !eDrink.isSpawned()) {
+            eDrink.spawn();
+        }
+
+        // If snake eats the energy drink
+        if (mSnake.checkDrink(eDrink.getLocation())) {
+            eDrink.hide();
+            mApple.spawn();
+            if (pApple.isSpawned()) {
+                pApple.hide();
+            }
+            if (yApple.isSpawned()) {
+                yApple.hide();
+            }
+            if(mApple.isSpawned()) {
+                mApple.hide();
+            }
+            randomNumber = random.nextInt(3);
+
+            // Increase snake speed
+            snakeSpeed();
+        }
+    }
+
+    public void snakeSpeed() { //Extracted from updateEnergyDrink
+        // Increase game speed
+        updateSystem.setTargetFPS(20);
+
+        // Cancel any existing timer
+        if (speedResetTimer != null) {
+            handler.removeCallbacks(speedResetTimer);
+        }
+
+        // Start a new timer to reset the speed after 5 seconds
+        speedResetTimer = new Runnable() {
+            @Override
+            public void run() {
+                // Reset game speed
+                updateSystem.setTargetFPS(10);
+            }
+        };
+        handler.postDelayed(speedResetTimer, 5000);
     }
 
     // Refactored, this is for the poison apple
@@ -699,7 +693,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         }
         if (eDrink.isSpawned()){
             eDrink.hide();
-            eDrink.spawned = false;
         }
     }
 
