@@ -26,7 +26,7 @@ public class Trash extends Rock implements Spawnable{
 
 
     /// Set up the rock in the constructor
-    private Trash(Context context, Point sr, int s) {
+    protected Trash(Context context, Point sr, int s) {
 
         super(context, sr, s);
 
@@ -63,26 +63,29 @@ public class Trash extends Rock implements Spawnable{
     }
 
     private boolean isLocationInvalid(Point location, List<Point> otherLocations) {
+
+        // Check if the new location is too close to any of the existing locations
         for (Point otherLocation : otherLocations) {
             if (otherLocation == null) continue;
+            // 2-D Absolute Difference |x_2 - x_1| & |y_2 - y_1| <= 2
             int xDiff = Math.abs(location.x - otherLocation.x);
             int yDiff = Math.abs(location.y - otherLocation.y);
             if (xDiff <= 2 && yDiff <= 2) {
-                return true;
+                return true; //Do not spawn here
             }
         }
-        return false;
+        return false; //Spawn here
     }
 
     //Overloaded method
     private boolean isLocationInvalid(Point location, Point otherLocation) {
+        // Check if the new location is too close to the other location
         if (otherLocation == null) return false;
+        // 2-D Absolute Difference |x_2 - x_1| & |y_2 - y_1| <= 2
         int xDiff = Math.abs(location.x - otherLocation.x);
         int yDiff = Math.abs(location.y - otherLocation.y);
         return xDiff <= 2 && yDiff <= 2;
     }
-
-
 
     // Draw the trash
 @Override
@@ -135,3 +138,4 @@ public static void remove_Locations(){
 }
 
 }
+
