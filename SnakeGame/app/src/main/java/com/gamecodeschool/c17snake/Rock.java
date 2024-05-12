@@ -93,7 +93,6 @@ class Rock extends GameObject implements Spawnable{
     }
 
     // Method to hide the rock
-    @Override
     public void hide() {
         // Set the rock's location outside the visible screen
         location.set(-10, -10); // Set the location outside the visible screen
