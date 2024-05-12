@@ -1,0 +1,4 @@
+    //if (segmentLocations.size() > 1) {
+    //  Point segmentLocation = segmentLocations.get(segmentLocations.size() - 1);
+    //                // Remove the segment from segmentLocations
+    //                segmentLocations.remove(segmentLocation);

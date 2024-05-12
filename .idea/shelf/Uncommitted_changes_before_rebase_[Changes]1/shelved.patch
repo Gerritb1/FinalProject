@@ -1,0 +1,468 @@
+Index: SnakeGame/app/src/main/java/com/gamecodeschool/c17snake/TextDrawer.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.gamecodeschool.c17snake;\r\n\r\nimport android.content.Context;\r\nimport android.graphics.Canvas;\r\nimport android.graphics.Color;\r\nimport android.graphics.Paint;\r\nimport android.graphics.Point;\r\nimport android.view.SurfaceView;\r\n\r\nimport java.util.ArrayList;\r\n\r\npublic class TextDrawer extends SurfaceView implements IText {\r\n\r\n    private static Apple mApple;\r\n    private static Snake mSnake;\r\n    private DrawPauseButton getScreen;\r\n    private final Canvas mCanvas;\r\n    private final Paint mPaint;\r\n    private final SnakeGame mSnakeGame;\r\n    private int mScore;\r\n    private int ss;\r\n    private YellowApple yApple;\r\n    private ArrayList<Rock> rocks;\r\n    private Point mr;\r\n\r\n\r\n    // Constructor of NameDrawer class with DI\r\n    public TextDrawer(Context context, Canvas canvas, Paint paint, SnakeGame snakeGame) {\r\n        super(context);\r\n        this.mCanvas = canvas;\r\n        this.mPaint = paint;\r\n        this.mSnakeGame = snakeGame;\r\n    }\r\n\r\n    // Setter method for injecting DrawPauseButton dependency\r\n    public void setDrawPauseButton(DrawPauseButton getScreen) {this.getScreen = getScreen; }\r\n    public void setSnake(Snake snake){ mSnake = snake;}\r\n\r\n    // Method for drawing names\r\n    @Override\r\n    public void drawNames() { //Extracted from SnakeGame\r\n        Point screenDimensions = getScreen.getScreenDimensions();\r\n        int screenWidth = screenDimensions.x;\r\n        int xCoordinate = screenWidth - 340; // Adjust this value as needed\r\n\r\n        mPaint.setColor(Color.argb(255, 255, 255, 255));\r\n        mPaint.setTextSize(30);\r\n        mCanvas.drawText(getResources().getString(R.string.name1), xCoordinate, 50, mPaint);\r\n        mCanvas.drawText(getResources().getString(R.string.name2), xCoordinate, 85, mPaint);\r\n        mCanvas.drawText(getResources().getString(R.string.name3), xCoordinate, 120, mPaint);\r\n        mCanvas.drawText(getResources().getString(R.string.name4), xCoordinate, 155, mPaint);\r\n        mCanvas.drawText(getResources().getString(R.string.name5), xCoordinate, 190, mPaint);\r\n    }\r\n\r\n    // Method for drawing \"Tap to play\" message\r\n    @Override\r\n    public void drawTapToPlay() { //Extracted from SnakeGame\r\n        // Draw the \"Tap to play\" message if the game is initially paused\r\n        String message = getResources().getString(R.string.tap_to_play);\r\n\r\n        // Get the width and height of the message\r\n        float messageWidth = mPaint.measureText(message);\r\n        float messageHeight = mPaint.getFontMetrics().bottom - mPaint.getFontMetrics().top;\r\n\r\n        // Get the screen dimensions\r\n        Point screenDimensions = getScreen.getScreenDimensions();\r\n        int screenWidth = screenDimensions.x;\r\n        int screenHeight = screenDimensions.y;\r\n\r\n        // Calculate the position to center the text horizontally and vertically\r\n        float centerX = (screenWidth - messageWidth) / 2;\r\n        float centerY = (screenHeight + messageHeight) / 2;\r\n\r\n        // Draw the \"Tap to play\" message centered on the screen\r\n        mCanvas.drawText(message, centerX, centerY, mPaint);\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/SnakeGame/app/src/main/java/com/gamecodeschool/c17snake/TextDrawer.java b/SnakeGame/app/src/main/java/com/gamecodeschool/c17snake/TextDrawer.java
+--- a/SnakeGame/app/src/main/java/com/gamecodeschool/c17snake/TextDrawer.java	
++++ b/SnakeGame/app/src/main/java/com/gamecodeschool/c17snake/TextDrawer.java	
+@@ -69,7 +69,7 @@
+ 
+         // Calculate the position to center the text horizontally and vertically
+         float centerX = (screenWidth - messageWidth) / 2;
+-        float centerY = (screenHeight + messageHeight) / 2;
++        float centerY = (screenHeight + messageHeight/2) / 2;
+ 
+         // Draw the "Tap to play" message centered on the screen
+         mCanvas.drawText(message, centerX, centerY, mPaint);
+Index: SnakeGame/app/src/main/res/values/styles.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/SnakeGame/app/src/main/res/values/styles.xml b/SnakeGame/app/src/main/res/values/styles.xml
+new file mode 100644
+--- /dev/null	
++++ b/SnakeGame/app/src/main/res/values/styles.xml	
+@@ -0,0 +1,7 @@
++<resources>
++
++    <style name="Widget.Theme.SnakeGame.MyView" parent="">
++        <item name="android:background">@color/gray_400</item>
++        <item name="exampleColor">@color/light_blue_400</item>
++    </style>
++</resources>
+\ No newline at end of file
+Index: .idea/deploymentTargetDropDown.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"deploymentTargetDropDown\">\r\n    <value>\r\n      <entry key=\"app\">\r\n        <State />\r\n      </entry>\r\n    </value>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetDropDown.xml b/.idea/deploymentTargetDropDown.xml
+--- a/.idea/deploymentTargetDropDown.xml	
++++ b/.idea/deploymentTargetDropDown.xml	
+@@ -2,7 +2,7 @@
+ <project version="4">
+   <component name="deploymentTargetDropDown">
+     <value>
+-      <entry key="app">
++      <entry key="Snake_game.app">
+         <State />
+       </entry>
+     </value>
+Index: SnakeGame/app/src/main/res/values-night/styles.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/SnakeGame/app/src/main/res/values-night/styles.xml b/SnakeGame/app/src/main/res/values-night/styles.xml
+new file mode 100644
+--- /dev/null	
++++ b/SnakeGame/app/src/main/res/values-night/styles.xml	
+@@ -0,0 +1,7 @@
++<resources>
++
++    <style name="Widget.Theme.SnakeGame.MyView" parent="">
++        <item name="android:background">@color/gray_600</item>
++        <item name="exampleColor">@color/light_blue_600</item>
++    </style>
++</resources>
+\ No newline at end of file
+Index: SnakeGame/app/src/main/res/values/attrs_game_over_view.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/SnakeGame/app/src/main/res/values/attrs_game_over_view.xml b/SnakeGame/app/src/main/res/values/attrs_game_over_view.xml
+new file mode 100644
+--- /dev/null	
++++ b/SnakeGame/app/src/main/res/values/attrs_game_over_view.xml	
+@@ -0,0 +1,8 @@
++<resources>
++    <declare-styleable name="GameOverView">
++        <attr name="exampleString" format="string" />
++        <attr name="exampleDimension" format="dimension" />
++        <attr name="exampleColor" format="color" />
++        <attr name="exampleDrawable" format="color|reference" />
++    </declare-styleable>
++</resources>
+\ No newline at end of file
+Index: SnakeGame/app/src/main/res/layout/sample_game_over_view.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/SnakeGame/app/src/main/res/layout/sample_game_over_view.xml b/SnakeGame/app/src/main/res/layout/sample_game_over_view.xml
+new file mode 100644
+--- /dev/null	
++++ b/SnakeGame/app/src/main/res/layout/sample_game_over_view.xml	
+@@ -0,0 +1,16 @@
++<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent">
++
++    <com.gamecodeschool.c17snake.GameOverView
++        style="@style/Widget.Theme.SnakeGame.MyView"
++        android:layout_width="300dp"
++        android:layout_height="300dp"
++        android:paddingLeft="20dp"
++        android:paddingBottom="40dp"
++        app:exampleDimension="24sp"
++        app:exampleDrawable="@android:drawable/ic_menu_add"
++        app:exampleString="Hello, GameOverView" />
++
++</FrameLayout>
+\ No newline at end of file
+Index: SnakeGame/app/src/main/res/values/colors.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<resources>\r\n    <color name=\"black\">#FF000000</color>\r\n    <color name=\"white\">#FFFFFFFF</color>\r\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/SnakeGame/app/src/main/res/values/colors.xml b/SnakeGame/app/src/main/res/values/colors.xml
+--- a/SnakeGame/app/src/main/res/values/colors.xml	
++++ b/SnakeGame/app/src/main/res/values/colors.xml	
+@@ -2,4 +2,8 @@
+ <resources>
+     <color name="black">#FF000000</color>
+     <color name="white">#FFFFFFFF</color>
++    <color name="light_blue_400">#FF29B6F6</color>
++    <color name="light_blue_600">#FF039BE5</color>
++    <color name="gray_400">#FFBDBDBD</color>
++    <color name="gray_600">#FF757575</color>
+ </resources>
+\ No newline at end of file
+Index: SnakeGame/app/src/main/java/com/gamecodeschool/c17snake/SnakeGame.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.gamecodeschool.c17snake;\r\n\r\nimport android.content.Context;\r\nimport android.content.res.AssetFileDescriptor;\r\nimport android.content.res.AssetManager;\r\nimport android.graphics.Canvas;\r\nimport android.graphics.Color;\r\nimport android.graphics.Paint;\r\nimport android.graphics.Point;\r\nimport android.graphics.Rect;\r\nimport android.graphics.Typeface;\r\nimport android.media.AudioAttributes;\r\nimport android.media.SoundPool;\r\nimport android.view.MotionEvent;\r\nimport android.view.SurfaceHolder;\r\nimport android.view.SurfaceView;\r\nimport java.io.IOException;\r\nimport android.graphics.Bitmap;\r\nimport android.graphics.BitmapFactory;\r\nimport androidx.core.content.res.ResourcesCompat;\r\nimport java.util.*;\r\nimport java.util.Random;\r\n\r\nclass SnakeGame extends SurfaceView implements Runnable, Game {\r\n\r\n    // Objects for the game loop/thread\r\n    private Thread mThread = null;\r\n\r\n    private boolean isFirstPause = true;\r\n\r\n    // Is the game currently playing and or paused?\r\n    private volatile boolean mPlaying = false;\r\n    private volatile boolean mPaused = true;\r\n\r\n    // for playing sound effects\r\n    private SoundPool mSP;\r\n    private int mEat_ID = -1;\r\n    private int mCrashID = -1;\r\n\r\n    // The size in segments of the playable area\r\n    private final int NUM_BLOCKS_WIDE = 40;\r\n    private int mNumBlocksHigh;\r\n\r\n    // How many points does the player have\r\n    private int mScore;\r\n\r\n    //Pause button rendering objects\r\n    private Rect mPauseButtonRect;\r\n    private Paint mPauseButtonPaint;\r\n\r\n    // Objects for drawing\r\n    private Canvas mCanvas;\r\n    private final SurfaceHolder mSurfaceHolder;\r\n    private final Paint mPaint;\r\n\r\n    // Typeface object to hold the custom font\r\n    private Typeface mCustomFont;\r\n\r\n    // A snake ssss\r\n    private Snake mSnake;\r\n    // And an apple\r\n    private Apple mApple;\r\n\r\n    //And an Yellow Apple\r\n    private YellowApple yApple;\r\n\r\n    // And a Poisoned Apple\r\n    private PoisonApple pApple;\r\n\r\n    // And four rock objects\r\n    private Rock rock1;\r\n    private Rock rock2;\r\n    private Rock rock3;\r\n    private Rock rock4;\r\n    private ArrayList<Rock> rocks;\r\n\r\n    private Bitmap mBackgroundBitmap;\r\n    private final DrawPauseButton drawPauseButton;\r\n    private final UpdateSystem updateSystem;\r\n    private TextDrawer DrawNames;\r\n    private Context mContext;\r\n    private TextDrawer textDrawer;\r\n\r\n    private Random random;\r\n\r\n    private int randomNumber = 0;\r\n\r\n    // This is the constructor method that gets called\r\n    // from SnakeActivity\r\n    protected SnakeGame(Context context, Point size) {\r\n        super(context);\r\n\r\n        // Refactored\r\n        fontTryCatch(context);\r\n\r\n        // Refactored\r\n        loadBackgroundImage(context, size);\r\n\r\n        // Refactored\r\n        soundPool();\r\n\r\n        // Refactored\r\n        tryCatch(context);\r\n\r\n        // Initialize the drawing objects\r\n        mSurfaceHolder = getHolder();\r\n        mPaint = new Paint();\r\n\r\n        // Refactored\r\n        callConstructors(context, size);\r\n\r\n        // Create the pause button\r\n        createPauseButton();\r\n\r\n        //Initialize the drawButtonPause\r\n        drawPauseButton = DrawPauseButton.getDrawPauseButton(context, this);\r\n        updateSystem = new UpdateSystem();\r\n\r\n        //Refactored\r\n        listOfRocks();\r\n        this.mContext = context;\r\n\r\n        random = new Random();\r\n\r\n    }\r\n\r\n    public void listOfRocks() {\r\n        rocks = new ArrayList<>();\r\n        rocks.add(rock1);\r\n        rocks.add(rock2);\r\n        rocks.add(rock3);\r\n        rocks.add(rock4);\r\n    }\r\n\r\n    //Builder for buildDesign Pattern Still under develelopment\r\n   /* public SnakeGame() {\r\n\r\n\r\n          DrawBuilder builder = new DrawBuilder()\r\n                .setCanvas(mCanvas)\r\n                .setPaint(mPaint)\r\n                .setFirstPause(isFirstPause)\r\n                .setPaused(mPaused);\r\n\r\n        this.drawTapToPlayBehavior = builder.setMessage(\"Tap to play\").buildDrawTapToPlay();\r\n        this.drawNamesBehavior = builder.setMessage(\"John Doe\").buildDrawNames();\r\n        this.checkDrawConditionsBehavior = builder.buildCheckDrawConditions(drawTapToPlayBehavior, drawNamesBehavior);\r\n        this.drawAppleBehavior = builder.buildDrawApple();\r\n        this.drawColorSizeBehavior = builder.buildDrawColorSize();\r\n        this.drawPausedBehavior = builder.buildDrawPaused();\r\n    }*/\r\n\r\n    public boolean isPaused() {\r\n        return mPaused;\r\n    }\r\n\r\n    // Refactored\r\n    @Override\r\n    public void fontTryCatch(Context context) {\r\n        try {\r\n            // Load the custom font\r\n            mCustomFont = ResourcesCompat.getFont(context, R.font.font);\r\n        } catch (Exception e) {\r\n            e.printStackTrace();\r\n        }\r\n    }\r\n\r\n    // Refactored\r\n    @Override\r\n    public void loadBackgroundImage(Context context, Point size) {\r\n        // Load the background image\r\n        mBackgroundBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.background);\r\n\r\n        // Scale the image to match the screen size\r\n        mBackgroundBitmap = Bitmap.createScaledBitmap(mBackgroundBitmap, size.x, size.y, true);\r\n    }\r\n\r\n    // Method to create and draw the pause button\r\n    @Override\r\n    public void createPauseButton() {\r\n\r\n        int buttonWidth = 400;\r\n        int buttonHeight = 100;\r\n        int buttonLeft = 800;\r\n        int buttonTop = 50;\r\n\r\n        // Create a Rect object representing the pause button's bounds\r\n        mPauseButtonRect = new Rect(buttonLeft, buttonTop, buttonLeft + buttonWidth, buttonTop + buttonHeight);\r\n\r\n        // Define the appearance of the pause button (e.g., color)\r\n        mPauseButtonPaint = new Paint();\r\n        mPauseButtonPaint.setColor(Color.RED); // Adjust color as needed\r\n    }\r\n\r\n    //Refactored\r\n    @Override\r\n    public void soundPool() {\r\n        // Initialize the SoundPool\r\n        AudioAttributes audioAttributes = new AudioAttributes.Builder()\r\n                .setUsage(AudioAttributes.USAGE_MEDIA)\r\n                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)\r\n                .build();\r\n\r\n        mSP = new SoundPool.Builder()\r\n                .setMaxStreams(5)\r\n                .setAudioAttributes(audioAttributes)\r\n                .build();\r\n    }\r\n\r\n    //Refactored\r\n    @Override\r\n    public void tryCatch(Context context) {\r\n        try {\r\n            AssetManager assetManager = context.getAssets();\r\n            AssetFileDescriptor descriptor;\r\n\r\n            // Prepare the sounds in memory\r\n            descriptor = assetManager.openFd(\"get_apple.ogg\");\r\n            mEat_ID = mSP.load(descriptor, 0);\r\n\r\n            descriptor = assetManager.openFd(\"snake_death.ogg\");\r\n            mCrashID = mSP.load(descriptor, 0);\r\n\r\n        } catch (IOException e) {\r\n            // Error\r\n        }\r\n    }\r\n\r\n    //Refactored\r\n    @Override\r\n    public void callConstructors(Context context, Point size) {\r\n        // Work out how many pixels each block is\r\n        int blockSize = size.x / NUM_BLOCKS_WIDE;\r\n        mNumBlocksHigh = size.y / blockSize;\r\n\r\n        // Call the constructors of our two game objects by using the Singelton pattern\r\n        mApple = Apple.getApple(context,\r\n                new Point(NUM_BLOCKS_WIDE,\r\n                        mNumBlocksHigh),\r\n                blockSize);\r\n\r\n        yApple = YellowApple.getYellowApple(context,\r\n                new Point(NUM_BLOCKS_WIDE,\r\n                        mNumBlocksHigh),\r\n                blockSize);\r\n\r\n        pApple = PoisonApple.getPoisonApple(context,\r\n                new Point(NUM_BLOCKS_WIDE,\r\n                        mNumBlocksHigh),\r\n                blockSize);\r\n\r\n        mSnake = Snake.getSnake(context,\r\n                new Point(NUM_BLOCKS_WIDE,\r\n                        mNumBlocksHigh),\r\n                blockSize);\r\n\r\n        //Refactored\r\n        rockInitialization(context, size);\r\n\r\n    }\r\n\r\n    //Refactored\r\n    public void rockInitialization(Context context, Point size) {\r\n        // Work out how many pixels each block is\r\n        int blockSize = size.x / NUM_BLOCKS_WIDE;\r\n        mNumBlocksHigh = size.y / blockSize;\r\n\r\n        // Initializing the rocks\r\n        rock1 = Rock.getRock1(context,\r\n                new Point(NUM_BLOCKS_WIDE,\r\n                        mNumBlocksHigh),\r\n                blockSize);\r\n        rock2 = Rock.getRock2(context,\r\n                new Point(NUM_BLOCKS_WIDE,\r\n                        mNumBlocksHigh),\r\n                blockSize);\r\n        rock3 = Rock.getRock3(context,\r\n                new Point(NUM_BLOCKS_WIDE,\r\n                        mNumBlocksHigh),\r\n                blockSize);\r\n        rock4 = Rock.getRock4(context,\r\n                new Point(NUM_BLOCKS_WIDE,\r\n                        mNumBlocksHigh),\r\n                blockSize);\r\n    }\r\n\r\n    // Handles the game loop\r\n    @Override\r\n    public void run() {\r\n        while (mPlaying) {\r\n            if(!mPaused) {\r\n                if (updateSystem.updateRequired()) {\r\n                    update();\r\n                }\r\n            }\r\n            draw();\r\n        }\r\n    }\r\n\r\n    @Override\r\n    public void newGame() {\r\n        // Reset the snake and spawn the apple if it's not paused and it's the first pause\r\n        if (!mPaused && isFirstPause) {\r\n            mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);\r\n            mApple.spawn();\r\n            if(mScore > 3) {\r\n                yApple.spawn();\r\n            }\r\n            for(Rock rock: rocks) {\r\n                rock.spawn();\r\n            }\r\n        }\r\n\r\n        isFirstPause = mPaused;\r\n    }\r\n\r\n    // Update the newGame() method to set isFirstPause to true\r\n    @Override\r\n    public void update() {\r\n        if (!mPaused) {\r\n            mSnake.move();\r\n\r\n            // Refactored, this is for the red apple\r\n            updateMApple();\r\n\r\n            // Refactored, this is for the yellow apple\r\n            updateYApple();\r\n\r\n            // Refactored, this is for the poison apple\r\n            updatePApple();\r\n\r\n            for(Rock rock: rocks) {\r\n                if (mSnake.hitRock(rock.getLocation())) {\r\n                    resetGame();\r\n                }\r\n            }\r\n\r\n            if (mSnake.detectDeath()) {\r\n                // Reset the score and the game if snake dies\r\n                resetGame();\r\n            }\r\n        }\r\n    }\r\n\r\n    // Refactored, this is for the red apple\r\n    public void updateMApple() {\r\n        if (mSnake.checkDinner(mApple.getLocation())) {\r\n            mApple.spawn();\r\n            if (yApple.isSpawned()) {\r\n                yApple.hide();\r\n            }\r\n            if (pApple.isSpawned()) {\r\n                pApple.hide();\r\n            }\r\n            mScore++;\r\n            mSP.play(mEat_ID, 1, 1, 0, 0, 1);\r\n            randomNumber = random.nextInt(4);\r\n        }\r\n    }\r\n\r\n    // Refactored, this is for the yellow apple\r\n    public void updateYApple() {\r\n        // Check if the score is a dividable by 4 and spawn the yellow apple\r\n        if ((mScore > 0) && (mScore % 4 == 0) && !yApple.isSpawned()) {\r\n            yApple.spawn();\r\n        }\r\n\r\n        if (mSnake.bigCheckDinner(yApple.getLocation())) {\r\n            yApple.hide();\r\n            mApple.spawn();\r\n            if(pApple.isSpawned()){\r\n                pApple.hide();\r\n            }\r\n            mScore+=3;\r\n            mSP.play(mEat_ID, 1, 1, 0, 0, 1);\r\n\r\n            randomNumber = random.nextInt(3);\r\n\r\n            // to grow the snake body segment by 3, since 2+1=3\r\n            mSnake.grow(2);\r\n        }\r\n    }\r\n\r\n    // Refactored, this is for the poison apple\r\n    public void updatePApple() {\r\n        if (mSnake.bigCheckDinner(pApple.getLocation())) {\r\n            mScore -= 2;\r\n            if (mScore < 0) {\r\n                resetGame();\r\n            } else {\r\n                pApple.hide();\r\n                mApple.spawn();\r\n                if (yApple.isSpawned()) {\r\n                    yApple.hide();\r\n                }\r\n                mSP.play(mEat_ID, 1, 1, 0, 0, 1);\r\n\r\n                mSnake.shrink(3);\r\n                randomNumber = random.nextInt(5);\r\n            }\r\n        }\r\n\r\n        if ((mScore > 0) && (randomNumber == 2) && !pApple.isSpawned()) {\r\n            pApple.spawn();\r\n        }\r\n    }\r\n\r\n    private void resetGame() {\r\n        if (!mPaused) {\r\n            mScore = 0;\r\n\r\n            // Refactored\r\n            spawnHide();\r\n\r\n            mApple.spawn();\r\n            mApple.hide(); // Hide the apple upon resetting the game\r\n            mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);\r\n            mSnake.hide(); // Hide the snake upon resetting the game\r\n            isFirstPause = true; // Set isFirstPause to true upon resetting the game\r\n            mPaused = true; // Set mPaused to true upon resetting the game\r\n        }\r\n    }\r\n\r\n    // Refactored\r\n    public void spawnHide() {\r\n        for(Rock rock: rocks) {\r\n            rock.spawn();\r\n            rock.hide();\r\n        }\r\n\r\n        if(yApple.isSpawned()) {\r\n            yApple.hide();\r\n            yApple.spawned = false;\r\n        }\r\n\r\n        if(pApple.isSpawned()) {\r\n            pApple.hide();\r\n            pApple.spawned = false;\r\n        }\r\n    }\r\n\r\n    @Override\r\n    public void draw() {\r\n        // Get a lock on the canvas\r\n        if (mSurfaceHolder.getSurface().isValid()) {\r\n            mCanvas = mSurfaceHolder.lockCanvas();\r\n\r\n            // Draw the background image\r\n            mCanvas.drawBitmap(mBackgroundBitmap, 0, 0, null);\r\n\r\n            // Draw the score\r\n            drawColorSize();\r\n\r\n            // Refactored\r\n            drawConditions();\r\n\r\n            // Unlock the canvas and reveal the graphics for this frame\r\n            mSurfaceHolder.unlockCanvasAndPost(mCanvas);\r\n        }\r\n    }\r\n\r\n    // Refactored\r\n    public void drawConditions() {\r\n        // Check and draw conditions based on game state (paused, tap to play, etc.)\r\n        checkDrawConditions();\r\n\r\n        // Draw the pause button in any case except for the initial \"Tap to play\" state\r\n        if (!isFirstPause || !mPaused) {\r\n            drawPauseButton.drawButton(mCanvas, mPaint);\r\n        }\r\n\r\n        // Draw game elements if not paused\r\n        if (!mPaused) {\r\n            // Refactored\r\n            drawSpawnables();\r\n        }\r\n    }\r\n\r\n    //Refactored for extraction\r\n    public void checkDrawConditions() {\r\n        if (isFirstPause && mPaused) {\r\n            // Draw the \"Tap to play\" prompt if the game is initially paused\r\n            drawPaused();\r\n        } else if (mPaused) {\r\n            // Draw the names if the game is paused\r\n            if (textDrawer == null) {\r\n                textDrawer = new TextDrawer(getContext(), mCanvas, mPaint, this);\r\n                textDrawer.setDrawPauseButton(DrawPauseButton.getDrawPauseButton(getContext(), this));\r\n                textDrawer.drawNames();\r\n            }\r\n\r\n            // Check if NameDrawer instance is not null before calling drawNames\r\n            if (textDrawer != null) {\r\n                textDrawer.drawNames();\r\n            }\r\n        }\r\n    }\r\n\r\n\r\n    @Override\r\n    public void drawColorSize() {\r\n        // Set the size and color of the mPaint for the text\r\n        mPaint.setColor(Color.argb(255, 255, 255, 255));\r\n        mPaint.setTextSize(120);\r\n\r\n        // Draw the score\r\n        mCanvas.drawText(\"\" + mScore, 20, 120, mPaint);\r\n\r\n        // Draw the apples and the snake\r\n        mApple.draw(mCanvas, mPaint);\r\n        mSnake.draw(mCanvas, mPaint);\r\n        yApple.draw(mCanvas, mPaint);\r\n        pApple.draw(mCanvas, mPaint);\r\n\r\n        // Draw the Rocks\r\n        for(Rock rock: rocks) {\r\n            rock.draw(mCanvas, mPaint);\r\n        }\r\n\r\n    }\r\n\r\n    // Refactored\r\n    public void drawSpawnables() {\r\n        // Draw the rock only if the game is not paused\r\n        for(Rock rock: rocks) {\r\n            rock.draw(mCanvas, mPaint);\r\n        }\r\n        // Draw the apple only if the game is not paused\r\n        mApple.draw(mCanvas, mPaint);\r\n\r\n        yApple.draw(mCanvas, mPaint);\r\n\r\n        pApple.draw(mCanvas, mPaint);\r\n    }\r\n\r\n    // Refactored\r\n    @Override\r\n    public void drawPaused() {\r\n        // Set the size and color of the mPaint for the text\r\n        mPaint.setColor(Color.argb(255, 203, 67, 53));\r\n        mPaint.setTextSize(250);\r\n        // Set the custom font to the Paint object\r\n        mPaint.setTypeface(mCustomFont);\r\n\r\n        if (isFirstPause && mPaused) {\r\n            if(textDrawer == null) {\r\n                // Instantiate TextDrawer preparing for Injection\r\n                textDrawer = new TextDrawer(mContext, mCanvas, mPaint, this);\r\n                textDrawer.setDrawPauseButton(drawPauseButton); //Injecting\r\n            }\r\n\r\n            //Refactored\r\n            textDrawer.drawTapToPlay();\r\n            textDrawer.drawNames();\r\n        }\r\n    }\r\n\r\n    @Override\r\n    public boolean onTouchEvent(MotionEvent motionEvent) {\r\n        if ((motionEvent.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {\r\n            if (isFirstPause) {\r\n                // If the game beginning, start the game\r\n                mPaused = false;\r\n                newGame();\r\n            }else if(mPaused && mPauseButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())){\r\n                //If the game is paused, resume the game\r\n                mPaused = false;\r\n            }else if (mPauseButtonRect.contains((int) motionEvent.getX(), (int) motionEvent.getY())) {\r\n                // If the pause button is touched, pause the game\r\n                mPaused = true;\r\n            } else if (!mPaused) {\r\n                // If the game is running and not paused, handle snake movement\r\n                mSnake.switchHeading(motionEvent);\r\n            }\r\n            return true;\r\n        }\r\n        return true;\r\n    }\r\n\r\n    // Stop the thread\r\n    @Override\r\n    public void pause() {\r\n        mPlaying = false;\r\n        try {\r\n            mThread.join();\r\n        } catch (InterruptedException e) {\r\n            // Error\r\n        }\r\n    }\r\n\r\n    // Start the thread\r\n    @Override\r\n    public void resume() {\r\n        mPlaying = true;\r\n        mThread = new Thread(this);\r\n        mThread.start();\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/SnakeGame/app/src/main/java/com/gamecodeschool/c17snake/SnakeGame.java b/SnakeGame/app/src/main/java/com/gamecodeschool/c17snake/SnakeGame.java
+--- a/SnakeGame/app/src/main/java/com/gamecodeschool/c17snake/SnakeGame.java	
++++ b/SnakeGame/app/src/main/java/com/gamecodeschool/c17snake/SnakeGame.java	
+@@ -26,7 +26,7 @@
+     // Objects for the game loop/thread
+     private Thread mThread = null;
+ 
+-    private boolean isFirstPause = true;
++    protected boolean isFirstPause = true;
+ 
+     // Is the game currently playing and or paused?
+     private volatile boolean mPlaying = false;
+@@ -50,11 +50,12 @@
+ 
+     // Objects for drawing
+     private Canvas mCanvas;
+-    private final SurfaceHolder mSurfaceHolder;
++    private Canvas sCanvas;
++    protected final SurfaceHolder mSurfaceHolder;
+     private final Paint mPaint;
+ 
+     // Typeface object to hold the custom font
+-    private Typeface mCustomFont;
++    protected Typeface mCustomFont;
+ 
+     // A snake ssss
+     private Snake mSnake;
+@@ -77,13 +78,14 @@
+     private Bitmap mBackgroundBitmap;
+     private final DrawPauseButton drawPauseButton;
+     private final UpdateSystem updateSystem;
+-    private TextDrawer DrawNames;
+     private Context mContext;
+     private TextDrawer textDrawer;
+ 
+     private Random random;
++    private boolean isSnakeDead = true;
+ 
+     private int randomNumber = 0;
++    private SurfaceHolder sf;
+ 
+     // This is the constructor method that gets called
+     // from SnakeActivity
+@@ -104,6 +106,7 @@
+ 
+         // Initialize the drawing objects
+         mSurfaceHolder = getHolder();
++        sf = getHolder();
+         mPaint = new Paint();
+ 
+         // Refactored
+@@ -132,23 +135,6 @@
+         rocks.add(rock4);
+     }
+ 
+-    //Builder for buildDesign Pattern Still under develelopment
+-   /* public SnakeGame() {
+-
+-
+-          DrawBuilder builder = new DrawBuilder()
+-                .setCanvas(mCanvas)
+-                .setPaint(mPaint)
+-                .setFirstPause(isFirstPause)
+-                .setPaused(mPaused);
+-
+-        this.drawTapToPlayBehavior = builder.setMessage("Tap to play").buildDrawTapToPlay();
+-        this.drawNamesBehavior = builder.setMessage("John Doe").buildDrawNames();
+-        this.checkDrawConditionsBehavior = builder.buildCheckDrawConditions(drawTapToPlayBehavior, drawNamesBehavior);
+-        this.drawAppleBehavior = builder.buildDrawApple();
+-        this.drawColorSizeBehavior = builder.buildDrawColorSize();
+-        this.drawPausedBehavior = builder.buildDrawPaused();
+-    }*/
+ 
+     public boolean isPaused() {
+         return mPaused;
+@@ -173,6 +159,7 @@
+ 
+         // Scale the image to match the screen size
+         mBackgroundBitmap = Bitmap.createScaledBitmap(mBackgroundBitmap, size.x, size.y, true);
++
+     }
+ 
+     // Method to create and draw the pause button
+@@ -289,11 +276,13 @@
+     public void run() {
+         while (mPlaying) {
+             if(!mPaused) {
+-                if (updateSystem.updateRequired()) {
++                if (updateSystem.updateRequired() && !isSnakeDead) {
+                     update();
+                 }
+             }
+-            draw();
++
++                draw();
++
+         }
+     }
+ 
+@@ -312,6 +301,7 @@
+         }
+ 
+         isFirstPause = mPaused;
++        isSnakeDead = false;
+     }
+ 
+     // Update the newGame() method to set isFirstPause to true
+@@ -332,12 +322,22 @@
+             for(Rock rock: rocks) {
+                 if (mSnake.hitRock(rock.getLocation())) {
+                     resetGame();
++                    sCanvas = mSurfaceHolder.lockCanvas();
++                    sCanvas.drawColor(Color.BLACK);
++                    mSurfaceHolder.unlockCanvasAndPost(sCanvas);
+                 }
+             }
+ 
+             if (mSnake.detectDeath()) {
+                 // Reset the score and the game if snake dies
+                 resetGame();
++                invalidate();
++                loadBackgroundImage();
++                sCanvas = sf.lockCanvas();
++                sCanvas.drawColor(Color.BLACK);
++                sf.unlockCanvasAndPost(sCanvas);
++
++
+             }
+         }
+     }
+@@ -416,8 +416,9 @@
+             mApple.hide(); // Hide the apple upon resetting the game
+             mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
+             mSnake.hide(); // Hide the snake upon resetting the game
+-            isFirstPause = true; // Set isFirstPause to true upon resetting the game
+-            mPaused = true; // Set mPaused to true upon resetting the game
++            isFirstPause = true;// Set isFirstPause to true upon resetting the game
++            isSnakeDead = true;
++            //mPaused = true; // Set mPaused to true upon resetting the game
+         }
+     }
+ 
+@@ -446,7 +447,7 @@
+             mCanvas = mSurfaceHolder.lockCanvas();
+ 
+             // Draw the background image
+-            mCanvas.drawBitmap(mBackgroundBitmap, 0, 0, null);
++            mCanvas.drawBitmap(mBackgroundBitmap, 0, 0, mPaint);
+ 
+             // Draw the score
+             drawColorSize();
+@@ -558,7 +559,7 @@
+     @Override
+     public boolean onTouchEvent(MotionEvent motionEvent) {
+         if ((motionEvent.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
+-            if (isFirstPause) {
++            if (isFirstPause && isSnakeDead) {
+                 // If the game beginning, start the game
+                 mPaused = false;
+                 newGame();
+Index: SnakeGame/app/src/main/java/com/gamecodeschool/c17snake/GameOverScreen.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/SnakeGame/app/src/main/java/com/gamecodeschool/c17snake/GameOverScreen.java b/SnakeGame/app/src/main/java/com/gamecodeschool/c17snake/GameOverScreen.java
+new file mode 100644
+--- /dev/null	
++++ b/SnakeGame/app/src/main/java/com/gamecodeschool/c17snake/GameOverScreen.java	
+@@ -0,0 +1,30 @@
++package com.gamecodeschool.c17snake;
++
++import android.content.Context;
++import android.graphics.Bitmap;
++import android.graphics.BitmapFactory;
++import android.graphics.Canvas;
++import android.graphics.Color;
++import android.graphics.Point;
++
++public class GameOverScreen extends Screens{
++    private SnakeGame snakeGame;
++    private Canvas sCanvas;
++    public GameOverScreen(Context context, SnakeGame snakeGame) {
++        super(context);
++        this.snakeGame = snakeGame;
++    }
++
++
++
++    private void drawGameOver(){
++        sCanvas = snakeGame.mSurfaceHolder.lockCanvas();
++        sCanvas.drawColor(Color.BLACK);
++
++
++    }
++
++    private SnakeGame getSnakeGame(){
++        return snakeGame;
++    }
++}
+Index: SnakeGame/app/src/main/java/com/gamecodeschool/c17snake/Screens.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/SnakeGame/app/src/main/java/com/gamecodeschool/c17snake/Screens.java b/SnakeGame/app/src/main/java/com/gamecodeschool/c17snake/Screens.java
+new file mode 100644
+--- /dev/null	
++++ b/SnakeGame/app/src/main/java/com/gamecodeschool/c17snake/Screens.java	
+@@ -0,0 +1,46 @@
++package com.gamecodeschool.c17snake;
++
++import android.content.Context;
++import android.graphics.Canvas;
++import android.graphics.Paint;
++import android.graphics.Point;
++import android.util.DisplayMetrics;
++import android.view.Display;
++import android.view.SurfaceView;
++import android.view.WindowManager;
++
++public abstract class Screens extends SurfaceView {
++    private SnakeGame snakeGame;
++    private Paint sPaint;
++    private Canvas sCanvas;
++
++    public Screens(Context context) {
++        super(context);
++
++    }
++
++    //returns Pointer object <x,y>
++    //X represents the width of the screen
++    //Y represents the height of the screen
++    protected Point getScreenDimensions(){
++        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
++        Display display = wm.getDefaultDisplay();
++        DisplayMetrics metrics = new DisplayMetrics();
++        display.getMetrics(metrics);
++        return new Point(metrics.widthPixels, metrics.heightPixels);
++    }
++
++    //Returns a Pointer object <x,y>
++    //X represents the width of the string
++    //Y represents the height of the string
++    protected Point getMessageDimensions(String message){
++        return new Point((int) sPaint.measureText(message), (int) (sPaint.getFontMetrics().bottom - sPaint.getFontMetrics().top));
++    }
++
++    //Returns a Pointer object <x,y>
++    //X represents the coordinate that centers a message horizontally
++    //Y represents the coordinate that centers a message vertically
++    protected Point getCenterPoint(Point screenDimensions, Point messageDimensions){
++        return new Point((screenDimensions.x - messageDimensions.x), (screenDimensions.y + messageDimensions.y/2) / 2);
++    }
++}
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ExternalStorageConfigurationManager\" enabled=\"true\" />\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_17\" default=\"true\" project-jdk-name=\"jbr-17\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/out\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	
++++ b/.idea/misc.xml	
+@@ -1,4 +1,3 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="ExternalStorageConfigurationManager" enabled="true" />
+   <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">
+Index: .idea/libraries/Gradle__androidx_core_core_ktx_1_2_0_aar.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/libraries/Gradle__androidx_core_core_ktx_1_2_0_aar.xml b/.idea/libraries/Gradle__androidx_core_core_ktx_1_2_0_aar.xml
+new file mode 100644
+--- /dev/null	
++++ b/.idea/libraries/Gradle__androidx_core_core_ktx_1_2_0_aar.xml	
+@@ -0,0 +1,12 @@
++<component name="libraryTable">
++  <library name="Gradle: androidx.core:core-ktx:1.2.0@aar" external-system-id="GRADLE">
++    <CLASSES>
++      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/1927cbde6bd111b9a6d65328f0442b6b/transformed/core-ktx-1.2.0/jars/classes.jar!/" />
++      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/1927cbde6bd111b9a6d65328f0442b6b/transformed/core-ktx-1.2.0/AndroidManifest.xml" />
++    </CLASSES>
++    <JAVADOC />
++    <SOURCES>
++      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.core/core-ktx/1.2.0/75eb613f7dec270f611d0adff5fcb0e8b617fe0a/core-ktx-1.2.0-sources.jar!/" />
++    </SOURCES>
++  </library>
++</component>
+\ No newline at end of file
+Index: .idea/libraries/Gradle__androidx_fragment_fragment_1_3_6_aar.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/libraries/Gradle__androidx_fragment_fragment_1_3_6_aar.xml b/.idea/libraries/Gradle__androidx_fragment_fragment_1_3_6_aar.xml
+new file mode 100644
+--- /dev/null	
++++ b/.idea/libraries/Gradle__androidx_fragment_fragment_1_3_6_aar.xml	
+@@ -0,0 +1,16 @@
++<component name="libraryTable">
++  <library name="Gradle: androidx.fragment:fragment:1.3.6@aar" external-system-id="GRADLE">
++    <ANNOTATIONS>
++      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/65612b5fae6c2aa4265237c94fd623b4/transformed/fragment-1.3.6/annotations.zip!/" />
++    </ANNOTATIONS>
++    <CLASSES>
++      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/65612b5fae6c2aa4265237c94fd623b4/transformed/fragment-1.3.6/jars/classes.jar!/" />
++      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/65612b5fae6c2aa4265237c94fd623b4/transformed/fragment-1.3.6/res" />
++      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/65612b5fae6c2aa4265237c94fd623b4/transformed/fragment-1.3.6/AndroidManifest.xml" />
++    </CLASSES>
++    <JAVADOC />
++    <SOURCES>
++      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.fragment/fragment/1.3.6/25ece06338d39da1fdc9d8488aa57b5014866918/fragment-1.3.6-sources.jar!/" />
++    </SOURCES>
++  </library>
++</component>
+\ No newline at end of file
