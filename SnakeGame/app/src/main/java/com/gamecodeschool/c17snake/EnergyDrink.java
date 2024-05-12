@@ -18,7 +18,7 @@ public class EnergyDrink extends GameObject implements Spawnable{
     boolean spawned;
     private int scaledSize;
 
-    protected EnergyDrink(Context context, Point sr, int size){
+    private EnergyDrink(Context context, Point sr, int size){
         super(context, sr, size);
 
         mBitmapEnergyDrink = BitmapFactory.decodeResource(context.getResources(), R.drawable.energydrink);
@@ -37,16 +37,22 @@ public class EnergyDrink extends GameObject implements Spawnable{
 
     @Override
     public void spawn() {
+        // Get the current locations of all game objects
         List<Point> rockLocations = Rock.get_Locations();
         Point mAppleLocation = Apple.get_Location();
         Point yAppleLocation = YellowApple.get_Location();
         Point pAppleLocation = PoisonApple.get_Location();
         List<Point> trashLocations = Trash.get_Locations();
 
+        // Create a new random object
         Random random = new Random();
+
+        // Generate a random location for the new object
         location.x = random.nextInt(mSpawnRange.x) + 1;
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
 
+        // Check if the new location is invalid (i.e., it overlaps with an existing object)
+        // If it is, generate a new location
         while (isLocationInvalid(location, rockLocations) ||
                 (isLocationInvalid(location, mAppleLocation)) ||
                 (isLocationInvalid(location, yAppleLocation)) ||
@@ -56,35 +62,41 @@ public class EnergyDrink extends GameObject implements Spawnable{
             location.y = random.nextInt(mSpawnRange.y - 1) + 1;
         }
 
+        // Set the new location and mark the object as spawned
         locations = new Point(location.x, location.y);
         spawned = true;
     }
 
     private boolean isLocationInvalid(Point location, List<Point> otherLocations) {
+
+        // Check if the new location is too close to any of the existing locations
         for (Point otherLocation : otherLocations) {
-            if (otherLocation == null) continue;  //Needed to prevent crashing
+            if (otherLocation == null) continue;
+            // 2-D Absolute Difference |x_2 - x_1| & |y_2 - y_1| <= 2
             int xDiff = Math.abs(location.x - otherLocation.x);
             int yDiff = Math.abs(location.y - otherLocation.y);
-            if (xDiff <= 2 && yDiff <= 2) {
-                return true;
+            if (xDiff <= 3 && yDiff <= 3) {
+                return true; //Do not spawn here
             }
         }
-        return false;
+        return false; //Spawn here
     }
 
     //Overloaded method
     private boolean isLocationInvalid(Point location, Point otherLocation) {
-        if (otherLocation == null) return false;  //Needed to prevent crashing
+        // Check if the new location is too close to the other location
+        if (otherLocation == null) return false;
+        // 2-D Absolute Difference |x_2 - x_1| & |y_2 - y_1| <= 2
         int xDiff = Math.abs(location.x - otherLocation.x);
         int yDiff = Math.abs(location.y - otherLocation.y);
-        return xDiff <= 2 && yDiff <= 2;
+        return xDiff <= 3 && yDiff <= 3;
     }
 
     // Draw the apple
     @Override
     public void draw(Canvas canvas, Paint paint) {
         canvas.drawBitmap(mBitmapEnergyDrink,
-                (location.x * size) - (scaledSize / 2), (location.y * size) - (scaledSize / 2), paint);
+                (location.x * size) - ((float) scaledSize / 2), (location.y * size) - ((float) scaledSize / 2), paint);
     }
 
 
