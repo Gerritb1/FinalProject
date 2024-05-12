@@ -17,6 +17,7 @@ public class GameOverActivity extends Activity {
         // Get the pixel dimensions of the screen
         Display display = getWindowManager().getDefaultDisplay();
         SnakeActivity.mSnakeGame.spawnHide();
+        SnakeActivity.mSnakeGame.resetGameState();
 
         // Initialize the result into a Point object
         Point size = new Point();
