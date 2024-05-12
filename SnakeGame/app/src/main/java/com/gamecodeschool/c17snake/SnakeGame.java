@@ -111,16 +111,11 @@ class SnakeGame extends SurfaceView implements Runnable{
     // Trash index & trash probability
     private int trashPiece = 0;
     private int trashChance = 3;
-
-
-
-
+    
     // This is the constructor method that gets called
     // from SnakeActivity
     protected SnakeGame(Context context, Point size) {
         super(context);
-
-
 
         // Refactored
         fontTryCatch(context);
@@ -339,8 +334,7 @@ class SnakeGame extends SurfaceView implements Runnable{
                         mNumBlocksHigh),
                 blockSize);
     }
-
-    // Handles the game loop
+    
     // Handles the game loop
     @Override
     public void run() {
@@ -410,7 +404,6 @@ class SnakeGame extends SurfaceView implements Runnable{
                 if(!isVulnerable) {
                     mSP.play(mCrashIDRock, 1, 1, 0, 0, 1);
                     snakeHitRock = true;
-                    mBackgroundMusic.pause();
                     break;
                 }
             }
@@ -421,7 +414,6 @@ class SnakeGame extends SurfaceView implements Runnable{
                 if(!isVulnerable) {
                     mSP.play(mCrashIDTrash, 1, 1, 0, 0, 1);
                     snakeHitTrash = true;
-                    mBackgroundMusic.pause();
                     break;
                 }
             }
@@ -429,8 +421,6 @@ class SnakeGame extends SurfaceView implements Runnable{
 
         if (mSnake.detectDeath() && !snakeHitTrash && !snakeHitRock) {
             mSP.play(mCrashID, 1, 1, 0, 0, 1);
-            mBackgroundMusic.pause();
-
         }
         if (snakeHitRock || snakeHitTrash || mSnake.detectDeath()) {
             startGameOverActivity();
@@ -448,20 +438,8 @@ class SnakeGame extends SurfaceView implements Runnable{
             ((Activity)  mContext).finishAffinity();
         }
 
+        mBackgroundMusic.pause();
         mBackgroundMusic.seekTo(0);
-
-        //Reset obstacles
-        //Rock.remove_Locations();
-        //Trash.remove_Locations();
-        //Apple.remove_Locations();
-        //YellowApple.remove_Locations();
-        //PoisonApple.remove_Locations();
-        //Rock.remove_Locations();
-        
-        // Refactored
-        //spawnHide();
-        //resetGameState();
-
     }
 
     // Refactored, this is for the red apple
@@ -641,35 +619,7 @@ class SnakeGame extends SurfaceView implements Runnable{
         }
     }
 
-    /*
-    private void resetGame() { //Refactored
-        if (!mPaused) {
-            mScore = 0;
-
-            //Reset music
-            if (mBackgroundMusic.isPlaying()) {
-                mBackgroundMusic.pause();
-                mBackgroundMusic.seekTo(0);
-            }
-
-            //Reset obstacles
-            Rock.remove_Locations();
-            Trash.remove_Locations();
-            Apple.remove_Locations();
-            YellowApple.remove_Locations();
-            PoisonApple.remove_Locations();
-            Rock.remove_Locations();
-
-            // Refactored
-            spawnHide();
-            resetGameState();
-
-
-        }
-    }
-
-     */
-
+    //Refactored
     public void resetGameState(){ //Extracted from resetGame
         //Reset game objects
         mApple.spawn();
@@ -693,8 +643,6 @@ class SnakeGame extends SurfaceView implements Runnable{
         updateSystem.setTargetFPS(10);
 
     }
-
-
 
     // Refactored
     public void spawnHide() {
