@@ -21,11 +21,6 @@ class PoisonApple extends Apple implements Spawnable{
     // Maintain a single global reference to the apple
     private static PoisonApple poisonApple;
     private static Point locations = null;
-    private List<Point> rockLocations = new ArrayList<>();
-    private List<Point> trashLocations = new ArrayList<>();
-    private Point mAppleLocation = null;
-    private Point yAppleLocation = null;
-    private Point eDrinkLocation = null;
 
     /// Set up the apple in the constructor
     private PoisonApple(Context context, Point sr, int s) {
@@ -72,27 +67,30 @@ class PoisonApple extends Apple implements Spawnable{
         spawned = true;
     }
 
+    private boolean isLocationInvalid(Point location, List<Point> otherLocations) {
+
+        // Check if the new location is too close to any of the existing locations
+        for (Point otherLocation : otherLocations) {
+            if (otherLocation == null) continue;
+            // 2-D Absolute Difference |x_2 - x_1| & |y_2 - y_1| <= 2
+            int xDiff = Math.abs(location.x - otherLocation.x);
+            int yDiff = Math.abs(location.y - otherLocation.y);
+            if (xDiff <= 2 && yDiff <= 2) {
+                return true; //Do not spawn here
+            }
+        }
+        return false; //Spawn here
+    }
+
+    //Overloaded method
     private boolean isLocationInvalid(Point location, Point otherLocation) {
-        if (otherLocation == null) return false;  //Needed to prevent crashing
+        // Check if the new location is too close to the other location
+        if (otherLocation == null) return false;
+        // 2-D Absolute Difference |x_2 - x_1| & |y_2 - y_1| <= 2
         int xDiff = Math.abs(location.x - otherLocation.x);
         int yDiff = Math.abs(location.y - otherLocation.y);
         return xDiff <= 2 && yDiff <= 2;
     }
-
-    //Overloaded method
-    private boolean isLocationInvalid(Point location, List<Point> otherLocations) {
-        for (Point otherLocation : otherLocations) {
-            if (otherLocation == null) continue;  //Needed to prevent crashing
-            int xDiff = Math.abs(location.x - otherLocation.x);
-            int yDiff = Math.abs(location.y - otherLocation.y);
-            if (xDiff <= 2 && yDiff <= 2) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
 
     public boolean isSpawned() {
         return spawned;
