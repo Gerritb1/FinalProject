@@ -412,8 +412,28 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
 
     // Refactored
     public void updateDeath() {
-        boolean snakeHitRock = checkSnakeHitRock();
-        boolean snakeHitTrash = checkSnakeHitTrash();
+        boolean snakeHitRock = false;
+        boolean snakeHitTrash = false;
+
+        for(Rock rock: rocks) {
+            if (mSnake.hitRock(rock.getLocation())) {
+                if(!isVulnerable) {
+                    mSP.play(mCrashIDRock, 1, 1, 0, 0, 1);
+                    snakeHitRock = true;
+                    break;
+                }
+            }
+        }
+
+        for(Trash trash: trashStuff) {
+            if (mSnake.hitRock(trash.getLocation())) {
+                if(!isVulnerable) {
+                    mSP.play(mCrashIDTrash, 1, 1, 0, 0, 1);
+                    snakeHitTrash = true;
+                    break;
+                }
+            }
+        }
 
         if (mSnake.detectDeath() && !snakeHitTrash && !snakeHitRock) {
             mSP.play(mCrashID, 1, 1, 0, 0, 1);
@@ -421,30 +441,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         if (snakeHitRock || snakeHitTrash || mSnake.detectDeath()) {
             startGameOverActivity();
         }
-    }
-
-    private boolean checkSnakeHitRock() {
-        for(Rock rock: rocks) {
-            if (mSnake.hitRock(rock.getLocation())) {
-                if(!isVulnerable) {
-                    mSP.play(mCrashIDRock, 1, 1, 0, 0, 1);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean checkSnakeHitTrash() {
-        for(Trash trash: trashStuff) {
-            if (mSnake.hitRock(trash.getLocation())) {
-                if(!isVulnerable) {
-                    mSP.play(mCrashIDTrash, 1, 1, 0, 0, 1);
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     private void startGameOverActivity() {
