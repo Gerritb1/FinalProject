@@ -5,10 +5,14 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Display;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class SnakeActivity extends Activity {
 
     // Declare an instance of SnakeGame
-    SnakeGame mSnakeGame;
+    public static SnakeGame mSnakeGame;
+    static ExecutorService executorService = Executors.newFixedThreadPool(4);
 
     // Set the game up
     @Override

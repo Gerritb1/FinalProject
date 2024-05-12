@@ -113,10 +113,14 @@ class SnakeGame extends SurfaceView implements Runnable{
     private int trashChance = 3;
 
 
+
+
     // This is the constructor method that gets called
     // from SnakeActivity
     protected SnakeGame(Context context, Point size) {
         super(context);
+
+
 
         // Refactored
         fontTryCatch(context);
@@ -262,12 +266,12 @@ class SnakeGame extends SurfaceView implements Runnable{
                         mNumBlocksHigh),
                 blockSize);
 
-        yApple = YellowApple.getYellowApple(context,
+        this.yApple = YellowApple.getYellowApple(context,
                 new Point(NUM_BLOCKS_WIDE,
                         mNumBlocksHigh),
                 blockSize);
 
-        pApple = PoisonApple.getPoisonApple(context,
+        this.pApple = PoisonApple.getPoisonApple(context,
                 new Point(NUM_BLOCKS_WIDE,
                         mNumBlocksHigh),
                 blockSize);
@@ -437,6 +441,7 @@ class SnakeGame extends SurfaceView implements Runnable{
     private void startGameOverActivity() {
         Intent gameOver = new Intent(mContext, GameOverActivity.class);
         gameOver.putExtra("key", mScore);
+
         mContext.startActivity(gameOver);
         if (mContext instanceof Activity) {
             ((Activity) mContext).overridePendingTransition(0, 0);
@@ -454,8 +459,8 @@ class SnakeGame extends SurfaceView implements Runnable{
         //Rock.remove_Locations();
         
         // Refactored
-        spawnHide();
-        resetGameState();
+        //spawnHide();
+        //resetGameState();
 
     }
 
