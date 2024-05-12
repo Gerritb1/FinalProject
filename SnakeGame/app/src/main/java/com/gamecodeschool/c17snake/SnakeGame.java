@@ -414,6 +414,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                     mSP.play(mCrashIDRock, 1, 1, 0, 0, 1);
                     snakeHitRock = true;
                     mBackgroundMusic.pause();
+                    mBackgroundMusic.seekTo(0);
                     break;
                 }
             }
@@ -425,6 +426,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
                     mSP.play(mCrashIDTrash, 1, 1, 0, 0, 1);
                     snakeHitTrash = true;
                     mBackgroundMusic.pause();
+                    mBackgroundMusic.seekTo(0);
                     break;
                 }
             }
@@ -433,6 +435,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         if (mSnake.detectDeath() && !snakeHitTrash && !snakeHitRock) {
             mSP.play(mCrashID, 1, 1, 0, 0, 1);
             mBackgroundMusic.pause();
+            mBackgroundMusic.seekTo(0);
         }
         if (snakeHitRock || snakeHitTrash || mSnake.detectDeath()) {
             startGameOverActivity();
@@ -448,6 +451,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             ((Activity) mContext).overridePendingTransition(0, 0);
         }
         if (activityFlag && !isVulnerable) {
+
             resetGame();
         }
     }
