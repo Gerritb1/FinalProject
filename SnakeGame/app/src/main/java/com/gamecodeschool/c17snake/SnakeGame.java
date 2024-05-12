@@ -379,6 +379,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         }
         isFirstPause = mPaused;
         isSnakeDead = false;
+        activityFlag = true;
     }
 
     // Update the newGame() method to set isFirstPause to true
@@ -451,6 +452,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             ((Activity) mContext).overridePendingTransition(0, 0);
         }
         if (activityFlag && !isVulnerable) {
+            activityFlag = false;
 
             resetGame();
         }
@@ -571,6 +573,9 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             if(mApple.isSpawned()) {
                 mApple.hide();
             }
+            if(eDrink.isSpawned()) {
+                eDrink.hide();
+            }
             randomNumber = random.nextInt(3);
 
             // Increase snake speed
@@ -648,6 +653,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
             spawnHide();
             resetGameState();
 
+
         }
     }
 
@@ -665,6 +671,7 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         mSnake.setVulnerable(false);
         isVulnerable = false;
         isSnakeDead = true;
+        activityFlag = false;
 
         // Cancel the vulnerability timer
         cancelVulnerabilityTimer();
