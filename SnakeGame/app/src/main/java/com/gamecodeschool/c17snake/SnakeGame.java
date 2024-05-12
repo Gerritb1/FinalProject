@@ -610,8 +610,12 @@ class SnakeGame extends SurfaceView implements Runnable{
             }
 
             mSP.play(pEat_ID, 1, 1, 0, 0, 1);
-            mSnake.shrink(3);
-            randomNumber = random.nextInt(4);
+            if(mScore < 2)
+                startGameOverActivity();
+            else {
+                mSnake.shrink(3);
+                randomNumber = random.nextInt(4);
+            }
         }
 
         if ((mScore > 0) && (randomNumber == 1) && !pApple.isSpawned()) {
