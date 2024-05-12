@@ -23,7 +23,7 @@ import java.util.Random;
 import android.os.Handler;
 
 
-class SnakeGame extends SurfaceView implements Runnable, Game {
+class SnakeGame extends SurfaceView implements Runnable{
 
     //Flags
     private volatile boolean mPlaying = false;
@@ -187,7 +187,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     }
 
     // Refactored
-    @Override
     public void fontTryCatch(Context context) {
         try {
             // Load the custom font
@@ -198,7 +197,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     }
 
     // Refactored
-    @Override
     public void loadBackgroundImage(Context context, Point size) {
         // Load the background image
         mBackgroundBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.background);
@@ -208,7 +206,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     }
 
     // Method to create and draw the pause button
-    @Override
     public void createPauseButton() {
         int buttonWidth = 400;
         int buttonHeight = 100;
@@ -224,7 +221,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     }
 
     //Refactored
-    @Override
     public void soundPool() {
         // Initialize the SoundPool
         AudioAttributes audioAttributes = new AudioAttributes.Builder()
@@ -239,7 +235,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     }
 
     //Refactored
-    @Override
     public void tryCatch(Context context) {
         try {
             // Load the sounds from the raw folder
@@ -256,7 +251,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     }
 
     //Refactored
-    @Override
     public void callConstructors(Context context, Point size) {
         // Work out how many pixels each block is
         int blockSize = size.x / NUM_BLOCKS_WIDE;
@@ -358,7 +352,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         }
     }
 
-    @Override
     public void newGame() {
 
         // Reset the snake and spawn the apple if it's not paused and it's the first pause
@@ -383,7 +376,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     }
 
     // Update the newGame() method to set isFirstPause to true
-    @Override
     public void update() {
         if (!mPaused) {
             mBackgroundMusic.start();
@@ -450,13 +442,9 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         mContext.startActivity(gameOver);
         if (mContext instanceof Activity) {
             ((Activity) mContext).overridePendingTransition(0, 0);
+            ((Activity)  mContext).finishAffinity();
         }
-        if (activityFlag && !isVulnerable) {
-            activityFlag = false;
-
-            resetGame();
-        }
-    }
+           }
 
     // Refactored, this is for the red apple
     public void updateMApple() {
@@ -662,7 +650,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         mApple.spawn();
         mApple.hide();
         mSnake.reset(NUM_BLOCKS_WIDE, mNumBlocksHigh);
-        mSnake.hide();
         eDrink.hide();
 
         //Reset flags
@@ -709,7 +696,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
         }
     }
 
-    @Override
     public void draw() {
         // Get a lock on the canvas
         if (mSurfaceHolder.getSurface().isValid()) {
@@ -767,7 +753,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     }
 
 
-    @Override
     public void drawColorSize() {
         // Set the size and color of the mPaint for the text
         mPaint.setColor(Color.argb(255, 255, 255, 255));
@@ -862,7 +847,6 @@ class SnakeGame extends SurfaceView implements Runnable, Game {
     }
 
     // Stop the thread
-    @Override
     // Stop the thread
     public void pause() {
         mPlaying = false;

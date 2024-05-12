@@ -2,6 +2,8 @@ package com.gamecodeschool.c17snake;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -14,27 +16,25 @@ import androidx.core.content.res.ResourcesCompat;
 
 public class GameOverScreen extends SurfaceView implements Runnable {
     Context gContext;
-    int score;
+    private int score, highscore;
     SurfaceHolder gSurfaceHolder;
     Canvas gCanvas;
     Paint gPaint;
     TextDrawer textDrawer;
     volatile boolean playing;
     private Thread thread = null;
-    public GameOverScreen(Context context, int score) {
+    SharedPreferences mPrefs;
+
+
+
+    public GameOverScreen(Context context, int score, int Highscore) {
         super(context);
         this.score = score;
-        this.gContext = context;
-
+        gContext = context;
+        highscore = Highscore;
+        mPrefs = context.getSharedPreferences("Highscore", 0);
         innitDrawing();
     }
-    public int getHighscore(int score){
-        if(score > GameOverActivity.Highscore)
-            GameOverActivity.Highscore = score;
-        return GameOverActivity.Highscore;
-
-    }
-
     public void innitDrawing(){
         gCanvas = new Canvas();
         gPaint = new Paint();
@@ -59,7 +59,7 @@ public class GameOverScreen extends SurfaceView implements Runnable {
             gPaint.setTextSize(75);
             gCanvas.drawText("Your Score: " + score, 650, 250, gPaint);
 
-            gCanvas.drawText("Highscore:  " + getHighscore(score), 650, 350, gPaint);
+            gCanvas.drawText("Highscore:  " + highscore, 650, 350, gPaint);
 
             gCanvas.drawText("Tap To Play Again!", 550, 500, gPaint);
 
@@ -83,7 +83,10 @@ public class GameOverScreen extends SurfaceView implements Runnable {
         if ((motionEvent.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
             if(gContext instanceof Activity){
                 SnakeGame.activityFlag = true;
-                ((Activity) gContext).finish();
+                Intent newGame = new Intent(gContext, SnakeActivity.class);
+                gContext.startActivity(newGame);
+                ((Activity) gContext).finishAffinity();
+                ((Activity) gContext).overridePendingTransition(0,0);
             }
         }
         return true;

@@ -101,7 +101,6 @@ public class EnergyDrink extends GameObject implements Spawnable{
 
 
     // Method to hide the apple
-    @Override
     public void hide() {
         location.set(-10, -10);
         spawned = false;

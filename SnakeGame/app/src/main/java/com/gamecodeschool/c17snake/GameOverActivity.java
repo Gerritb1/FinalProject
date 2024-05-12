@@ -1,6 +1,7 @@
 package com.gamecodeschool.c17snake;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Display;
@@ -9,7 +10,6 @@ import android.view.Display;
 public class GameOverActivity extends Activity {
 
     private GameOverScreen gameOverScreen;
-    static int Highscore=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,7 +28,17 @@ public class GameOverActivity extends Activity {
             //The key argument here must match that used in the other activity
         }
 
-        gameOverScreen = new GameOverScreen(this, score);
+        SharedPreferences sharedPref = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        if(score > sharedPref.getInt("scoreKey", 0)) {
+            editor.putInt("scoreKey", score);
+            editor.apply();
+        }
+
+        int Highscore = sharedPref.getInt("scoreKey", 0);
+
+
+        gameOverScreen = new GameOverScreen(this, score, Highscore);
 
         setContentView(gameOverScreen);
 
