@@ -75,7 +75,7 @@ public class EnergyDrink extends GameObject implements Spawnable{
             // 2-D Absolute Difference |x_2 - x_1| & |y_2 - y_1| <= 2
             int xDiff = Math.abs(location.x - otherLocation.x);
             int yDiff = Math.abs(location.y - otherLocation.y);
-            if (xDiff <= 3 && yDiff <= 3) {
+            if (xDiff <= 2 && yDiff <= 2) {
                 return true; //Do not spawn here
             }
         }
@@ -89,7 +89,7 @@ public class EnergyDrink extends GameObject implements Spawnable{
         // 2-D Absolute Difference |x_2 - x_1| & |y_2 - y_1| <= 2
         int xDiff = Math.abs(location.x - otherLocation.x);
         int yDiff = Math.abs(location.y - otherLocation.y);
-        return xDiff <= 3 && yDiff <= 3;
+        return xDiff <= 2 && yDiff <= 2;
     }
 
     // Draw the apple
