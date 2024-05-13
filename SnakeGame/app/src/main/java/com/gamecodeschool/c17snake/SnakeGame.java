@@ -70,6 +70,7 @@ class SnakeGame extends SurfaceView implements Runnable{
     private int mEat_ID = -1;
     private int yEat_ID = -1;
     private int pEat_ID = -1;
+    private int eEat_ID = -1;
     private int mCrashID = -1;
     private int mCrashIDTrash = -1;
     private int mCrashIDRock = -1;
@@ -243,6 +244,7 @@ class SnakeGame extends SurfaceView implements Runnable{
             mCrashID = mSP.load(context, R.raw.game_over_sound, 1);
             yEat_ID = mSP.load(context, R.raw.yellow_apple_sound, 1);
             pEat_ID = mSP.load(context, R.raw.poison_apple_sound, 1);
+            eEat_ID = mSP.load(context, R.raw.energydrinksound, 1);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -546,6 +548,7 @@ class SnakeGame extends SurfaceView implements Runnable{
 
         // If snake eats the energy drink
         if (mSnake.checkDrink(eDrink.getLocation())) {
+            mSP.play(eEat_ID, 1, 1, 0, 0, 1);
             eDrink.hide();
             mApple.spawn();
             if (pApple.isSpawned()) {
@@ -630,7 +633,7 @@ class SnakeGame extends SurfaceView implements Runnable{
 
         //Reset flags
         isFirstPause = true;
-        mPaused = true;
+        mPaused = false;
         mSnake.setVulnerable(false);
         isVulnerable = false;
         isSnakeDead = true;
@@ -641,7 +644,6 @@ class SnakeGame extends SurfaceView implements Runnable{
 
         //Reset game loop speed if snake dies
         updateSystem.setTargetFPS(10);
-
     }
 
     // Refactored
