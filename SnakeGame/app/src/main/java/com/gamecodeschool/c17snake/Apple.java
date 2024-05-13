@@ -19,13 +19,6 @@ class Apple extends GameObject implements Spawnable{
     // Maintain a single global reference to the apple
     private static Apple apple;
     private static Point locations = null;
-
-    private List<Point> rockLocations = new ArrayList<>();
-    private List<Point> trashLocations = new ArrayList<>();
-    private Point yAppleLocations = null;
-    private Point pAppleLocations = null;
-
-    private Point eDrinkLocations = null;
     private boolean spawned;
 
     /// Set up the apple in the constructor
@@ -50,47 +43,49 @@ class Apple extends GameObject implements Spawnable{
     // This is called every time an apple is eaten
     @Override
     public void spawn() {
+        // Choose two random values and place the apple
         List<Point> rockLocations = Rock.get_Locations();
-        Point yAppleLocation = YellowApple.get_Location();
-        Point pAppleLocation = PoisonApple.get_Location();
-        Point eDrinkLocation = EnergyDrink.get_Location();
-        List<Point> trashLocations = Trash.get_Locations();
-
+        List<Point>trashLocations = Trash.get_Locations();
+        Point yAppleLocations = YellowApple.get_Location();
+        Point pAppleLocations = PoisonApple.get_Location();
+        Point energyDrinkLocation = EnergyDrink.get_Location(); // Assuming you have a method to get the energy drink location
         Random random = new Random();
         location.x = random.nextInt(mSpawnRange.x) + 1;
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
-
-        while (isLocationInvalid(location, rockLocations) ||
-                (isLocationInvalid(location, yAppleLocation)) ||
-                (isLocationInvalid(location, pAppleLocation)) ||
-                (isLocationInvalid(location, eDrinkLocation)) ||
-                isLocationInvalid(location, trashLocations)) {
-            location.x = random.nextInt(mSpawnRange.x) + 1;
-            location.y = random.nextInt(mSpawnRange.y - 1) + 1;
-        }
-
-        locations = new Point(location.x, location.y);
-    }
-
-    private boolean isLocationInvalid(Point location, List<Point> otherLocations) {
-        for (Point otherLocation : otherLocations) {
-            if (otherLocation == null) continue;  //Needed to prevent crashing
-            int xDiff = Math.abs(location.x - otherLocation.x);
-            int yDiff = Math.abs(location.y - otherLocation.y);
-            if (xDiff <= 2 && yDiff <= 2) {
-                return true;
+        for (int x=0; x<4; x++){
+            if((location.x==rockLocations.get(x).x || location.x==(rockLocations.get(x).x)+1 || location.x==(rockLocations.get(x).x)+2 || location.x==(rockLocations.get(x).x)-1 || location.x==(rockLocations.get(x).x)-2) && (location.y==rockLocations.get(x).y || location.y==(rockLocations.get(x).y+1) || location.y==(rockLocations.get(x).y+2) || location.y==(rockLocations.get(x).y-1) || location.y==(rockLocations.get(x).y-2))){
+                location.x = random.nextInt(mSpawnRange.x) + 1;
+                location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+            }
+            if(!trashLocations.isEmpty()){
+                if((location.x==trashLocations.get(x).x || location.x==(trashLocations.get(x).x)+1 || location.x==(trashLocations.get(x).x)-1) && (location.y==trashLocations.get(x).y || location.y==(trashLocations.get(x).y+1) || location.y==(trashLocations.get(x).y-1))){
+                    location.x = random.nextInt(mSpawnRange.x) + 1;
+                    location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+                }
+            }
+            if(yAppleLocations != null){
+                if((location.x==yAppleLocations.x || location.x==yAppleLocations.x+1 || location.x==yAppleLocations.x-1) && (location.y==yAppleLocations.y || location.y==yAppleLocations.y+1 || location.y==yAppleLocations.y-1)){
+                    location.x = random.nextInt(mSpawnRange.x) + 1;
+                    location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+                }
+            }
+            if(pAppleLocations != null){
+                if((location.x==pAppleLocations.x || location.x==pAppleLocations.x+1 || location.x==pAppleLocations.x-1) && (location.y==pAppleLocations.y || location.y==pAppleLocations.y+1 || location.y==pAppleLocations.y-1)){
+                    location.x = random.nextInt(mSpawnRange.x) + 1;
+                    location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+                }
+            }
+            if(energyDrinkLocation != null){
+                if((location.x==energyDrinkLocation.x || location.x==energyDrinkLocation.x+1 || location.x==energyDrinkLocation.x-1) && (location.y==energyDrinkLocation.y || location.y==energyDrinkLocation.y+1 || location.y==energyDrinkLocation.y-1)){
+                    location.x = random.nextInt(mSpawnRange.x) + 1;
+                    location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+                }
             }
         }
-        return false;
+        locations = new Point(location.x, location.y);
+        spawned = true;
     }
 
-    //Overloaded method
-    private boolean isLocationInvalid(Point location, Point otherLocation) {
-        if (otherLocation == null) return false;  //Needed to prevent crashing
-        int xDiff = Math.abs(location.x - otherLocation.x);
-        int yDiff = Math.abs(location.y - otherLocation.y);
-        return xDiff <= 2 && yDiff <= 2;
-    }
 
 
     // Draw the apple
@@ -101,12 +96,10 @@ class Apple extends GameObject implements Spawnable{
         canvas.drawBitmap(mBitmapApple,
                 location.x * size, location.y * size, paint);
     }
-
     // Method to hide the apple
-    @Override
     public void hide() {
         // Set the apple's location outside the visible screen
-        location.set(-1, -1); // Set the location outside the visible screen
+        location.set(-1, -1); // Set the location outside the visible screens
     }
     public static Point get_Location(){
         return locations;
