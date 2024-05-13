@@ -557,9 +557,6 @@ class SnakeGame extends SurfaceView implements Runnable{
             if (yApple.isSpawned()) {
                 yApple.hide();
             }
-            if(mApple.isSpawned()) {
-                mApple.hide();
-            }
 
             randomNumber = random.nextInt(3);
 
