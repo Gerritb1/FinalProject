@@ -97,7 +97,7 @@ public void hide() {
 
 public void chanceToSpawn(int score, int chance){
     Random rand = new Random();
-    if (rand.nextInt(score) > chance) {
+    if (rand.nextInt(score) >= chance) {
         this.spawn();
     }
 }
