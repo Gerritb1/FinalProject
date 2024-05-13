@@ -456,7 +456,18 @@ class Snake extends GameObject{
 
         return dead;
     }
-    
+
+    public void hide() {
+        // Set the snake's head position outside the visible screen
+        segmentLocations.get(0).set(-1, -1);
+
+        // Set each segment's position outside the visible screen
+        for (int i = 1; i < segmentLocations.size(); i++) {
+            segmentLocations.get(i).x = -1;
+            segmentLocations.get(i).y = -1;
+        }
+    }
+
     @Override
     public void draw(Canvas canvas, Paint paint) {
 
