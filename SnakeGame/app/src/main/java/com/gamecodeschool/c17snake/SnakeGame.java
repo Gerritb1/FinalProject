@@ -462,7 +462,7 @@ class SnakeGame extends SurfaceView implements Runnable{
                 trashPiece = (trashPiece+1)%3;
                 trashChance+= 3;
             }
-            trashChance = 4;
+            trashChance = 3;
 
             mSP.play(mEat_ID, 1, 1, 0, 0, 1);
             randomNumber = random.nextInt(3);
@@ -489,7 +489,7 @@ class SnakeGame extends SurfaceView implements Runnable{
             for(int i = 0; i < 4; i++ ) {
                 trashStuff.get(trashPiece).chanceToSpawn(mScore, trashChance);
                 trashPiece = (trashPiece+1)%3;
-                trashChance+= 4;
+                trashChance+= 3;
             }
             trashChance = 3;
 
