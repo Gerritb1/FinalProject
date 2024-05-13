@@ -19,10 +19,10 @@ public class Trash extends Rock implements Spawnable{
     private static Trash trash4;
     private static List<Point> locations = new ArrayList<>();
     private List<Point> rockLocations = new ArrayList<>();
-    private Point mAppleLocation = null;
-    private Point yAppleLocation = null;
-    private Point pAppleLocation = null;
-    private Point eDrinkLocation = null;
+    private Point mAppleLocations;
+    private Point pAppleLocations;
+    private Point yAppleLocations;
+    private Point eDrinkLocations;
 
 
     /// Set up the rock in the constructor
@@ -41,50 +41,45 @@ public class Trash extends Rock implements Spawnable{
     @Override
     public void spawn() {
         rockLocations = Rock.get_Locations();
-        mAppleLocation = Apple.get_Location();
-        yAppleLocation = YellowApple.get_Location();
-        pAppleLocation = PoisonApple.get_Location();
-        eDrinkLocation = EnergyDrink.get_Location();
-
+        yAppleLocations = YellowApple.get_Location();
+        mAppleLocations = Apple.get_Location();
+        pAppleLocations = PoisonApple.get_Location();
+        eDrinkLocations = EnergyDrink.get_Location();
+        // Choose two random values and place the trash
         Random random = new Random();
         location.x = random.nextInt(mSpawnRange.x) + 1;
         location.y = random.nextInt(mSpawnRange.y - 1) + 1;
-
-        while (isLocationInvalid(location, rockLocations) ||
-                isLocationInvalid(location, mAppleLocation) ||
-                isLocationInvalid(location, yAppleLocation) ||
-                isLocationInvalid(location, pAppleLocation) ||
-                isLocationInvalid(location, eDrinkLocation)) {
-            location.x = random.nextInt(mSpawnRange.x) + 1;
-            location.y = random.nextInt(mSpawnRange.y - 1) + 1;
-        }
-
-        locations.add(new Point(location.x, location.y));
-    }
-
-    private boolean isLocationInvalid(Point location, List<Point> otherLocations) {
-
-        // Check if the new location is too close to any of the existing locations
-        for (Point otherLocation : otherLocations) {
-            if (otherLocation == null) continue;
-            // 2-D Absolute Difference |x_2 - x_1| & |y_2 - y_1| <= 2
-            int xDiff = Math.abs(location.x - otherLocation.x);
-            int yDiff = Math.abs(location.y - otherLocation.y);
-            if (xDiff <= 2 && yDiff <= 2) {
-                return true; //Do not spawn here
+        for (int x=0; x<4; x++){
+            if((location.x==rockLocations.get(x).x || location.x==(rockLocations.get(x).x)+1 || location.x==(rockLocations.get(x).x)+2 || location.x==(rockLocations.get(x).x)-1 || location.x==(rockLocations.get(x).x)-2) && (location.y==rockLocations.get(x).y || location.y==(rockLocations.get(x).y+1) || location.y==(rockLocations.get(x).y+2) || location.y==(rockLocations.get(x).y-1) || location.y==(rockLocations.get(x).y-2))){
+                location.x = random.nextInt(mSpawnRange.x) + 1;
+                location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+            }
+            if(locations.size() > x) {
+                if ((location.x == locations.get(x).x || location.x == (locations.get(x).x) + 1 || location.x == (locations.get(x).x) - 1) && (location.y == locations.get(x).y || location.y == (locations.get(x).y + 1) || location.y == (locations.get(x).y - 1))) {
+                    location.x = random.nextInt(mSpawnRange.x) + 1;
+                    location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+                }
+            }
+            if(yAppleLocations != null){
+                if((location.x==yAppleLocations.x || location.x==yAppleLocations.x+1 || location.x==yAppleLocations.x-1) && (location.y==yAppleLocations.y || location.y==yAppleLocations.y+1 || location.y==yAppleLocations.y-1)){
+                    location.x = random.nextInt(mSpawnRange.x) + 1;
+                    location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+                }
+            }
+            if(pAppleLocations != null){
+                if((location.x==pAppleLocations.x || location.x==pAppleLocations.x+1 || location.x==pAppleLocations.x-1) && (location.y==pAppleLocations.y || location.y==pAppleLocations.y+1 || location.y==pAppleLocations.y-1)){
+                    location.x = random.nextInt(mSpawnRange.x) + 1;
+                    location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+                }
+            }
+            if(eDrinkLocations != null){
+                if((location.x==eDrinkLocations.x || location.x==eDrinkLocations.x+1 || location.x==eDrinkLocations.x-1) && (location.y==eDrinkLocations.y || location.y==eDrinkLocations.y+1 || location.y==eDrinkLocations.y-1)){
+                    location.x = random.nextInt(mSpawnRange.x) + 1;
+                    location.y = random.nextInt(mSpawnRange.y - 1) + 1;
+                }
             }
         }
-        return false; //Spawn here
-    }
-
-    //Overloaded method
-    private boolean isLocationInvalid(Point location, Point otherLocation) {
-        // Check if the new location is too close to the other location
-        if (otherLocation == null) return false;
-        // 2-D Absolute Difference |x_2 - x_1| & |y_2 - y_1| <= 2
-        int xDiff = Math.abs(location.x - otherLocation.x);
-        int yDiff = Math.abs(location.y - otherLocation.y);
-        return xDiff <= 2 && yDiff <= 2;
+        locations.add(new Point(location.x, location.y));
     }
 
     // Draw the trash
@@ -138,4 +133,3 @@ public static void remove_Locations(){
 }
 
 }
-
