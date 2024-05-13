@@ -12,7 +12,7 @@ public class SnakeActivity extends Activity {
 
     // Declare an instance of SnakeGame
     public static SnakeGame mSnakeGame;
-    static ExecutorService executorService = Executors.newFixedThreadPool(4);
+    //static ExecutorService executorService = Executors.newFixedThreadPool(4);
 
     // Set the game up
     @Override

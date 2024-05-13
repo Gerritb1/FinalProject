@@ -4,9 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -25,15 +28,22 @@ public class GameOverScreen extends SurfaceView implements Runnable {
     private Thread thread = null;
     SharedPreferences mPrefs;
 
+    private Bitmap background;
 
 
-    public GameOverScreen(Context context, int score, int Highscore) {
+
+
+    public GameOverScreen(Context context, int score, int Highscore, Point size) {
         super(context);
         this.score = score;
         gContext = context;
         highscore = Highscore;
         mPrefs = context.getSharedPreferences("Highscore", 0);
         innitDrawing();
+        background = BitmapFactory.decodeResource(context.getResources(), R.drawable.gameoverbg);
+
+        // Scale the image to match the screen size
+        background = Bitmap.createScaledBitmap(background, size.x, size.y, true);
     }
     public void innitDrawing(){
         gCanvas = new Canvas();
@@ -41,27 +51,28 @@ public class GameOverScreen extends SurfaceView implements Runnable {
         gSurfaceHolder = getHolder();
         gPaint = new Paint();
         textDrawer = new TextDrawer(gContext, gCanvas, gPaint);
+
     }
 
 
     private void drawGameOver(Context context, int score){
         if(gSurfaceHolder.getSurface().isValid()) {
             gCanvas = gSurfaceHolder.lockCanvas();
-            gCanvas.drawColor(Color.BLACK);
+            gCanvas.drawBitmap(background, 0, 0, null);
             Typeface customFont = ResourcesCompat.getFont(context, R.font.retro);
             gPaint.setTypeface(customFont);
 
             gPaint.setColor(Color.RED);
-            gPaint.setTextSize(150);
-            gCanvas.drawText("GAME OVER", 550, 150, gPaint);
+            gPaint.setTextSize(75);
+            gCanvas.drawText("GAME OVER", 800, 250, gPaint);
 
             gPaint.setColor(Color.WHITE);
-            gPaint.setTextSize(75);
-            gCanvas.drawText("Your Score: " + score, 650, 250, gPaint);
+            gPaint.setTextSize(50);
+            gCanvas.drawText("Your Score: " + score, 850, 350, gPaint);
 
-            gCanvas.drawText("Highscore:  " + highscore, 650, 350, gPaint);
+            gCanvas.drawText("Highscore:  " + highscore, 850, 410, gPaint);
 
-            gCanvas.drawText("Tap To Play Again!", 550, 500, gPaint);
+            gCanvas.drawText("Tap To Play Again!", 550, 550, gPaint);
 
 
 //            gPaint.setColor(Color.WHITE);

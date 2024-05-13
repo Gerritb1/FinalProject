@@ -12,7 +12,7 @@ import android.view.WindowManager;
 
 public class DrawPauseButton extends SurfaceView {
 
-    private SnakeGame snakeGame;
+    private SnakeGame Game;
     private int screenWidth;
     private int screenHeight;
     private int buttonWidth;
@@ -28,7 +28,7 @@ public class DrawPauseButton extends SurfaceView {
 
     private DrawPauseButton(Context context, SnakeGame snakeGame) {
         super(context);
-        this.snakeGame = snakeGame;
+        Game = snakeGame;
     }
 
     // Provide access to the DrawPauseButton, creating it if necessary
@@ -82,12 +82,13 @@ public class DrawPauseButton extends SurfaceView {
         buttonHeight = screenHeight / 20;
         buttonLeft = (screenWidth - buttonWidth) / 2;
         buttonTop = screenHeight / 10;
+
     }
 
     public void drawButtonText(Canvas canvas, Paint paint) {
 
         // Determine the text to be displayed based on the pause state
-        String buttonText = snakeGame.isPaused() ? "Resume" : "Pause";
+        String buttonText = Game.isPaused() ? "Resume" : "Pause";
 
         // Calculate the position to center the text within the button
         textWidth = paint.measureText(buttonText);

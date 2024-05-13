@@ -40,7 +40,7 @@ public class GameOverActivity extends Activity {
         int Highscore = sharedPref.getInt("scoreKey", 0);
 
 
-        gameOverScreen = new GameOverScreen(this, score, Highscore);
+        gameOverScreen = new GameOverScreen(this, score, Highscore, size);
 
         setContentView(gameOverScreen);
 
